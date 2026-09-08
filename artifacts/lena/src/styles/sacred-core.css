@@ -76,20 +76,6 @@
   animation: lena-sacred-blink 13.6s cubic-bezier(.4,0,.2,1) infinite;
 }
 
-.lena-orbit.is-focus .lena-house {
-  filter:
-    drop-shadow(0 0 14px rgba(255, 220, 145, .34))
-    drop-shadow(0 0 40px rgba(223, 137, 35, .24));
-}
-
-.lena-orbit.is-focus .lena-house::after {
-  opacity: .82;
-  box-shadow:
-    0 0 10px rgba(255,245,220,.94),
-    0 0 27px rgba(255,191,67,.68),
-    0 0 60px rgba(255,141,16,.26);
-}
-
 .lena-public.lena-gateway-quiet .lena-house {
   filter:
     drop-shadow(0 0 17px rgba(255, 220, 145, .38))

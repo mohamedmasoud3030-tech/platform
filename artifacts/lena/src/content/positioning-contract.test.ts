@@ -14,7 +14,7 @@ const PUBLIC_POSITIONING_FILES = [
   "src/layouts/PublicFooter.tsx",
   "src/layouts/FloatingHeader.tsx",
   "src/components/LenaCta.tsx",
-  "src/features/home/DigitalHouseOrbit.tsx",
+  "src/features/home/DigitalHouseFrontage.tsx",
   "src/features/home/ProcessSection.tsx",
   "index.html",
 ];

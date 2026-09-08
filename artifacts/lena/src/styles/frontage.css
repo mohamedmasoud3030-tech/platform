@@ -1,0 +1,258 @@
+/* ==========================================================================
+   LENA Digital House frontage — Home hero scene (House Ledger direction).
+   Flat editorial facade at dusk: parapet, four first-floor windows, a round
+   porch lamp (the canonical Sacred Core sigil), ground floor with two
+   windows flanking the entrance door. Six windows = six public systems in
+   owner order; lit = evidence-registry-documented, dim = not yet documented
+   (documentation-status sign in the key line — never a lifecycle word).
+
+   Register rules: flat fills + hairlines only on the building (no gradients,
+   no glass, no glow on the architecture itself; the approved sigil keeps its
+   own warm lamp pulse from sacred-core.css). All geometry is logical/RTL
+   native — grid auto-flow mirrors under dir=rtl so owner order reads
+   right-to-left in Arabic.
+============================================================================= */
+
+.lena-frontage {
+  width: min(560px, 100%);
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: lena-frontage-enter 0.7s cubic-bezier(0.2, 0.7, 0.3, 1) 0.12s backwards;
+}
+
+.lena-frontage-building {
+  width: 100%;
+  overflow: hidden;
+  border: 1px solid rgba(167, 188, 255, 0.24);
+  border-radius: 18px 18px 10px 10px;
+  background: rgba(15, 25, 56, 0.7);
+}
+.light .lena-frontage-building {
+  border-color: rgba(38, 72, 152, 0.28);
+  background: rgba(255, 255, 255, 0.78);
+}
+
+.lena-frontage-parapet {
+  height: 26px;
+  border-bottom: 1px solid rgba(167, 188, 255, 0.16);
+  background: rgba(5, 9, 22, 0.9);
+}
+.light .lena-frontage-parapet {
+  border-bottom-color: rgba(38, 72, 152, 0.16);
+  background: rgba(222, 230, 250, 0.95);
+}
+
+.lena-frontage-first-floor,
+.lena-frontage-ground {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  gap: 12px;
+}
+.lena-frontage-first-floor { padding: 22px 20px 0; }
+.lena-frontage-ground { padding: 0 20px 20px; }
+
+.lena-front-window {
+  margin: 0;
+  display: flex;
+  grid-column: span 2;
+  flex-direction: column;
+  align-items: center;
+}
+
+.lena-front-pane {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 0.82;
+  overflow: hidden;
+  border: 1px solid rgba(167, 188, 255, 0.22);
+  border-radius: 4px;
+  background: rgba(3, 7, 18, 0.92);
+}
+.lena-front-pane i { position: absolute; inset: 0; }
+.lena-front-pane i::before,
+.lena-front-pane i::after {
+  content: "";
+  position: absolute;
+  background: rgba(158, 178, 220, 0.14);
+}
+.lena-front-pane i::before {
+  left: 50%;
+  top: 5%;
+  bottom: 5%;
+  width: 1px;
+}
+.lena-front-pane i::after {
+  top: 50%;
+  left: 5%;
+  right: 5%;
+  height: 1px;
+}
+
+.lena-front-window.is-lit .lena-front-pane {
+  border-color: rgba(255, 214, 140, 0.6);
+  background: var(--lena-gold);
+}
+.lena-front-window.is-lit .lena-front-pane i::before,
+.lena-front-window.is-lit .lena-front-pane i::after {
+  background: rgba(96, 58, 0, 0.32);
+}
+
+.light .lena-front-pane {
+  border-color: rgba(38, 72, 152, 0.3);
+  background: rgba(84, 103, 150, 0.16);
+}
+.light .lena-front-pane i::before,
+.light .lena-front-pane i::after {
+  background: rgba(38, 72, 152, 0.18);
+}
+.light .lena-front-window.is-lit .lena-front-pane {
+  border-color: rgba(150, 86, 0, 0.42);
+  background: #f4b954;
+}
+.light .lena-front-window.is-lit .lena-front-pane i::before,
+.light .lena-front-window.is-lit .lena-front-pane i::after {
+  background: rgba(96, 58, 0, 0.28);
+}
+
+.lena-front-name {
+  margin: 6px 0 0;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  width: 100%;
+  justify-content: center;
+  color: var(--lena-muted);
+  font-size: 9px;
+  line-height: 1.35;
+  text-align: center;
+}
+.lena-front-num {
+  font-size: 7px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  opacity: 0.75;
+}
+
+.lena-frontage-frieze {
+  display: flex;
+  height: 178px;
+  align-items: center;
+  justify-content: center;
+}
+
+/* The porch lamp is the approved Sacred Core sigil (sacred-core.css owns its
+   artwork, pulse, blink and gateway awakening). Frontage only sizes and
+   seats it; the lamp sits above the entrance door. */
+.lena-frontage .lena-house {
+  width: 152px !important;
+  height: 152px !important;
+  position: relative;
+}
+
+.lena-front-door {
+  grid-column: span 4;
+  position: relative;
+  height: 132px;
+  align-self: center;
+  border: 1px solid rgba(167, 188, 255, 0.26);
+  border-radius: 6px 6px 0 0;
+  background: rgba(2, 4, 12, 0.94);
+}
+.light .lena-front-door {
+  border-color: rgba(38, 72, 152, 0.32);
+  background: rgba(9, 14, 34, 0.9);
+}
+.lena-front-door::before {
+  content: "";
+  position: absolute;
+  inset: 6px;
+  border: 1px solid rgba(167, 188, 255, 0.14);
+  border-radius: 4px 4px 0 0;
+}
+.lena-front-door::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 10px;
+  bottom: 10px;
+  width: 1px;
+  background: rgba(167, 188, 255, 0.12);
+  transform: translateX(-50%);
+}
+.light .lena-front-door::before { border-color: rgba(255, 255, 255, 0.12); }
+.light .lena-front-door::after { background: rgba(255, 255, 255, 0.1); }
+
+.lena-frontage-key {
+  margin: 14px 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px 18px;
+  color: var(--lena-muted);
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1.6;
+}
+.lena-frontage-key-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.lena-key-swatch {
+  display: inline-block;
+  width: 11px;
+  height: 11px;
+  flex: 0 0 auto;
+  border: 1px solid rgba(167, 188, 255, 0.3);
+  border-radius: 2px;
+}
+.light .lena-key-swatch { border-color: rgba(38, 72, 152, 0.3); }
+.lena-key-swatch.is-lit { background: var(--lena-gold); }
+.light .lena-key-swatch.is-lit { background: #f4b954; }
+.lena-key-swatch.is-unlit { background: rgba(3, 7, 18, 0.9); }
+.light .lena-key-swatch.is-unlit { background: rgba(84, 103, 150, 0.16); }
+
+@keyframes lena-frontage-enter {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+/* Compact facade for the mobile gateway. */
+@media (max-width: 1050px) {
+  .lena-frontage {
+    width: min(540px, 100%);
+    margin-block: 26px 0;
+  }
+}
+
+@media (max-width: 720px) {
+  .lena-frontage { width: min(480px, 100%); margin: 4px 0 10px; }
+  .lena-frontage-building { border-radius: 14px 14px 8px 8px; }
+  .lena-frontage-parapet { height: 18px; }
+  .lena-frontage-first-floor,
+  .lena-frontage-ground { gap: 8px; }
+  .lena-frontage-first-floor { padding: 14px 14px 0; }
+  .lena-frontage-ground { padding: 0 14px 14px; }
+  .lena-frontage-frieze { height: 168px; }
+  .lena-frontage .lena-house { width: 146px !important; height: 146px !important; }
+  .lena-front-name { font-size: 8px; }
+  .lena-front-num { font-size: 6.5px; }
+  .lena-front-door { height: 108px; }
+  .lena-frontage-key { font-size: 9px; margin-top: 10px; gap: 6px 12px; }
+}
+
+@media (max-width: 420px) {
+  .lena-frontage { margin-top: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lena-frontage {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+}
