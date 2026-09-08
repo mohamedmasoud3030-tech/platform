@@ -104,13 +104,18 @@ for (const viewport of [VIEWPORTS.mobile, VIEWPORTS.narrow]) {
     page,
   }) => {
     test.info().annotations.push(
-      { type: "route", description: "/en/world (selected property)" },
+      { type: "route", description: "/en/world (selected via click)" },
       { type: "viewport", description: `${viewport.width}x${viewport.height}` },
       { type: "theme", description: "dark" },
       { type: "locale", description: "en" },
     );
     await openApp(page, { route: "/world", locale: "en", theme: "dark", viewport });
-    await page.locator('.lena-world-entity[aria-label^="MALEK"]').first().click();
+    // Under the direct product chamber entry contract, clicking the
+    // pre-selected system portals away; on mobile the constellation dots are
+    // the selection control, so switch selection through them instead.
+    const dot = page.locator(".lena-world-mobile-dot").first();
+    await dot.click();
+    await expect(dot).toHaveAttribute("aria-pressed", "true");
     const info = page.locator(".lena-world-info");
     await expect(info).toBeVisible();
 

@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { openApp, settle, VIEWPORTS } from "../helpers/app.mjs";
+import { openApp, VIEWPORTS } from "../helpers/app.mjs";
 import { GUARDIAN_CONFIG } from "../helpers/config.mjs";
 
 /**
@@ -29,13 +29,14 @@ test("spatial journey: Home → World → Portal → Chamber → Inner Space →
   await expect(page.locator(".lena-world-entity"), "World entities listed").toHaveCount(6);
   await expect(page.locator(".lena-world-core")).toBeVisible();
 
-  // 3: select a system (portal preparation) then 4: enter the portal.
+  // 3 → 4: the canonical default/remembered system (MALEK) is pre-selected on
+  // arrival; under the direct product chamber entry contract (b0ebbde8c2) one
+  // click on the selected system opens its chamber through the portal. The
+  // info action stays the explicit second path and is asserted on both legs.
   const entity = page.locator(`.lena-world-entity[aria-label*="${journey.systemName}"]`);
+  await expect(entity, "canonical default selection is pre-selected").toHaveAttribute("aria-pressed", "true");
+  await expect(page.locator(".lena-world-info-action"), "info action renders for the pre-selected system").toBeVisible();
   await entity.click();
-  await expect(entity).toHaveAttribute("aria-pressed", "true");
-  await settle(page, 350);
-
-  await page.locator(".lena-world-info-action").click();
   await page.waitForURL(`**${journey.chamber}`, { timeout: 20_000 });
 
   // 5: Chamber + Inner Space present.
