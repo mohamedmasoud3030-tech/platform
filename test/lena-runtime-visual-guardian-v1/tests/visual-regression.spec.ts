@@ -11,17 +11,22 @@ import { openApp, VIEWPORTS } from "../helpers/app.mjs";
  *   RTL    — Arabic mobile dark (required RTL screenshot)
  *
  * Stability:
- *   - reduced-motion emulation (orbital JS places once at t=0),
+ *   - reduced-motion emulation (frontage renders placed once, static),
  *   - theme pinned via localStorage before first paint,
  *   - fonts awaited, entry animations disabled for capture,
- *   - deterministic seeded star fields.
+ *   - static House Ledger composition — no continuous scene motion.
  * Tolerance: 2% differing pixels + perceptual threshold — microscopic
  * anti-aliasing never fails the build; disappearance / layout collapse does.
  */
 const MATRIX = [
   { name: "home-mobile-dark", route: "/", locale: "en", theme: "dark", viewport: VIEWPORTS.mobile },
   { name: "home-mobile-light", route: "/", locale: "en", theme: "light", viewport: VIEWPORTS.mobile },
-  { name: "home-desktop-dark", route: "/", locale: "en", theme: "dark", viewport: VIEWPORTS.desktop },
+  // Desktop-dark tightened (0.008 / threshold 0.12 vs 0.02 / 0.25): a
+  // dark-on-dark hero change once slipped under the global tolerance,
+  // leaving a stale orbit-era baseline green against the frontage render.
+  // The surface changed — the baseline must too, and subtle dark-region
+  // regressions must register on this surface.
+  { name: "home-desktop-dark", route: "/", locale: "en", theme: "dark", viewport: VIEWPORTS.desktop, maxDiffPixelRatio: 0.008, threshold: 0.12 },
   { name: "world-mobile-dark", route: "/world", locale: "en", theme: "dark", viewport: VIEWPORTS.mobile },
   { name: "world-desktop-dark", route: "/world", locale: "en", theme: "dark", viewport: VIEWPORTS.desktop },
   { name: "chamber-mobile-dark", route: "/world/property", locale: "en", theme: "dark", viewport: VIEWPORTS.mobile },
@@ -45,8 +50,8 @@ for (const entry of MATRIX) {
 
     await expect(page).toHaveScreenshot(`${entry.name}.png`, {
       fullPage: true,
-      maxDiffPixelRatio: 0.02,
-      threshold: 0.25,
+      maxDiffPixelRatio: entry.maxDiffPixelRatio ?? 0.02,
+      threshold: entry.threshold ?? 0.25,
       animations: "disabled",
       caret: "hide",
       scale: "css",
