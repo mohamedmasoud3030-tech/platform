@@ -47,7 +47,10 @@ check("the named product family keeps independent brands", () => {
 check("the homepage is a normal LENA company page, not an app chooser or support flow", () => {
   const home = readFileSync(resolve(ROOT, "artifacts/lena/src/pages/Home.tsx"), "utf8");
   const app = readFileSync(resolve(ROOT, "artifacts/lena/src/App.tsx"), "utf8");
-  assert.match(home, /Real operating worlds/);
+  // House-direction register (visual-direction tranche): the honest hero claim,
+  // with the retired cosmic tokens asserted absent.
+  assert.match(home, /Real operating systems for real businesses/);
+  assert.doesNotMatch(home, /living operating world|move inward|living world/i);
   assert.doesNotMatch(home, /CREATIVE SYSTEMS|digital presence|الحضور الرقمي/i);
   assert.doesNotMatch(home, /useSearchParams/);
   assert.doesNotMatch(home, /from=malek/);
