@@ -127,19 +127,30 @@ const retiredInline = resolve(LENA, "src/assets/lena-sacred-core-v3-inline.svg")
 
 console.log("\n== Guardian: Sacred Core source contract ==\n");
 
-check("approved WebP owns the shared Sacred Core center", () => {
-  const centerRule = /\.lena-house,\s*\n\.lena-world-core\s*\{[\s\S]*?\}/.exec(sacredCss);
-  assert(centerRule, "shared .lena-house / .lena-world-core rule missing");
-  assert(/background:\s*transparent\s+url\([^)]*lena-sacred-core\.webp[^)]*\)/.test(centerRule[0]), "center must be a transparent url() background of the approved WebP");
-  assert(/border-color:\s*transparent\s*!important/.test(centerRule[0]), "center must not carry a fake disk border");
-  assert(centerRule[0].includes("no-repeat"), "center must be contained/no-repeat");
+/**
+ * House Ledger: the World scene is retired, so `.lena-world-core` no longer
+ * exists. The approved artwork is Home's single canonical center.
+ */
+function houseCenterRule() {
+  // The rule that paints the artwork: `.lena-house { background: transparent url(...) }`.
+  const m = /\.lena-house\s*\{[\s\S]*?background:\s*transparent\s+url\([^)]*lena-sacred-core\.webp[^)]*\)[\s\S]*?\}/.exec(sacredCss);
+  return m ? m[0] : null;
+}
+
+check("approved WebP owns the Sacred Core center on Home", () => {
+  const centerRule = houseCenterRule();
+  assert(centerRule, ".lena-house rule with transparent WebP url() missing");
+  assert(/border-color:\s*transparent\s*!important/.test(centerRule), "center must not carry a fake disk border");
+  assert(centerRule.includes("no-repeat"), "center must be contained/no-repeat");
+  // The World scene core is retired; record surfaces carry no sigil.
+  assert(!sacredCss.includes(".lena-world-core"), "retired .lena-world-core rules must not exist");
 });
 
 check("retired/truncated Sacred Core assets cannot own the center", () => {
   assert(!existsSync(retiredInline), "retired v3 inline SVG must not exist");
   assert(!sacredCss.includes("lena-sacred-core-v3-inline"), "retired inline asset reference found");
   assert(!sacredCss.includes("lena-sacred-core-v2"), "retired v2 asset reference found");
-  const centerRule = /\.lena-house,\s*\n\.lena-world-core\s*\{[\s\S]*?\}/.exec(sacredCss)?.[0] ?? "";
+  const centerRule = houseCenterRule() ?? "";
   assert(!/radial-gradient/.test(centerRule), "center must be the artwork url() — a radial-gradient would be a synthetic stand-in");
   assert(!/radial-gradient\([^)]*(?:#020202|#030303|#090705|#171009)/i.test(sacredCss), "dark synthetic disk gradient found");
   assert(!/background(?:-color)?:\s*(?:#0[0-9a-f]{5}\b|black\b)/i.test(centerRule), "black/void background found on the center");
@@ -151,11 +162,23 @@ check("sacred-core.css still loads after World styles (cascade priority)", () =>
   assert(worldIndex >= 0 && sacredIndex > worldIndex, "sacred-core.css must be imported after world.css");
 });
 
-check("chamber/inner watermarks still reference the canonical WebP", () => {
-  const chamber = readFileSync(resolve(LENA, "src/styles/world-chamber.css"), "utf8");
-  const inner = readFileSync(resolve(LENA, "src/styles/world-inner.css"), "utf8");
-  assert(chamber.includes("lena-sacred-core.webp"), "chamber watermark reference missing");
-  assert(inner.includes("lena-sacred-core.webp"), "inner watermark reference missing");
+check("only sacred-core.css may reference the canonical WebP", () => {
+  // House Ledger: scene watermarks are retired with their sheets. The artwork
+  // is owned by exactly one stylesheet — the ledger record surfaces must
+  // never restyle or restage it.
+  for (const name of ["world-chamber.css", "world-inner.css", "world-v2.css", "world-portal.css", "world-evidence.css"]) {
+    assert(!existsSync(resolve(LENA, "src/styles", name)), `retired sheet ${name} must not exist`);
+  }
+  const ledgerCss = readFileSync(resolve(LENA, "src/styles/ledger.css"), "utf8");
+  assert(!ledgerCss.includes("lena-sacred-core"), "ledger.css must not reference the canonical artwork");
+  const stylesDir = resolve(LENA, "src/styles");
+  const otherOwners = readdirSync(stylesDir).filter(
+    (name) => name.endsWith(".css") && name !== "sacred-core.css" && name !== "ledger.css",
+  );
+  for (const name of otherOwners) {
+    const css = readFileSync(resolve(stylesDir, name), "utf8");
+    assert(!css.includes("lena-sacred-core"), `${name} must not reference the canonical artwork`);
+  }
 });
 
 check("primary logo/identity is present in the app", () => {

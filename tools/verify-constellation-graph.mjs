@@ -140,14 +140,24 @@ check(
 );
 
 check(
-  "World v6 visual language loads after the Inner Constellation layer",
+  "World graph + Command layers load in stable cascade order",
   () => {
-    const inner = lenaCss.indexOf('@import "./styles/world-inner.css"');
     const graphIndex = lenaCss.indexOf('@import "./styles/world-graph.css"');
-    assert.ok(inner >= 0, "world-inner.css import missing");
+    const commandIndex = lenaCss.indexOf('@import "./styles/world-command.css"');
+    const atlasIndex = lenaCss.indexOf('@import "./styles/world-atlas.css"');
+    assert.ok(graphIndex >= 0, "world-graph.css import missing");
     assert.ok(
-      graphIndex > inner,
-      "world-graph.css must load after world-inner.css",
+      commandIndex > graphIndex,
+      "world-command.css must load after world-graph.css",
+    );
+    assert.ok(
+      atlasIndex > commandIndex,
+      "world-atlas.css must load after world-command.css",
+    );
+    // The retired Inner layer cannot sneak back into the stack.
+    assert.doesNotMatch(
+      lenaCss,
+      /world-inner\.css|world-chamber\.css|world-v2\.css|world-portal\.css|world-evidence\.css/,
     );
   },
 );

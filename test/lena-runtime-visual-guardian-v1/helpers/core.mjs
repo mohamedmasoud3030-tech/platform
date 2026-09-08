@@ -1,7 +1,12 @@
 import { expect } from "@playwright/test";
 
+/**
+ * House Ledger: the Sacred Core artwork renders only on Home now — the World
+ * register and chamber leaves are record surfaces and carry no sigil.
+ */
 export const HOME_CORE = ".lena-house";
-export const WORLD_CORE = ".lena-world-core";
+export const WORLD_REGISTER = ".ledger-sheet";
+export const CHAMBER_LEAF = ".ledger-leaf";
 
 /**
  * Runtime probe of a Sacred Core element.

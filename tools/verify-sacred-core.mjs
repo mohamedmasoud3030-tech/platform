@@ -61,11 +61,14 @@ check("the Sacred Core stylesheet is loaded after World styles", () => {
 
 const css = readFileSync(cssPath, "utf8");
 
-check("Orbit, World, chamber and inner spaces share the approved center", () => {
-  assert.match(css, /\.lena-house,\s*\n\.lena-world-core/);
+check("the approved center stays Home's: orbit rules own the canonical artwork", () => {
+  // House Ledger: the World register carries no scene core and no sigil; the
+  // approved artwork remains the Home orbit's single canonical center.
+  assert.match(css, /\.lena-house\s*\{/);
   assert.match(css, /lena-sacred-core\.webp/);
   assert.doesNotMatch(css, /lena-sacred-core-v3-inline\.svg/);
-  assert.match(css, /\.lena-inner-origin,\s*\n\.lena-chamber-origin[\s\S]*lena-sacred-core\.webp/);
+  assert.doesNotMatch(css, /\.lena-world-core/);
+  assert.doesNotMatch(css, /\.lena-inner-origin|\.lena-chamber-origin/);
 });
 
 check("no synthetic black sphere or retired asset can own the core", () => {
@@ -88,19 +91,19 @@ check("the Enter LENA gateway awakens the real eye instead of swapping identity"
   assert.match(css, /@keyframes\s+lena-sacred-awakening/);
 });
 
-check("World state focus acknowledges live beta and forming", () => {
-  assert.match(css, /state-live\.is-selected/);
-  assert.match(css, /state-beta\.is-selected/);
-  assert.match(css, /state-forming\.is-selected/);
-  assert.match(css, /lena-sacred-ack-live/);
-  assert.match(css, /lena-sacred-ack-beta/);
-  assert.match(css, /lena-sacred-ack-forming/);
+check("World state focus acknowledgement was retired with the scene, not weakened", () => {
+  // The acknowledgement keyframes choreographed the World scene core around a
+  // selected system; the register replaced the scene, so the retired
+  // machinery must stay gone while the Home gateway awakening remains.
+  assert.doesNotMatch(css, /lena-sacred-ack-live|lena-sacred-ack-beta|lena-sacred-ack-forming/);
+  assert.doesNotMatch(css, /\.state-(live|beta|forming)\.is-selected/);
+  assert.match(css, /lena-gateway-resolve[\s\S]*\.lena-house::after/);
 });
 
 check("reduced-motion removes surprise and continuous eye motion", () => {
   assert.match(css, /prefers-reduced-motion:\s*reduce/);
-  assert.match(css, /\.lena-house::before,[\s\S]*animation:\s*none\s*!important/);
-  assert.match(css, /\.lena-house::after,[\s\S]*animation:\s*none\s*!important/);
+  assert.match(css, /\.lena-house::before[\s\S]{0,300}?animation:\s*none\s*!important/);
+  assert.match(css, /\.lena-house::after[\s\S]{0,300}?animation:\s*none\s*!important/);
 });
 
 console.log(failures === 0 ? "\nALL CHECKS PASSED\n" : `\n${failures} FAILED\n`);

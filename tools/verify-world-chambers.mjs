@@ -1,4 +1,4 @@
-import { existsSync, readFileSync, readdirSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import assert from "node:assert/strict";
@@ -10,8 +10,7 @@ const app = read("artifacts/lena/src/App.tsx");
 const page = read("artifacts/lena/src/pages/WorldSystem.tsx");
 const world = read("artifacts/lena/src/features/world/content/world.ts");
 const systems = read("artifacts/lena/src/content/systems.ts");
-const css = read("artifacts/lena/src/styles/world-chamber.css");
-const evidenceCss = read("artifacts/lena/src/styles/world-evidence.css");
+const leafCss = read("artifacts/lena/src/styles/ledger.css");
 const lenaCss = read("artifacts/lena/src/lena.css");
 const sitemap = read("artifacts/lena/scripts/generate-sitemap.mjs");
 const analytics = read("artifacts/lena/src/lib/analytics/events.ts");
@@ -48,14 +47,14 @@ const check = (name, fn) => {
   }
 };
 
-console.log("\n== LENA World System Chamber contract ==\n");
+console.log("\n== LENA World System Chamber (ledger leaf) contract ==\n");
 
 check("a lazy dynamic World chamber route exists", () => {
   assert.match(app, /const WorldSystem = lazy\(\(\) => import\("\.\/pages\/WorldSystem"\)\)/);
   assert.match(app, /path="\/world\/:systemId" element=\{<WorldSystem \/>\}/);
 });
 
-check("all six World exits now land in canonical chambers", () => {
+check("all six World exits land in canonical chambers", () => {
   for (const id of ["wellness", "rental", "property", "hospitality", "investment", "recycling"]) {
     assert.match(world, new RegExp(`${id}: \\{ state:`));
   }
@@ -80,6 +79,7 @@ check("the Chamber resolves facts from the canonical system record", () => {
   assert.match(page, /system\.usage\[locale\]/);
   assert.match(page, /system\.does\[locale\]/);
   assert.match(page, /system\.beneficiaries\[locale\]/);
+  assert.match(page, /system\.workflowCycle/);
 });
 
 check("invalid system ids return safely to World", () => {
@@ -97,12 +97,11 @@ check("no lifecycle label tables are exported for public rendering", () => {
   assert.doesNotMatch(world, /WORLD_STATE_LABEL|WORLD_STATE_NOTE|WORLD_ACTION_LABEL/);
 });
 
-check("the Chamber exposes operating roots as Layer B intelligence", () => {
-  assert.match(page, /lena-chamber-signals/);
-  assert.match(page, /lena-chamber-roots/);
-  assert.match(page, /OPERATING_PRIMITIVES/);
-  assert.match(page, /system\.operatingPrimitives\.map/);
-  assert.match(css, /\.lena-chamber-roots\s*\{/);
+check("the leaf keeps record grammar derived from canonical data, never hardcoded", () => {
+  assert.match(page, /entryNumberFor\(system\.order, locale\)/);
+  assert.match(page, /recordStatusFor\(system\.id\)/);
+  assert.match(page, /figureCountFor\(system\.id\)/);
+  assert.match(page, /ledgerPad\(index \+ 1, 2, locale\)/);
 });
 
 check("the Chamber mounts the Operating Surfaces evidence layer", () => {
@@ -110,55 +109,69 @@ check("the Chamber mounts the Operating Surfaces evidence layer", () => {
   assert.match(page, /<OperatingSurfaces/);
   assert.match(page, /systemId=\{entity\.systemId\}/);
   assert.match(page, /brand=\{system\.name\[locale\]\}/);
-  assert.match(page, /evidence=\{productContract\?\.evidence\}/);
-  assert.match(page, /import \{ OperatingSurfaces \} from "@\/features\/world\/components\/OperatingSurfaces"/);
+  assert.match(
+    page,
+    /import \{ OperatingSurfaces \} from "@\/features\/world\/components\/OperatingSurfaces"/,
+  );
 });
 
-check("Operating Surfaces is real-evidence only, never a gallery", () => {
-  assert.match(evidenceCss, /floating dimensional planes|constellation language/);
-  assert.match(evidenceCss, /prefers-reduced-motion/);
-  assert.match(evidenceCss, /\.lena-surface-frame img\.is-missing/);
-});
-
-check("Operating Surfaces renders nothing when a system has no evidence", () => {
+check("Operating Surfaces is real-evidence only — never a gallery, never fabricated", () => {
   const component = read("artifacts/lena/src/features/world/components/OperatingSurfaces.tsx");
-  assert.match(component, /if \(surfaces\.length === 0\) return null/);
+  assert.match(component, /evidence \?\? evidenceFor\(systemId\) \?\? \[\]/);
+  assert.match(component, /total === 0/);
+  assert.match(component, /figureLabel/);
+  assert.doesNotMatch(component, /Math\.random|Date\(|fetch\(/);
+  assert.doesNotMatch(component, /publicSystems\(\)|SYSTEM_EVIDENCE\s*=|new Array/);
+  // A system with no evidence yet gets an honest pending record, not a mock.
+  assert.match(component, /ledger-plates is-pending/);
+});
+
+check("a chamber with no evidence yet still closes its record honestly", () => {
+  assert.match(leafCss, /\.ledger-plates\.is-pending/);
 });
 
 check("the Chamber keeps a calm exit into operating detail and contact", () => {
   assert.match(page, /to=\{`\/services#\$\{system\.id\}`\}/);
   assert.match(page, /to=\{`\/contact\?service=\$\{system\.id\}`\}/);
+  assert.match(page, /ledger-cta/);
 });
 
-check("portal arrival is one-shot visual settling, not continuous motion", () => {
+check("real product handoff is a single explicit boundary, never embedded", () => {
+  assert.match(page, /productContract\?\.handoff/);
+  assert.match(page, /data-testid="malek-product-handoff"/);
+  assert.match(page, /target="_blank"/);
+  assert.match(page, /rel="noreferrer"/);
+  assert.doesNotMatch(page, /<iframe/);
+});
+
+check("arrival is one-shot record motion, never continuous", () => {
   assert.match(page, /navState\?\.spatial\.intent === "descend"/);
   assert.match(page, /navState\?\.spatial\.intent === "emerge"/);
-  assert.match(page, /is-arrival/);
-  assert.match(page, /is-return/);
-  assert.match(css, /lena-chamber-body-arrive/);
-  assert.doesNotMatch(css, /\binfinite\b/);
+  assert.match(page, /"arrival"/);
+  assert.match(page, /"return"/);
+  assert.match(leafCss, /@keyframes ledger-leaf-open/);
+  assert.doesNotMatch(leafCss, /\binfinite\b/);
   // Current write path is typed spatial state. The legacy flag is not produced here.
   assert.doesNotMatch(page, /fromWorldPortal/);
 });
 
-check("all six Digital DNA families have chamber material rules", () => {
-  for (const dna of ["architectural", "organic", "crafted", "ceremonial", "systemic", "industrial"]) {
-    assert.match(css, new RegExp(`\\.dna-${dna} \\.lena-chamber-body`));
+check("the leaf carries a deliberate close line: only the documented is entered", () => {
+  assert.match(page, /ledger-leaf-close/);
+  assert.match(page, /لا يُسجَّل في هذا الدفتر إلا ما هو حقيقي وموثّق|nothing is entered in this register unless it is real and documented/);
+});
+
+check("ledger styles load after every sheet they must beat", () => {
+  const ledger = lenaCss.indexOf('@import "./styles/ledger.css"');
+  assert.ok(ledger >= 0, "ledger.css import missing");
+  for (const name of ["responsive.css", "spatial-continuity.css", "world.css"]) {
+    const at = lenaCss.indexOf(`@import "./styles/${name}"`);
+    assert.ok(at >= 0 && at < ledger, `ledger.css must load after ${name}`);
   }
 });
 
-check("Chamber styles load after Portal styles", () => {
-  const portal = lenaCss.indexOf('@import "./styles/world-portal.css"');
-  const chamber = lenaCss.indexOf('@import "./styles/world-chamber.css"');
-  const evidence = lenaCss.indexOf('@import "./styles/world-evidence.css"');
-  assert.ok(portal >= 0, "world-portal.css import missing");
-  assert.ok(chamber > portal, "world-chamber.css must load after world-portal.css");
-  assert.ok(evidence > chamber, "world-evidence.css must load after world-chamber.css");
-});
-
-check("reduced-motion removes arrival animation", () => {
-  assert.match(css, /prefers-reduced-motion:\s*reduce/);
-  assert.match(css, /animation:\s*none\s*!important/);
+check("reduced-motion removes arrival motion and keeps records present", () => {
+  assert.match(leafCss, /prefers-reduced-motion:\s*reduce/);
+  assert.match(leafCss, /animation:\s*none\s*!important/);
 });
 
 check("public systems generate indexable Chamber sitemap entries", () => {
@@ -204,7 +217,9 @@ check("no public render site still references stage labels", () => {
     "artifacts/lena/src/components/SystemGrid.tsx",
     "artifacts/lena/src/pages/Portfolio.tsx",
     "artifacts/lena/src/pages/Services.tsx",
-    "artifacts/lena/src/features/world/components/WorldScene.tsx",
+    "artifacts/lena/src/features/world/ledger/LedgerEntryCard.tsx",
+    "artifacts/lena/src/features/world/ledger/LedgerIndex.tsx",
+    "artifacts/lena/src/pages/WorldSystem.tsx",
   ]) {
     const source = read(file);
     assert.doesNotMatch(source, /STAGE_LABEL|STAGE_NOTE|WORLD_STATE_LABEL|WORLD_STATE_NOTE|WORLD_ACTION_LABEL/);

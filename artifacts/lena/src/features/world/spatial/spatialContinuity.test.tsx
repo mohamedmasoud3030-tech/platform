@@ -170,7 +170,7 @@ describe("coherent back navigation", () => {
 });
 
 describe("world focus restoration", () => {
-  it("restores the remembered system when a returning visitor opens the field", async () => {
+  it("marks the remembered system when a returning visitor opens the register", async () => {
     worldMemory.remember({
       space: "chamber",
       systemId: "wellness",
@@ -179,23 +179,22 @@ describe("world focus restoration", () => {
     });
 
     renderRoutes([worldRoute, otherRoute], { pathname: "/world" });
-    const selected = document.querySelector(".lena-world-entity.is-selected");
-    expect(selected).not.toBeNull();
-    // The remembered entity is selected — identified by its data-driven name
-    // from the canonical content, not a hardcoded label.
+    const marked = document.querySelector(".ledger-entry.is-remembered");
+    expect(marked).not.toBeNull();
+    // The remembered entry is identified by its data-driven name from the
+    // canonical content, not a hardcoded label.
     const wellnessName = publicSystems().find((s) => s.id === "wellness")?.name.en ?? "wellness";
-    expect(selected?.textContent).toContain(wellnessName);
-    // The remembered system is quietly marked in the list.
-    expect(document.querySelector(".lena-world-list-link.is-remembered")).not.toBeNull();
+    expect(marked?.textContent).toContain(wellnessName);
   });
 
-  it("opens with the stable default focus for a first-time visitor", async () => {
+  it("opens clean for a first-time visitor: full index in owner order, nothing marked", async () => {
     renderRoutes([worldRoute, otherRoute], { pathname: "/world" });
-    const selected = document.querySelector(".lena-world-entity.is-selected");
-    expect(selected).not.toBeNull();
-    // No memory: the default system (property) is selected, nothing marked.
-    expect(selected?.textContent).toContain("Property");
-    expect(document.querySelector(".lena-world-list-link.is-remembered")).toBeNull();
+    expect(document.querySelector(".ledger-entry.is-remembered")).toBeNull();
+    // All public systems appear, in the canonical owner order (first = order 1).
+    const entries = [...document.querySelectorAll(".ledger-entry")];
+    expect(entries.length).toBe(publicSystems().length);
+    const firstSystem = publicSystems().find((s) => s.order === 1);
+    expect(entries[0]?.textContent).toContain(firstSystem?.name.en ?? "");
   });
 });
 

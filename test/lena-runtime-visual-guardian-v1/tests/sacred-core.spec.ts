@@ -4,7 +4,7 @@ import {
   expectCoreCssContract,
   HOME_CORE,
   probeCore,
-  WORLD_CORE,
+  WORLD_REGISTER,
 } from "../helpers/core.mjs";
 import { openApp, VIEWPORTS } from "../helpers/app.mjs";
 
@@ -12,8 +12,12 @@ import { openApp, VIEWPORTS } from "../helpers/app.mjs";
  * Phase 2 — Sacred Core integrity contract in the browser.
  *
  * Beyond the static verifier, this suite proves the canonical artwork really
- * renders: CSS contract (canonical asset, transparent, no fake disk),
+ * renders on Home: CSS contract (canonical asset, transparent, no fake disk),
  * non-zero geometry, and in-browser decode/paint of the embedded artwork.
+ *
+ * House Ledger: the World register and chamber leaves are record surfaces —
+ * by direction they carry no Sacred Core. The retired-scene check is replaced
+ * by an explicit absence contract.
  *
  * The regression test at the bottom is the explicit guard for:
  *   "eye/glow visible while the main Sacred Core artwork is missing"
@@ -49,17 +53,6 @@ test("Sacred Core v3 renders on Home (dark, desktop)", async ({ page }) => {
   await testInfoAttachCore(page, probe);
 });
 
-test("Sacred Core v3 renders on World (dark, desktop)", async ({ page }) => {
-  test.info().annotations.push(
-    { type: "route", description: "/en/world" },
-    { type: "viewport", description: "1280x800" },
-    { type: "theme", description: "dark" },
-  );
-  await openApp(page, { route: "/world", locale: "en", theme: "dark", viewport: VIEWPORTS.desktop });
-  const { probe } = await expectCoreHealthy(page, WORLD_CORE, "World core (.lena-world-core)");
-  await testInfoAttachCore(page, probe);
-});
-
 test("Sacred Core v3 stays visible and inside safe bounds on mobile (390x844)", async ({ page }) => {
   test.info().annotations.push(
     { type: "route", description: "/en" },
@@ -74,19 +67,20 @@ test("Sacred Core v3 stays visible and inside safe bounds on mobile (390x844)", 
   await testInfoAttachCore(page, probe);
 });
 
-test("Sacred Core v3 renders on World under Arabic RTL (mobile)", async ({ page }) => {
+test("World register surfaces carry no Sacred Core by direction", async ({ page }) => {
   test.info().annotations.push(
-    { type: "route", description: "/ar/world" },
+    { type: "route", description: "/en/world + /en/world/property" },
     { type: "viewport", description: "390x844" },
     { type: "theme", description: "dark" },
-    { type: "locale", description: "ar" },
   );
-  await openApp(page, { route: "/world", locale: "ar", theme: "dark", viewport: VIEWPORTS.mobile });
-  const { probe } = await expectCoreHealthy(page, WORLD_CORE, "World core RTL mobile", {
-    viewport: true,
-    minSize: 140,
-  });
-  await testInfoAttachCore(page, probe);
+  await openApp(page, { route: "/world", locale: "en", theme: "dark", viewport: VIEWPORTS.mobile });
+  await expect(page.locator(WORLD_REGISTER), "register sheet visible").toBeVisible();
+  // The record surface must not resurrect the retired scene core or the sigil.
+  await expect(page.locator(".lena-world-core, .lena-house")).toHaveCount(0);
+  await page.goto("http://127.0.0.1:4173/en/world/property");
+  await expect(page.locator("main.lena-system-chamber")).toBeVisible();
+  await expect(page.locator(".ledger-leaf")).toBeVisible();
+  await expect(page.locator(".lena-house, .lena-world-core")).toHaveCount(0);
 });
 
 test("REGRESSION: eye/glow may never outlive a missing Sacred Core artwork", async ({ page }) => {
