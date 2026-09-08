@@ -9,6 +9,8 @@ import ProcessSection from "@/features/home/ProcessSection";
 import { useGatewayToWorld } from "@/features/home/HomeGatewayTransition";
 import WorldContinuation from "@/features/world/spatial/WorldContinuation";
 import { worldRegistry } from "@/features/world/registry";
+import { FOUNDER } from "@/content/founder";
+import { withBase } from "@/lib/base-path";
 import PublicShell from "@/layouts/PublicShell";
 import { pageSeo } from "@/content/seo";
 import { organizationJsonLd } from "@/lib/seo";
@@ -50,28 +52,25 @@ export default function Home() {
           <p className="lena-kicker">LENA DIGITAL HOUSE</p>
           {isReturning ? (
             <p className="lena-return-line">
-              {locale === "ar" ? "مرحبًا بعودتك إلى العالم." : "Welcome back to the world."}
+              {locale === "ar" ? "مرحبًا بعودتك إلى البيت." : "Welcome back to the house."}
             </p>
           ) : null}
           <h1>
             {locale === "ar" ? (
               <>
-                ادخل <span>عالم LENA الحي</span>
+                أنظمة تشغيل حقيقية لأعمال حقيقية — <span>في بيت رقمي واحد</span>
               </>
             ) : (
               <>
-                Enter a <span>living operating world</span>
+                Real operating systems for real businesses —{" "}
+                <span>inside one digital house</span>
               </>
             )}
           </h1>
           <p className="lena-lead">
             {locale === "ar"
-              ? isReturning
-                ? "العالم يتذكر مكانك. تابع رحلتك، أو ابدأ من جديد — القرار لك."
-                : "عوالم تشغيل حقيقية، بلغة مكانية واحدة. اقترب من النواة، اختر عالمًا، ثم تحرك إلى الداخل."
-              : isReturning
-                ? "The world remembers where you were. Continue your journey, or start again — the choice is yours."
-                : "Real operating worlds, one spatial language. Approach the core, choose a world, then move inward."}
+              ? "كل غرفة في هذا البيت نظام مبني على عمل يومي حقيقي؛ وحيث وُثّق النظام، تُعرض واجهته الفعلية — لا شرائح ولا مفاهيم."
+              : "Every room in this house is a system built on real daily work. Where a system is documented, you see its actual interface — no slides, no concepts."}
           </p>
           <div className="lena-actions">
             <Link
@@ -94,7 +93,7 @@ export default function Home() {
           </div>
           <a className="lena-scroll" href="#solutions">
             <ArrowDown size={15} />
-            {locale === "ar" ? "اختر عالمًا… ثم تحرك إلى الداخل" : "Choose a world… then move inward"}
+            {locale === "ar" ? "اختر غرفة… ثم ادخل" : "Pick a room… then step in"}
           </a>
         </div>
         <DigitalHouseOrbit />
@@ -109,10 +108,32 @@ export default function Home() {
           </h2>
           <p className="lena-section-lead">
             {locale === "ar"
-              ? "اقترب من أي نظام لترى عملياته وذكاءه وواجهته الحقيقية داخل عالم LENA."
-              : "Approach any system to reveal its operations, intelligence, and real product interface inside LENA World."}
+              ? "جذور التشغيل: أنماط العمل التي تتكرر بين الأنظمة — العلاقات، الوقت، المال، الأصول. لا نسمّي الجذر مشتركًا حتى يثبته نظامان فعليان. والبطاقات الموثّقة تعرض نافذة حقيقية من داخل النظام."
+              : "Operating roots: the work patterns that repeat across systems — relationships, time, money, assets. A root is only called shared once two real systems prove it. Documented cards show a real window into the system."}
           </p>
           <SystemGrid visitedSystemId={rememberedSystemId} />
+
+          <aside className="lena-founder-strip" aria-label={locale === "ar" ? "عن المؤسس" : "About the founder"}>
+            <img
+              className="lena-founder-strip-photo"
+              src={withBase(FOUNDER.photo)}
+              alt={FOUNDER.photoAlt[locale]}
+              loading="lazy"
+              decoding="async"
+              width={52}
+              height={52}
+            />
+            <p className="lena-founder-strip-line">
+              {locale === "ar"
+                ? "هذا البيت يبنيه مؤسس يعمل مع أصحاب المشاريع مباشرة."
+                : "This house is built by a founder who works directly with business owners."}
+            </p>
+            <p className="lena-founder-strip-byline">
+              <strong>{FOUNDER.name[locale]}</strong>
+              <span aria-hidden="true"> — </span>
+              <Link to="/about">{locale === "ar" ? "عن المؤسس" : "About the founder"}</Link>
+            </p>
+          </aside>
         </div>
       </section>
       <ProcessSection />

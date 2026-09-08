@@ -2,6 +2,8 @@ import { ArrowUpRight, ShieldCheck } from "lucide-react";
 import { Link } from "react-router";
 import { publicSystems } from "@/content/systems";
 import { SystemLogo } from "@/design-system/brand/SystemLogo";
+import { withBase } from "@/lib/base-path";
+import { evidenceFor } from "@/features/world/content/evidence";
 import { usePreferences } from "@/providers/preferences";
 
 /** Industry-first entry points, as decided in PRODUCT_DECISIONS.md D4. */
@@ -16,6 +18,17 @@ export default function SystemGrid({
 }) {
   const { locale } = usePreferences();
   const systems = limit ? publicSystems().slice(0, limit) : publicSystems();
+
+  /** Real capture window for documented systems — the operating dashboard
+   *  when the evidence registry tags one, otherwise the first surface. The
+   *  window renders only from canonical evidence; nothing is fabricated. */
+  const windowFor = (systemId: string) => {
+    const surfaces = evidenceFor(systemId) ?? [];
+    if (surfaces.length === 0) return null;
+    return (
+      surfaces.find((surface) => /dashboard/.test(surface.id)) ?? surfaces[0]
+    );
+  };
 
   return (
     <div className="lena-bento lena-showcase-grid">
@@ -55,6 +68,22 @@ export default function SystemGrid({
                 </span>
               ))}
             </div>
+          ) : null}
+
+          {windowFor(system.id) ? (
+            <figure className="lena-window">
+              <img
+                src={withBase(windowFor(system.id)!.src)}
+                alt={windowFor(system.id)!.alt[locale]}
+                loading="lazy"
+                decoding="async"
+              />
+              <figcaption>
+                {locale === "ar"
+                  ? "واجهة فعلية من داخل النظام"
+                  : "The actual interface from inside the system"}
+              </figcaption>
+            </figure>
           ) : null}
 
           <div style={{ display: "flex", gap: "12px", marginTop: "auto", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between" }}>
