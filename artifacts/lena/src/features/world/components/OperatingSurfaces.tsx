@@ -3,21 +3,23 @@ import { usePreferences } from "@/providers/preferences";
 import { withBase } from "@/lib/base-path";
 import { evidenceFor, type EvidenceSurface } from "@/features/world/content/evidence";
 import type { SystemId } from "@/content/systems";
+import { OPERATING_PRIMITIVES } from "@/features/world/content/operating-primitives";
+import { figureLabel, figureCountLabel, toLedgerDigits } from "@/features/world/ledger/format";
 
 /**
- * Operating Surfaces — Chamber Layer C.
+ * Evidence plates — Chamber Layer C in the House Ledger.
  *
- * The real application surfaces of a system, presented as floating dimensional
- * planes rather than a screenshots gallery. One surface is in focus at a time;
- * visitors step through the evidence with arrow controls or by selecting a
- * named capability from the rail. Every surface is real product UI from the
- * actual repository — this section is rendered only when real evidence exists,
- * and each surface states the capability it proves.
+ * Real application surfaces of a system, rendered as numbered, captioned
+ * plates pasted into the record: each plate carries a deterministic figure
+ * number («الشكل ٠١»), the canonical bilingual capability caption, a root
+ * cross-reference when the evidence registry tags one, and a source note.
+ * One plate is in focus at a time; visitors step through with the plate
+ * index or the arrow controls.
  *
- * Layout mirrors the constellation language: an orbit of labeled nodes
- * (capability markers) around the focused operational window.
+ * Evidence integrity is unchanged: every plate maps to a real capture in the
+ * canonical evidence registry. Systems without evidence do not get a fake
+ * gallery — they get an honest "record pending" block.
  */
-
 const motionQuery = () =>
   typeof window !== "undefined" &&
   window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
@@ -38,102 +40,155 @@ export function OperatingSurfaces({
   const [reduced, setReduced] = useState(motionQuery());
 
   const surfaces = evidence ?? evidenceFor(systemId) ?? [];
-  if (surfaces.length === 0) return null;
+  const total = surfaces.length;
+
+  if (total === 0) {
+    return (
+      <section className="ledger-plates is-pending" aria-labelledby="lena-plates-heading">
+        <header className="ledger-plates-head">
+          <p className="ledger-section-label">
+            {locale === "ar" ? "أدلة السجل" : "RECORD EVIDENCE"}
+          </p>
+          <h3 id="lena-plates-heading">
+            {locale === "ar" ? "لوحات موثّقة من داخل النظام" : "Verified plates from inside the system"}
+          </h3>
+          <p className="ledger-plates-note">
+            {locale === "ar"
+              ? "لا لوحات في هذا السجل بعد. تُنشر اللقطات الموثّقة من داخل النظام فور توفّرها — لا نعرض صورًا مفترضة."
+              : "No plates in this record yet. Verified captures from inside the system will be published as they become available — no fabricated imagery is shown."}
+          </p>
+        </header>
+      </section>
+    );
+  }
 
   const current = (surfaces[active] ?? surfaces[0]) as EvidenceSurface;
 
   const step = (dir: 1 | -1) => {
     if (reduced !== motionQuery()) setReduced(motionQuery());
-    setActive((prev) => (prev + dir + surfaces.length) % surfaces.length);
+    setActive((prev) => (prev + dir + total) % total);
   };
 
   const go = (index: number) => setActive(index);
 
+  const primitive = current.primitive
+    ? OPERATING_PRIMITIVES.find((entry) => entry.id === current.primitive)
+    : null;
+  const figure = figureLabel(active, total, locale);
+
   return (
     <section
-      className="lena-surfaces"
-      aria-labelledby="lena-surfaces-heading"
+      className="ledger-plates"
+      aria-labelledby="lena-plates-heading"
+      data-count={total}
       data-reduced-motion={reduced || undefined}
     >
-      <header className="lena-surfaces-head">
-        <p className="lena-surfaces-kicker">
-          {locale === "ar" ? "سطح التشغيل — واجهة النظام الفعلية" : "OPERATING SURFACE — THE REAL SYSTEM INTERFACE"}
+      <header className="ledger-plates-head">
+        <p className="ledger-section-label">
+          {locale === "ar"
+            ? "لوحات موثّقة — لقطات من واجهة النظام الفعلية"
+            : "DOCUMENTED PLATES — CAPTURES OF THE REAL SYSTEM INTERFACE"}
         </p>
-        <h3 id="lena-surfaces-heading">
+        <h3 id="lena-plates-heading">
           {locale === "ar" ? "أدلة من داخل النظام" : "Evidence from inside the system"}
         </h3>
-        <p className="lena-surfaces-note">
+        <p className="ledger-plates-note">
           {locale === "ar"
-            ? "كل سطح حقيقي من واجهة النظام الفعلية، ويُظهر قدرة مختلفة: التشغيل، الأصول، العقود، المال، الصيانة، الأتمتة."
-            : "Every surface is real UI from the actual system, each showing a different capability: operations, assets, contracts, money, maintenance, automation."}
+            ? "كل لوحة لقطة حقيقية من واجهة النظام الفعلية، مرقّمة وموثّقة، وتُظهر قدرة مختلفة: التشغيل، الأصول، العقود، المال، الصيانة، الأتمتة."
+            : "Every plate is a real capture of the actual system interface, numbered and documented, each showing a different capability: operations, assets, contracts, money, maintenance, automation."}
         </p>
       </header>
 
-      <div className="lena-surfaces-stage">
-        {/* Orbit rail of capability markers */}
-        <div className="lena-surfaces-rail" role="tablist" aria-label={locale === "ar" ? "أدلة النظام" : "System evidence"}>
+      <div className="ledger-plates-body">
+        <div
+          className="ledger-plate-index"
+          role="tablist"
+          aria-label={locale === "ar" ? "فهرس اللوحات" : "Plate index"}
+        >
           {surfaces.map((surface, index) => (
             <button
               key={surface.id}
               type="button"
               role="tab"
               aria-selected={index === active}
-              aria-controls="lena-surfaces-window"
-              className={`lena-surface-marker${index === active ? " is-active" : ""}`}
+              aria-controls="ledger-plate-window"
+              aria-label={surface.capability[locale]}
+              title={surface.capability[locale]}
+              className={`ledger-plate-tab${index === active ? " is-active" : ""}`}
               onClick={() => go(index)}
             >
-              <span className="lena-surface-marker-ring" aria-hidden="true" />
-              <span className="lena-surface-marker-name">
-                {surface.capability[locale]}
-              </span>
+              {figureLabel(index, total, locale).number}
             </button>
           ))}
         </div>
 
-        {/* Focused operational window */}
-        <div
-          className="lena-surfaces-window"
-          id="lena-surfaces-window"
-          role="tabpanel"
-          aria-live="polite"
-        >
-          <figure className="lena-surface-figure" key={current.id}>
-            <div className="lena-surface-frame">
-              <div className="lena-surface-frame-bar" aria-hidden="true">
-                <i />
-                <i />
-                <i />
-                <span>{brand ?? systemId}</span>
+        <div className="ledger-plate-window" id="ledger-plate-window" role="tabpanel" aria-live="polite">
+          <figure className="ledger-plate" key={current.id}>
+            <div className="ledger-plate-frame">
+              <div className="ledger-plate-bar" aria-hidden="true">
+                <span className="ledger-plate-bar-brand">{brand ?? systemId}</span>
+                <span className="ledger-plate-bar-fig">
+                  {locale === "ar" ? "الشكل" : "Figure"} {figure.number}
+                  <i /> {figure.of}
+                </span>
               </div>
               <img
                 src={withBase(current.src)}
                 alt={current.alt[locale]}
                 loading="lazy"
                 decoding="async"
-                onError={(e) => {
-                  e.currentTarget.classList.add("is-missing");
-                }}
+                onError={(event) => event.currentTarget.classList.add("is-missing")}
               />
             </div>
             <figcaption>
-              <strong>{current.capability[locale]}</strong>
-              <span>{current.alt[locale]}</span>
+              <p className="ledger-plate-numline">
+                <span className="ledger-plate-num">
+                  {locale === "ar" ? "الشكل" : "Figure"} {figure.number} {locale === "ar" ? "من" : "of"} {figure.of}
+                </span>
+                {primitive ? (
+                  <span className="ledger-rootref">
+                    {locale === "ar" ? "الجذر الموثّق:" : "Verified root:"} {primitive.label[locale]}
+                  </span>
+                ) : null}
+              </p>
+              <strong className="ledger-plate-capability">{current.capability[locale]}</strong>
+              <span className="ledger-plate-alt">{current.alt[locale]}</span>
+              <span className="ledger-plate-source">
+                {locale === "ar"
+                  ? "أصل اللوحة: لقطة من واجهة النظام الفعلية — أرشيف أدلة LENA"
+                  : "Plate source: capture of the real system interface — LENA evidence archive"}
+                {locale === "ar" ? ` · ${toLedgerDigits(total, locale)} لوحات` : ` · ${total} plates`}
+              </span>
             </figcaption>
           </figure>
 
-          <div className="lena-surfaces-arrows">
-            <button type="button" className="lena-surface-arrow is-prev" onClick={() => step(-1)} aria-label={locale === "ar" ? "السطح السابق" : "Previous surface"}>
+          <div className="ledger-plates-arrows">
+            <button
+              type="button"
+              className="ledger-plate-arrow is-prev"
+              onClick={() => step(-1)}
+              aria-label={locale === "ar" ? "اللوحة السابقة" : "Previous plate"}
+            >
               <span aria-hidden="true">‹</span>
             </button>
-            <span className="lena-surfaces-count" aria-hidden="true">
-              {String(active + 1).padStart(2, "0")} / {String(surfaces.length).padStart(2, "0")}
+            <span className="ledger-plates-count" aria-hidden="true">
+              {figure.number} / {figure.of}
             </span>
-            <button type="button" className="lena-surface-arrow is-next" onClick={() => step(1)} aria-label={locale === "ar" ? "السطح التالي" : "Next surface"}>
+            <button
+              type="button"
+              className="ledger-plate-arrow is-next"
+              onClick={() => step(1)}
+              aria-label={locale === "ar" ? "اللوحة التالية" : "Next plate"}
+            >
               <span aria-hidden="true">›</span>
             </button>
           </div>
         </div>
       </div>
+
+      <p className="ledger-plates-total">
+        {figureCountLabel(total, locale)} · {locale === "ar" ? "لا تُنشر لوحة غير حقيقية" : "no unreal plate is ever published"}
+      </p>
     </section>
   );
 }

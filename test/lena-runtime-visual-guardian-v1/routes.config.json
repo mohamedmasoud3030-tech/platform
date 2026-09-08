@@ -1,12 +1,12 @@
 {
   "$schema": "Single source of truth for the routes and assets the Guardian must protect. Add routes here (and in App.tsx) — both the static integrity verifier and the browser suites pick them up automatically. World Command and Atlas are canonical protected routes; the approved Sacred Core WebP is the single canonical artwork.",
   "criticalRoutes": [
-    { "path": "/", "name": "home", "owner": "main h1", "core": ".lena-house", "locales": ["en", "ar"] },
-    { "path": "/world", "name": "world-portal", "owner": ".lena-world", "core": ".lena-world-core", "locales": ["en", "ar"] },
+    { "path": "/", "name": "home", "owner": ".lena-house", "core": ".lena-house", "locales": ["en", "ar"] },
+    { "path": "/world", "name": "world-ledger-index", "owner": ".ledger-sheet", "locales": ["en", "ar"] },
     { "path": "/world/command", "name": "world-command", "owner": ".lena-command", "locales": ["en", "ar"] },
     { "path": "/world/atlas", "name": "world-atlas", "owner": ".lena-world-atlas", "locales": ["en", "ar"] },
-    { "path": "/world/property", "name": "chamber-property", "owner": "main.lena-system-chamber", "core": ".lena-inner-constellation", "locales": ["en", "ar"] },
-    { "path": "/world/wellness", "name": "chamber-wellness", "owner": "main.lena-system-chamber", "core": ".lena-inner-constellation", "locales": ["en"] },
+    { "path": "/world/property", "name": "chamber-property", "owner": "main.lena-system-chamber", "core": ".ledger-leaf", "locales": ["en", "ar"] },
+    { "path": "/world/wellness", "name": "chamber-wellness", "owner": "main.lena-system-chamber", "core": ".ledger-leaf", "locales": ["en"] },
     { "path": "/services", "name": "services", "owner": "main", "locales": ["en"] },
     { "path": "/portfolio", "name": "portfolio", "owner": "main", "locales": ["en"] },
     { "path": "/about", "name": "about", "owner": "main", "locales": ["en"] },
@@ -18,7 +18,7 @@
     "world": "/world",
     "chamber": "/world/property",
     "systemName": "MALEK",
-    "innerSpace": ".lena-inner-constellation"
+    "leaf": ".ledger-leaf"
   },
   "criticalAssets": [
     { "name": "sacred-core-webp", "file": "artifacts/lena/src/assets/lena-sacred-core.webp", "kind": "webp", "canonical": true },

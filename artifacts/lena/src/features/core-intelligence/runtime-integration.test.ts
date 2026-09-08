@@ -21,20 +21,20 @@ describe("LENA Intelligence runtime activation contract", () => {
     expect(hook).toContain("canonicalWorldGraphAdapter");
   });
 
-  it("binds the Sacred Core surface to the canonical intelligence result", () => {
-    const scene = read("src/features/world/components/WorldScene.tsx");
+  it("keeps the canonical intelligence result bound to a real surface — Command, not ledger records", () => {
+    // House Ledger: the World register is a record, so runtime intelligence
+    // must never leak into ledger record surfaces. The one remaining World
+    // intelligence surface is Command.
+    const command = read("src/features/world/command/WorldCommand.tsx");
+    const leaf = read("src/pages/WorldSystem.tsx");
+    const index = read("src/pages/World.tsx");
 
-    expect(scene).toContain("useLenaIntelligence");
-    expect(scene).toContain("data-core-state={core.state}");
-    expect(scene).toContain("data-core-pulse={core.pulse}");
-    expect(scene).toContain("data-core-attention={core.attentionLevel}");
-    expect(scene).toContain("className={`lena-world-core core-${core.state} urgency-${core.urgency}`}");
-    expect(scene).toContain("data-guidance-world={guidance.destination?.systemId ?? undefined}");
-    const worldStyles = read("src/styles/world-v2.css");
-    const coreStyles = read("src/styles/sacred-core.css");
-    expect(coreStyles).toContain(".lena-world-core.core-focused");
-    expect(coreStyles).toContain(".lena-world-core.core-critical");
-    expect(worldStyles).toContain(".lena-world-v2.is-focus .lena-world-path.presence-unavailable.is-active::after");
+    expect(command).toContain("useLenaIntelligence");
+    expect(command).toContain("data-core-state={core.state}");
+    expect(leaf).not.toContain("useLenaIntelligence");
+    expect(leaf).not.toContain("data-core-state");
+    expect(index).not.toContain("useLenaIntelligence");
+    expect(index).not.toContain("data-core-state");
   });
 
   it("passes source authority into the intelligence snapshot", () => {

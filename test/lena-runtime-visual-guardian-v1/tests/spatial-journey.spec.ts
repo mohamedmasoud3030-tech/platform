@@ -3,22 +3,22 @@ import { openApp, VIEWPORTS } from "../helpers/app.mjs";
 import { GUARDIAN_CONFIG } from "../helpers/config.mjs";
 
 /**
- * Phase 8 — spatial journey smoke.
+ * House Ledger — register journey smoke.
  *
- * Home → World → Portal → Chamber → Inner Space with browser Back support.
- * Asserts navigation outcomes and clean state (no stuck overlay, no disabled
- * pointer layer), never animation frames.
+ * Home → World (the systems register) → MALEK Chamber (a record leaf) with
+ * browser Back support at both steps. Asserts navigation outcomes and clean
+ * state (no stuck overlay, no aria-busy, no pointer-blocking layer), never
+ * animation frames. The register carries one real figure preview for MALEK;
+ * the leaf opens its seven documented plates.
  */
 const journey = GUARDIAN_CONFIG.spatialJourney;
 
-test("spatial journey: Home → World → Portal → Chamber → Inner Space → Back → Back", async ({
-  page,
-}) => {
+test("register journey: Home → World → MALEK Chamber → Back → Back", async ({ page }) => {
   test.info().annotations.push(
     { type: "route", description: "full journey (en)" },
     { type: "viewport", description: "1280x800" },
-    { type: "theme", description: "dark" },
     { type: "locale", description: "en" },
+    { type: "theme", description: "dark" },
   );
 
   await openApp(page, { route: "/", locale: "en", theme: "dark", viewport: VIEWPORTS.desktop });
@@ -26,28 +26,31 @@ test("spatial journey: Home → World → Portal → Chamber → Inner Space →
   // 1 → 2: Home → World via the primary gateway CTA.
   await page.getByRole("link", { name: /Enter the world/i }).click();
   await page.waitForURL(`**${journey.world}`, { timeout: 20_000 });
-  await expect(page.locator(".lena-world-entity"), "World entities listed").toHaveCount(6);
-  await expect(page.locator(".lena-world-core")).toBeVisible();
+  await expect(page.locator(".ledger-sheet"), "the register sheet is open").toBeVisible();
+  await expect(page.locator(".ledger-entry"), "six record entries in one house").toHaveCount(6);
 
-  // 3 → 4: the canonical default/remembered system (MALEK) is pre-selected on
-  // arrival; under the direct product chamber entry contract (b0ebbde8c2) one
-  // click on the selected system opens its chamber through the portal. The
-  // info action stays the explicit second path and is asserted on both legs.
-  const entity = page.locator(`.lena-world-entity[aria-label*="${journey.systemName}"]`);
-  await expect(entity, "canonical default selection is pre-selected").toHaveAttribute("aria-pressed", "true");
-  await expect(page.locator(".lena-world-info-action"), "info action renders for the pre-selected system").toBeVisible();
-  await entity.click();
+  // The MALEK entry is a documented record: seal + a real first figure.
+  const malekEntry = page.locator('.ledger-entry[data-system="property"]');
+  await expect(malekEntry).toBeVisible();
+  await expect(malekEntry.getByText("DOCUMENTED", { exact: true })).toBeVisible();
+  await expect(malekEntry.locator('[data-testid="ledger-preview"] img')).toBeVisible();
+
+  // 3: open the MALEK chamber through the entry's own CTA.
+  await malekEntry.getByRole("link", { name: /Open system chamber/i }).click();
   await page.waitForURL(`**${journey.chamber}`, { timeout: 20_000 });
 
-  // 5: Chamber + Inner Space present.
+  // 4: the chamber is a ledger leaf with documented plates.
   await expect(page.locator("main.lena-system-chamber")).toBeVisible();
   await expect(page.locator(".lena-chamber-back")).toBeVisible();
-  await expect(page.locator(journey.innerSpace)).toBeVisible();
-  await expect(page.locator(".lena-inner-node").first()).toBeVisible();
+  await expect(page.locator(journey.leaf)).toBeVisible();
+  await expect(page.locator(".ledger-plates")).toBeVisible();
+  await expect(page.locator(".ledger-plate")).toBeVisible();
+  await expect(page.locator(".ledger-plate-tab").first()).toBeVisible();
+  await expect(page.locator(".ledger-entrytag", { hasText: "ENTRY 03" })).toBeVisible();
 
-  // Clean state: no stuck portal overlay / aria-busy / disabled pointer layer.
+  // Clean state: no stuck portal layer / aria-busy / disabled pointer layer.
   await expect(page.locator(".lena-world.is-portal, .lena-world.is-portal-resolve")).toHaveCount(0);
-  await expect(page.locator(".lena-world [aria-busy='true']")).toHaveCount(0);
+  await expect(page.locator("[aria-busy='true']")).toHaveCount(0);
   const blocked = await page.evaluate(() => {
     const target = document.querySelector("main");
     if (!target) return true;
@@ -61,9 +64,9 @@ test("spatial journey: Home → World → Portal → Chamber → Inner Space →
   // Browser Back works through the path: chamber → world → home.
   await page.goBack();
   await page.waitForURL(`**${journey.world}`, { timeout: 20_000 });
-  await expect(page.locator(".lena-world-entity").first()).toBeVisible();
-  await expect(page.locator(".lena-world [aria-busy='true']")).toHaveCount(0);
-  await expect(page.locator(".lena-world-info-action")).toBeVisible();
+  await expect(page.locator(".ledger-sheet")).toBeVisible();
+  await expect(page.locator("[aria-busy='true']")).toHaveCount(0);
+  await expect(page.locator(".ledger-entry").first()).toBeVisible();
 
   await page.goBack();
   await page.waitForURL("**/en", { timeout: 20_000 });
