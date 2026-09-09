@@ -32,7 +32,7 @@ marked explicitly rather than assumed.*
 | 2026-09-09 | HOME-R3 cosmic CSS | **STILL PREMATURE** — `.lena-card-glow` / `.lena-visual-orb` / glass sheets remain live on Home SystemGrid cards, Services and projects surfaces; recorded as the remaining old-register visual surfaces. |
 | 2026-09-09 | PROD-R1 / EVID-R1 (P0) evidence capture (LENA Dress, Terranex, Hospitality, Kayyal) | **BLOCKED — founder access required.** No fabrication. Capture tooling guidance committed so founder sessions are turnkey. |
 | 2026-09-09 | FR-4 "Five application case studies" staleness | **DONE** — corrected to the canonical six public systems with hospitality permission caveat (this PRD commit). |
-| 2026-09-09 | WCAG AA (P2 / B-11) | **Automated layer started** — programmatic axe-based audit added to the guardian (see tranche entry when it lands); assistive-technology pass still requires a human/tool with a screen reader. |
+| 2026-09-09 | WCAG AA (P2 / B-11) | **DONE (automated layer)** — axe-core WCAG 2.x A/AA suite in the guardian smoke project (PR #78 → `0835808`; CI run `34300315321`): 16 route/locale/theme combos, zero violations of any impact after ledger contrast fixes (`--led-brass-dim` dark 4.12→4.96:1, light 2.58→4.99:1; light CTA bg 3.67→5.38:1). No visual baseline change needed. Assistive-technology (screen-reader) pass remains human-side. |
 | — | C1 second admin, C3 CI `workflows` permission, C4 AI translation, A5/B1–B4 content, F1 | **OWNER-GATED** — answered only by the founder; rows stand in `OPEN_DECISIONS.md`. |
 
 ---
@@ -250,7 +250,7 @@ to MALEK's standard; and the accessibility layer guards the WCAG working bar.
 - [x] All guardian/verify contracts green on `main` — verified at `de962ab`
 - [ ] 6/6 public systems have real evidence registered — **BLOCKED: founder access** (2/6 today)
 - [ ] `materials` has an explicit, documented visibility decision — **F1 open, owner**
-- [ ] Automated WCAG 2.2 audit layer green in CI — **in progress**
+- [x] Automated WCAG 2.2 audit layer green in CI — PR #78 (2026-09-09), run `34300315321`; zero violations across the audited matrix
 - [ ] Remaining old-register visual surfaces moved to the ledger register — **candidate tranche**
 - [ ] Assistive-technology (screen reader) pass — **owner/human-side, AT required**
 
