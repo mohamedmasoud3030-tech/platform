@@ -92,11 +92,11 @@ export function OperatingSurfaces({
         <h3 id="lena-plates-heading">
           {locale === "ar" ? "أدلة من داخل النظام" : "Evidence from inside the system"}
         </h3>
-        <p className="ledger-plates-note">
-          {locale === "ar"
-            ? "كل لوحة لقطة حقيقية من واجهة النظام الفعلية، مرقّمة وموثّقة، وتُظهر قدرة مختلفة: التشغيل، الأصول، العقود، المال، الصيانة، الأتمتة."
-            : "Every plate is a real capture of the actual system interface, numbered and documented, each showing a different capability: operations, assets, contracts, money, maintenance, automation."}
-        </p>
+          <p className="ledger-plates-note">
+            {locale === "ar"
+              ? "كل لوحة لقطة حقيقية من واجهة النظام الفعلية، مرقّمة وموثّقة، وتوثّق قدرة تشغيلية مختلفة داخل النظام."
+              : "Every plate is a real capture of the actual system interface, numbered and documented; each records a different operating capability inside the system."}
+          </p>
       </header>
 
       <div className="ledger-plates-body">

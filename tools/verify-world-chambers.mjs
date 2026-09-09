@@ -126,6 +126,16 @@ check("Operating Surfaces is real-evidence only — never a gallery, never fabri
   assert.match(component, /ledger-plates is-pending/);
 });
 
+check("the documented evidence note stays system-agnostic, never one product's nouns", () => {
+  const component = read("artifacts/lena/src/features/world/components/OperatingSurfaces.tsx");
+  // The note is shared by every documented chamber (property and wellness
+  // today). It must not enumerate capabilities that only one system's plates
+  // show — e.g. MALEK's assets/contracts/maintenance vocabulary would be
+  // false on the wellness chamber.
+  assert.doesNotMatch(component, /assets, contracts, money, maintenance/);
+  assert.doesNotMatch(component, /الأصول، العقود، المال/);
+});
+
 check("a chamber with no evidence yet still closes its record honestly", () => {
   assert.match(leafCss, /\.ledger-plates\.is-pending/);
 });
@@ -142,6 +152,16 @@ check("real product handoff is a single explicit boundary, never embedded", () =
   assert.match(page, /target="_blank"/);
   assert.match(page, /rel="noreferrer"/);
   assert.doesNotMatch(page, /<iframe/);
+});
+
+check("the product boundary names the connected system, never a hardcoded brand", () => {
+  // The boundary copy renders under handoff for whichever system owns a real
+  // connection. Hardcoding "MALEK" here would silently lie the day a second
+  // system gains a connection.
+  assert.match(page, /يفتح \$\{system\.name\[locale\]\} الفعلي في جلسة مستقلة/);
+  assert.match(page, /The real \$\{system\.name\[locale\]\} product opens/);
+  assert.doesNotMatch(page, /يفتح MALEK الفعلي في جلسة مستقلة/);
+  assert.doesNotMatch(page, /The real MALEK product opens/);
 });
 
 check("arrival is one-shot record motion, never continuous", () => {
