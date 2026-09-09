@@ -155,19 +155,13 @@
 }
 
 .rose-petal[data-lit="true"] {
-  stroke: rgba(240, 214, 140, 0.95);
-  animation: rose-petal-in 1s ease-out forwards, rose-gild-shimmer 5s ease-in-out infinite;
+  stroke: rgba(226, 196, 120, 0.85);
+  animation: rose-petal-in 1s ease-out forwards;
 }
 
 .rose-petal[data-lit="false"] {
   stroke: rgba(167, 188, 255, 0.55);
-  animation: rose-petal-in 1s ease-out forwards, rose-charge 2.8s ease-in-out infinite;
-}
-
-/* Charging pulse for pending petals: edge + fill breathing, still stone. */
-@keyframes rose-charge {
-  0%, 100% { stroke-opacity: 0.45; fill-opacity: 0.65; }
-  50% { stroke-opacity: 1; fill-opacity: 1; }
+  animation: rose-petal-in 1s ease-out forwards;
 }
 
 .rose-petal.is-active {
@@ -179,11 +173,6 @@
   0% { stroke-dashoffset: 1; opacity: 0; }
   35% { opacity: 1; }
   100% { stroke-dashoffset: 0; opacity: 1; }
-}
-
-@keyframes rose-gild-shimmer {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.8; }
 }
 
 .rose-center {

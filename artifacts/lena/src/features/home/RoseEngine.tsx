@@ -131,13 +131,13 @@ export default function RoseEngine() {
             <svg className="rose-svg" viewBox="0 0 600 600" aria-hidden="true">
               <defs>
                 <radialGradient id="rose-gild" cx="50%" cy="40%" r="75%">
-                  <stop offset="0%" stopColor="rgba(255,232,180,1)" />
-                  <stop offset="55%" stopColor="rgba(215,175,85,0.7)" />
-                  <stop offset="100%" stopColor="rgba(170,135,70,0.3)" />
+                  <stop offset="0%" stopColor="rgba(255,226,166,0.9)" />
+                  <stop offset="55%" stopColor="rgba(200,160,78,0.42)" />
+                  <stop offset="100%" stopColor="rgba(157,128,72,0.08)" />
                 </radialGradient>
                 <radialGradient id="rose-stone" cx="50%" cy="50%" r="75%">
-                  <stop offset="0%" stopColor="rgba(124,155,255,0.14)" />
-                  <stop offset="100%" stopColor="rgba(124,155,255,0.03)" />
+                  <stop offset="0%" stopColor="rgba(124,155,255,0.1)" />
+                  <stop offset="100%" stopColor="rgba(124,155,255,0.02)" />
                 </radialGradient>
                 <radialGradient id="rose-halo-gold">
                   <stop offset="0%" stopColor="rgba(232,200,118,0.55)" />
@@ -207,7 +207,7 @@ export default function RoseEngine() {
                   data-lit={body.lit}
                   d={petalPath(petalCenterDeg(i, mirror), mirror)}
                   pathLength={1}
-                  style={{ animationDelay: `${2.1 + i * 0.22}s, 3.8s` }}
+                  style={{ animationDelay: `${2.1 + i * 0.22}s` }}
                   fill={body.lit ? "url(#rose-gild)" : "url(#rose-stone)"}
                 />
               ))}

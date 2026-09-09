@@ -32,9 +32,7 @@ describe("rose styling contract (data-lit wiring)", () => {
     expect(css).not.toContain("data-documented");
   });
 
-  it("defines the charge animations the pending states invoke", () => {
-    for (const name of ["@keyframes rose-charge", "@keyframes rose-key-pulse"]) {
-      expect(css, `missing ${name}`).toContain(name);
-    }
+  it("defines the key pulse the night card invokes", () => {
+    expect(css, "missing @keyframes rose-key-pulse").toContain("@keyframes rose-key-pulse");
   });
 });
