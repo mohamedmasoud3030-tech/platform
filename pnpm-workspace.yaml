@@ -42,6 +42,10 @@ onlyBuiltDependencies:
   - unrs-resolver
 
 overrides:
+  # Transitive advisory floors (2026-09-09): express 5.2.1 ships qs 6.15.1 /
+  # body-parser 2.2.2 below the patched floors; ranges allow the floors.
+  qs: ^6.16.0
+  body-parser: ^2.3.0
   '@esbuild-kit/esm-loader': npm:tsx@^4.21.0
   '@expo/ngrok-bin>@expo/ngrok-bin-darwin-arm64': '-'
   '@expo/ngrok-bin>@expo/ngrok-bin-darwin-x64': '-'
