@@ -21,7 +21,7 @@
     "drizzle-orm": "catalog:",
     "express": "^5",
     "jose": "^6.2.3",
-    "nodemailer": "^8.0.7",
+    "nodemailer": "^9.0.4",
     "pino": "^9",
     "pino-http": "^10",
     "superjson": "^2.2.6",
