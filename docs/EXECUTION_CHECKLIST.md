@@ -1,6 +1,6 @@
 # LENA Digital House — Final Roadmap & Execution Checklist
 
-**Status date:** 2026-09-09 · **Current `main`:** `0135c0c` · **Source of truth reconciled from:** `PLATFORM_PRD.md` (live), `OPEN_DECISIONS.md` (live register), `lena-direction-refined.md`, `docs/CHAMBER_AUDIT_2026-09-09.md`, and independent verification performed across this engagement (real diffs, real CI runs, real baseline images — not status reports taken on faith).
+**Status date:** 2026-09-09 · **Current `main`:** `d74858a` · **Source of truth reconciled from:** `PLATFORM_PRD.md` (live), `OPEN_DECISIONS.md` (live register), `lena-direction-refined.md`, `docs/CHAMBER_AUDIT_2026-09-09.md`, and independent verification performed across this engagement (real diffs, real CI runs, real baseline images — not status reports taken on faith).
 
 This document is the fixed reference for future tranche reports: update against this checklist's item numbers rather than restating scope from scratch. Everything below is either: (a) verified complete, (b) blocked on a named external party with a named unblock condition, or (c) sequenceable now. Nothing is included on the strength of a claim alone — see each item's evidence pointer.
 
@@ -21,10 +21,11 @@ Verified — engineering complete, CI green, baseline-audited where visual:
 - House Ledger register extended to **every** remaining public surface; ambient orb/glow system retired site-wide (#79)
 - Ledger remnant sweep — remaining cosmos accents flattened (#80); follow-up completion — last public fills neutralized, duplicate ≤720px responsive block consolidated, selector-level §17 register (#87 → `64e75bc`, run `34311694330`)
 - Ambient system fully deleted, zero dangling references (#82, independently `grep`-confirmed)
-- Guardian test matrix expanded to all six public chambers, bilingual/RTL, 63/63 (#83, #84)
+- Guardian test matrix expanded to all six public chambers, bilingual/RTL, 63/63 (#83, #84); B-10 operator-record browser contract added — 12 smoke tests pinning visible-on-evidence-bearing / absent-on-pending chambers in both locales (#89 → `324ca92`)
 - FR-4 "five" → six-product staleness corrected
 - B-10 / D6 / R7 operator-record scaffold on the evidence-bearing chambers (MALEK + Lara Beauty) — evidence-gated content module + ledger-grammar chamber section, bilingual, tests pinned; remaining chambers gain records in the same tranche their evidence registers (**#88 → `0135c0c`, run `34318985015`; baselines `chamber-desktop-dark`/`chamber-mobile-dark` regenerated from CI Chromium actuals, run `34318280863`, artifact `10090952343`**)
 - Credential hygiene (T0-1) — closed 2026-09-09: token audit clean (never in repo files or shell history; appeared only in the chat transcript), invalid token rotated by the owner; delivery resumed with the replacement
+- Transitive advisory floors raised — `pnpm audit --prod` from 1 low + 3 moderate to **0 known vulnerabilities** (qs 6.16.0, body-parser 2.3.0 via workspace overrides; **#90 → `d74858a`**, run `34327246072`)
 
 **Do not re-open, re-litigate, or re-implement any of the above.** If something here looks wrong, that's a bug report against a specific commit, not a new tranche.
 
