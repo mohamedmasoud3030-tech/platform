@@ -50,17 +50,27 @@ describe("RoseEngine", () => {
     ]);
   });
 
-  it("marks exactly the documented systems as gilded", () => {
+  it("lights documented systems plus the owner-ready directive", () => {
     renderEngine();
     const group = screen.getByRole("group", {
       name: "The Rose Engine: six systems around the LENA core",
     });
     const chips = within(group).getAllByRole("link");
-    const gilded = chips
-      .filter((chip) => chip.getAttribute("data-documented") === "true")
+    const lit = chips
+      .filter((chip) => chip.getAttribute("data-lit") === "true")
       .map((chip) => chip.getAttribute("data-system"))
       .sort();
-    expect(gilded).toEqual(["property", "wellness"]);
+    expect(lit).toEqual(["hospitality", "property", "rental", "wellness"]);
+  });
+
+  it("renders the renamed Carmen Gallery chip in both locales", () => {
+    renderEngine("en");
+    const enChip = screen.getByRole("link", { name: /Carmen Gallery/ });
+    expect(enChip.getAttribute("href")).toBe("/world/rental");
+    cleanup();
+    renderEngine("ar");
+    const arChip = screen.getByRole("link", { name: /كارمن جالري/ });
+    expect(arChip.getAttribute("href")).toBe("/world/rental");
   });
 
   it("numbers the chips with ledger numerals in the active locale", () => {
