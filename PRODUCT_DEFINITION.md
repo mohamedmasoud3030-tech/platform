@@ -203,11 +203,13 @@ by device language; a returning visitor's explicit choice always wins. (d) Switc
 visitor on the same page, never sends them home. (e) `html lang` and `dir` match the URL's language.
 (f) Both language versions appear in the sitemap.
 
-### FR-4 — Five application case studies
-**Acceptance:** For each of the five: (a) industry label; (b) the business problem in one paragraph;
-(c) who it is for; (d) what the application does, as 3–6 capabilities; (e) at least three screens;
-(f) an honest provenance label; (g) exactly one primary action; (h) complete in both languages;
-(i) a stable, shareable URL.
+### FR-4 — Application case studies for the six products
+**Acceptance:** For each of the six public products (five founder-initiated plus the client-built
+hospitality system, whose naming stays permission-gated per B4): (a) industry label; (b) the business
+problem in one paragraph; (c) who it is for; (d) what the application does, as 3–6 capabilities;
+(e) real evidence surfaces in the canonical registry — the original "at least three screens" ask is
+superseded by the registry standard (OPEN_DECISIONS B1: 2 of 6 documented today); (f) an honest provenance
+label; (g) exactly one primary action; (h) complete in both languages; (i) a stable, shareable URL.
 
 ### FR-5 — Honest provenance labelling
 Every portfolio item declares what it is: an application built and owned by the founder, work delivered
@@ -351,7 +353,7 @@ the site is attracting the wrong audience — fix targeting, not volume.
 | # | Item | Serves |
 |---|---|---|
 | M1 | Per-language URLs with alternates, detection and a page-preserving switch | P3, FR-3 |
-| M2 | Five application case studies, complete in both languages | P4, FR-4 |
+| M2 | Application case studies for all six products, complete in both languages | P4, FR-4 |
 | M3 | Remove Oman as a market boundary; contact details fully configuration-driven | P2, FR-2 |
 | M4 | Founder identity: About page, photo, bio, corrected voice site-wide | P1, FR-1 |
 | M5 | Honest provenance labels on every portfolio item | P5, FR-5 |
@@ -407,11 +409,12 @@ analytics platform; CRM; newsletter.
 > existing stack is retained: the founder's binding constraint is cost.
 
 **Context.** A bilingual portfolio and lead-generation site for one founder operating under the LENA
-brand. Goal: paying project clients from Arabic and English markets. Proof: five self-built web
-applications across different industries. Existing surface: home, services (8 tracks), service detail,
+brand. Goal: paying project clients from Arabic and English markets. Proof: six self-built
+applications across different industries (the original plan assumed five; the recycling system is the
+sixth public product — PROJECT_INVENTORY). Existing surface: home, services (8 tracks), service detail,
 portfolio, work detail, about, ai-solutions, contact, help, login, dashboard, project editor. Existing
 data model already supports rich case studies (localised content blocks, gallery, related services,
-status, sort order) — **no schema change is required for the five applications.**
+status, sort order) — **no schema change is required for the six applications.**
 
 **Deliver, in order:**
 
@@ -423,9 +426,10 @@ status, sort order) — **no schema change is required for the five applications
 2. **De-regionalisation.** Remove Oman-as-market from all copy and metadata; keep it only as the
    founder's location in About and structured data. Move every contact literal into configuration.
    Make date formatting language-based, not country-based.
-3. **Five application case studies.** Use the existing project entity. Each requires: industry label,
-   business problem, intended user, 3–6 capabilities, ≥3 screens with alt text, provenance label,
-   one primary action, both languages complete. Publishing gates on both languages being present.
+3. **Six application case studies** (one per public system). Use the existing project entity. Each
+   requires: industry label, business problem, intended user, 3–6 capabilities, real evidence surfaces in
+   the canonical registry (the ≥3-screens wording is superseded by the evidence standard), provenance
+   label, one primary action, both languages complete. Publishing gates on both languages being present.
 4. **Founder identity.** Rewrite About around the named founder with photo and bio in both languages.
    Audit all public copy for unsupported team claims. Add the founder to Organization structured data.
 5. **Attribution surfacing.** Inquiries already record entry context; ensure an application-originated
