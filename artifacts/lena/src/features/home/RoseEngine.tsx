@@ -26,12 +26,11 @@ import { ROSE_READY_LABEL, roseBodies } from "./rose-system-bodies";
  * scribing in sequence), then the thin petals resolve from their
  * intersections, then gilding settles into the work that earned it.
  *
- * Six petals = the six systems in owner order. Lit systems gild in brass;
- * the two pending ones breathe with a quiet charging pulse while their
- * stonework stays honest. THE CHIPS LEAD: every chip rides ahead of its
- * petal in the rotation — the chip is the leader, the system follows —
- * tethered by a visible rope of light with energy flowing chip → system and
- * a glowing tow-node riding the petal's tip. The chips are also wired to
+ * Six petals = the six systems in owner order: lit systems gild in brass,
+ * pending ones rest in quiet stone-blue. THE CHIPS LEAD: every chip rides
+ * just ahead of its petal in the rotation — the chip is the leader, the
+ * system follows closely — tethered by a visible rope of light with energy
+ * flowing chip → system and a glowing tow-node riding the petal's tip. The chips are also wired to
  * each other: six light-bridges join every chip to its two neighbours in one
  * continuous circuit, and three comets circle the ring.
  *

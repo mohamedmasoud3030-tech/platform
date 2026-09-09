@@ -14,7 +14,7 @@ export const ROSE_CX = 300;
 export const ROSE_CY = 300;
 export const ROSE_R = 150;
 /** How far (in degrees) each system trails behind its chip. */
-export const ROSE_TRAIL_DEG = 30;
+export const ROSE_TRAIL_DEG = 15;
 export const ROSE_PETAL_HALF_DEG = 30;
 export const ROSE_TIP_RADIUS = ROSE_R * 1.02;
 /** Half-gap (in degrees) where a light-bridge plugs into a chip. */

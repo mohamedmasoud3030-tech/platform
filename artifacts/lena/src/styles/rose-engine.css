@@ -306,14 +306,14 @@
 .rose-tow {
   stroke: rgba(238, 206, 130, 0.6);
   stroke-width: 2;
-  stroke-dasharray: 3 5;
+  stroke-dasharray: 5 4;
   opacity: 0;
   animation: rose-thread-in 0.8s ease-out 3.2s forwards, rose-tow-flow 0.9s linear infinite;
   transition: stroke 0.3s ease;
 }
 
 @keyframes rose-tow-flow {
-  to { stroke-dashoffset: -8; }
+  to { stroke-dashoffset: -9; }
 }
 
 .rose-tow.is-active {

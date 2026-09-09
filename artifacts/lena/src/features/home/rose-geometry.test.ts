@@ -33,7 +33,7 @@ describe("rose fan geometry", () => {
     it(`[${dir}] trails every petal behind its chip by the tow lag`, () => {
       for (let i = 0; i < 6; i++) {
         const lag = mod((chipAngleDeg(i, mirror) - petalCenterDeg(i, mirror)) * mirror);
-        expect(lag, `petal ${i} lag`).toBeCloseTo(30, 9);
+        expect(lag, `petal ${i} lag`).toBeCloseTo(15, 9);
       }
     });
 
@@ -58,8 +58,8 @@ describe("rose fan geometry", () => {
         const chipRadius = Math.hypot(ends.x1 - ROSE_CX, ends.y1 - ROSE_CY);
         expect(chipRadius, `rope ${i} chip end`).toBeCloseTo(226, 9);
         const length = Math.hypot(ends.x2 - ends.x1, ends.y2 - ends.y1);
-        expect(length, `rope ${i} length`).toBeGreaterThan(105);
-        expect(length, `rope ${i} length`).toBeLessThan(135);
+        expect(length, `rope ${i} length`).toBeGreaterThan(70);
+        expect(length, `rope ${i} length`).toBeLessThan(105);
       }
     });
 
