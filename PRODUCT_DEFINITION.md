@@ -373,6 +373,11 @@ the site is attracting the wrong audience — fix targeting, not volume.
 
 ### Could — only after Must and Should are live and measured
 
+> **Identifier note:** the C1–C5 rows below are product-idea rows specific to this document.
+> `OPEN_DECISIONS.md` Part C (C1–C4) reuses the same labels for owner access/credentials items
+> (second admin identity value, CI `workflows` permission, AI draft translation) — two separate
+> registers with different meanings; never treat the identifiers as interchangeable.
+
 | # | Item |
 |---|---|
 | C1 | Industry filter on the portfolio (justified only once there are more than ~8 items) |
@@ -383,7 +388,7 @@ the site is attracting the wrong audience — fix targeting, not volume.
 
 ### Later — revisit only with evidence
 
-Blog; third language; live demo deployments of all five applications; client portal; pricing page;
+Blog; third language; live demo deployments of all six applications; client portal; pricing page;
 analytics platform; CRM; newsletter.
 
 ---
@@ -446,8 +451,8 @@ metric that cannot be substantiated; add a paid service or recurring cost; colle
 beyond the inquiry form; change the published reply commitment; add push notifications or install
 prompts.
 
-**Resolved owner decision (2026-08-20):** the five applications are presented as **screens plus
+**Resolved owner decision (2026-08-20):** the six applications are presented as **screens plus
 short recordings inside this site**, with a "request a live walkthrough" action for anyone who wants
-to see one running. Separate hosting for the five applications is **rejected** — zero additional
+to see one running. Separate hosting for the six applications is **rejected** — zero additional
 recurring cost, less maintenance, and the walkthrough requests measure real interest instead of
 assuming it. Any single application may still be published live later without rebuilding anything.

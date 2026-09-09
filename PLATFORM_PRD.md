@@ -33,8 +33,9 @@ marked explicitly rather than assumed.*
 | 2026-09-09 | PROD-R1 / EVID-R1 (P0) evidence capture (LENA Dress, Terranex, Hospitality, Kayyal) | **BLOCKED — founder access required.** No fabrication. Capture tooling guidance committed so founder sessions are turnkey. |
 | 2026-09-09 | FR-4 "Five application case studies" staleness | **DONE** — corrected to the canonical six public systems with hospitality permission caveat (this PRD commit). |
 | 2026-09-09 | WCAG AA (P2 / B-11) | **DONE (automated layer)** — axe-core WCAG 2.x A/AA suite in the guardian smoke project (PR #78 → `0835808`; CI run `34300315321`): 16 route/locale/theme combos, zero violations of any impact after ledger contrast fixes (`--led-brass-dim` dark 4.12→4.96:1, light 2.58→4.99:1; light CTA bg 3.67→5.38:1). No visual baseline change needed. Assistive-technology (screen-reader) pass remains human-side. |
+| 2026-09-09 | V-R1 ledger remnant sweep (§17 follow-up) | **DONE** — PR #80 → `a697b6e` (main CI run `34308483403`; PR guardian run `34308022877`, both green incl. guardian-browser visual): flattened the remaining cosmos accents on ledger surfaces — `.lena-cta` gradient → ledger sheet; nav/mobile-link hover-active blue → brass wash in both themes (axe re-verified, guardian smoke 45/45); service-icon and tags blue tints → transparent + `--lena-line`; form fields → ink/paper tints; `.light` AA overrides added for `.lena-success`/`.lena-error`; footer cold tints → warm ink/paper; logo/header-scrolled shadows neutralized; admin-header blur removed; `responsive.css` cosmos fragments (≤720 glass blur, `.lena-smoke-b`) and mobile-menu `blur(20px)` removed; onboarding portrait/chip neutralized. **Explicitly-scoped surfaces retained** (never ledger debt): studio/project concept presentation art (`ProjectVisual`, case pages, `art-float`), World graph/atlas/command visualization, LENA Assistant widget, admin console, WhatsApp brand FAB. No visual baseline change (CI visual green). |
 | 2026-09-09 | HOME-R3 / §17 old-register visual surfaces (P2) | **DONE** — House Ledger register applied to every remaining public surface (PR #79 → `0a71eea`; final CI run `34302369502` green): tokens rewritten to the ledger palette both themes (`--lena-gradient-*` deleted, referenced nowhere); page/glass/primary/secondary flat ledger paper/brass; ambient orb/smoke/grid animation system retired (`ambient.css` = `display:none` guard; component stays mounted); orb/glow nodes removed from SystemGrid, Services, RelatedServices, ProjectVisual, CmsProjectDetails — grep clean across `src/**/*.tsx`. Axe regression fixes during the pass (no disable rules, contrast-only): footer channel `<small>` opacity `.65` removed, `.lena-memory-reset` dimming removed (dark `.62` / light alpha → full-strength muted), light accent small-text `#a37924` → `#845f13` (4.9–5.5:1 on paper), `.lena-front-num` opacity `.75` removed (light 3.43:1 → full-strength). Guardian suite 72/72 at PR head; `home-desktop-dark` baseline regenerated from CI Chromium actuals (run `34302010568`, artifact `10085325719`). Supersedes the HOME-R3 premature row above. |
-| — | C1 second admin, C3 CI `workflows` permission, C4 AI translation, A5/B1–B4 content, F1 | **OWNER-GATED** — answered only by the founder; rows stand in `OPEN_DECISIONS.md`. |
+| — | Owner-needed now: C1 (second admin identity value), B4 (written permission to name the hospitality client), F1 (`materials` visibility decision) | **OWNER-REQUIRED** — rows stand in `OPEN_DECISIONS.md`. A5 was answered 2026-08-20 (property + hospitality in real use) with a 2026-09-09 code-truth supersession note (canonical stage stays evidence-driven: hospitality `trial` until real evidence registers). B1 evidence capture ×4 is founder-dependent. C2 answered (defer), C3 answered (defer — reopening is the owner's call), C4 answered (no). |
 
 ---
 
@@ -185,9 +186,13 @@ images and confirms no voids/clipping/missing content before accepting. Recent r
 ## 17. Cleanup Requirements
 
 - `ConstellationGraph` / `verify-constellation-graph.mjs` — **RESOLVED active** (WORLD-R1).
-- Cosmic CSS audit — **RESOLVED (PR #79)** — `.lena-card-glow`, `.lena-visual-orb` rules and nodes, the ambient
-  orb/smoke/grid animation system, and the gradient/glass tokens are gone from all public surfaces; register
-  tranche shipped 2026-09-09.
+- Cosmic CSS audit — **RESOLVED (PR #79 + #80)** — `.lena-card-glow`, `.lena-visual-orb`, the ambient
+  orb/smoke/grid system and the gradient/glass tokens are gone (#79); remaining cosmos accents on ledger
+  surfaces (CTA gradient, nav-active/mobile-link blue, icon/chip blue tints, cosmos-tinted form fields,
+  cold footer/logo shadows, light-theme status contrast, responsive.css cosmos fragments) flattened or
+  tokenized (#80). **Intentionally-scoped non-ledger surfaces (kept and recorded):** studio/project concept
+  presentation art (`ProjectVisual`, case pages, `art-float`), World graph/atlas/command visualization,
+  LENA Assistant widget, admin console, WhatsApp brand FAB.
 - No other dead code surfaced; sweep out of scope until the register tranche.
 
 ## 18. Remaining Work Inventory (as of 2026-09-09)
@@ -214,14 +219,16 @@ Active continuously, without per-task approval stops (founder directive 2026-09-
 1. Evidence capture sessions for the four undocumented products — **when the founder grants access**, starting
    with whichever is soonest; tranche = one product's evidence + any baseline updates, nothing else bundled.
 2. Everything engineering-side that remains sequenceable: automated accessibility layer (§14) — **DONE (#78)**;
-   old-register visual surfaces (§17) — **DONE (#79)**; remaining: re-verify the full checklist as items resolve.
+   old-register visual surfaces (§17) — **DONE (#79)**, remnant sweep (#80); remaining: re-verify the full
+   checklist as items resolve.
 3. Keep §0 and §24 of this document current as each item resolves.
 
 ## 20. Next Tranche (as of 2026-09-09, superseded 2026-09-09)
 
-**"Automated accessibility layer"** — **DONE (PR #78).** **"Visual-register completion"** (§17) — **DONE (PR #79).**
-Open sequence now: founder evidence sessions for the four undocumented products as access arrives; WCAG
-assistive-technology (screen-reader) pass (owner/human-side); then final full-checklist re-verification.
+**"Automated accessibility layer"** — **DONE (PR #78).** **"Visual-register completion"** (§17) — **DONE
+(PR #79 + #80 remnant sweep).** Open sequence now: founder evidence sessions for the four undocumented
+products as access arrives; WCAG assistive-technology (screen-reader) pass (owner/human-side); final
+full-checklist re-verification.
 
 ## 21. Later / Deferred Work
 
@@ -253,6 +260,7 @@ to MALEK's standard; and the accessibility layer guards the WCAG working bar.
 - [ ] `materials` has an explicit, documented visibility decision — **F1 open, owner**
 - [x] Automated WCAG 2.2 audit layer green in CI — PR #78 (2026-09-09), run `34300315321`; zero violations across the audited matrix
 - [x] Remaining old-register visual surfaces moved to the ledger register — PR #79 (2026-09-09), run `34302369502`; `home-desktop-dark` regenerated from CI actuals (run `34302010568`, artifact `10085325719`)
+- [x] Ledger remnant sweep — remaining cosmos accents on ledger surfaces flattened; scoped non-ledger surfaces recorded — PR #80 (2026-09-09), run `34308483403`
 - [ ] Assistive-technology (screen reader) pass — **owner/human-side, AT required**
 
 ---
@@ -260,12 +268,12 @@ to MALEK's standard; and the accessibility layer guards the WCAG working bar.
 ## AUTHORITATIVE STATUS (updated 2026-09-09)
 
 - **Working document:** this file — `PLATFORM_PRD.md` (root), maintained live per §0.
-- **Current main commit:** `05117c9` (PR #79 merged as `0a71eea`; #74–#78 earlier today).
-- **Milestone:** House Ledger register applied end-to-end — World/Chamber, Home copy + frontage hero, and every
-  remaining old-register public surface; Chamber audit done; remediation Part B done; automated a11y layer
-  done; visual-register completion done.
+- **Current main commit:** `a697b6e` (PR #80 merged; #79 earlier).
+- **Milestone:** House Ledger register applied end-to-end — World/Chamber, Home copy + frontage hero, all
+  old-register public surfaces (#79), and the remaining cosmos accents on ledger surfaces flattened (#80);
+  Chamber audit done; Part B done; automated a11y layer done.
 - **Remaining REQUIRED work:** P0 evidence capture ×4 (founder-access-blocked); WCAG assistive-technology
-  pass (owner/human-side); final full-checklist re-verification.
+  pass (owner/human-side); owner answers C1/B4/F1; final full-checklist re-verification.
 - **Open owner items:** F1 `materials`; C1/C3/C4; B4 permission; A5 answers; evidence access sessions.
 - **Definition of done:** §23 — tracked live in §24.
 

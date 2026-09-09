@@ -12,7 +12,8 @@
 > answers and what each one changed are recorded in §Answers at the end. Three items remain open:
 > a second admin account id (C1, approved in principle), permission to name the hospitality client
 > (B4, deliberately withheld), and the `materials` visibility decision (F1, opened 2026-09-09 —
-> deliberately undecided, awaiting the owner's word).
+> deliberately undecided, awaiting the owner's word). C2 (SMTP), C3 (CI `workflows` wiring) and C4
+> (AI draft translation) were answered on 2026-08-20 (defer / defer / no) and are not open.
 
 **Date:** 2026-08-20 · **Purpose:** the owner asked for *every* deferred decision and task in one
 place, with nothing held back.
@@ -125,7 +126,7 @@ Part B needs nothing from you.
 | A2 | Do not publish prices | Unchanged; no price appears anywhere |
 | A3 | Hosting **per product**; do not force one model | No architecture built. Recorded as a per-product decision taken at sale time |
 | A4 | Subscription → ongoing updates and support. Outright sale → a **separate support agreement per product** | Published as the after-delivery answer |
-| A5 | **Property (Malek) and Hospitality are in real use** | Both now carry an "In real use" badge — the strongest proof on the site |
+| A5 | **Property (Malek) and Hospitality are in real use** | Both now carry an "In real use" badge — the strongest proof on the site. **Code-truth supersession (2026-09-09):** canonical stage is evidence-driven — `systems.ts` keeps hospitality `trial` until real evidence registers; this answer is preserved as the owner's 2026-08-20 account, not presented as registered proof |
 | B1 | Screenshots later | Portfolio keeps its honest "being prepared" state — **superseded for 2 of 6 products on 2026-09-09** (MALEK + Lara Beauty evidence shipped; see the B1 row status above) |
 | B2 | Not a one-liner — **full detail per product**: what it is, how it is used, who benefits | Each product now has industry, stage, problem, how it is used, who benefits, and what it runs |
 | B3 | Everything is **trial**, except the two products in real use | Two stages implemented: `in-use` and `trial` |

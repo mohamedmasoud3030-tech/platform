@@ -89,7 +89,11 @@ route/locale/theme combos; zero violations after AA contrast fixes on the ledger
 Register completion (PR #79, run `34302369502`) kept the automated matrix green: axe surfaced four
 opacity/alpha dimming spots on the old-register surfaces (footer `<small>`, `.lena-memory-reset`,
 `.lena-front-num`) and a pale light-theme brass — all fixed at the token level, no contrast disable rules;
-guardian suite 72/72 at PR head.
+guardian suite 72/72 at PR head. Ledger remnant sweep (PR #80, main run `34308483403`) then
+flattened the remaining cosmos accents on ledger surfaces (CTA, nav-active, icon/chip tints, form
+fields, statuses, footer, mobile-menu blur) while keeping the axe matrix clean; intentionally-scoped
+non-ledger surfaces (studio/project concept art, World visualization, assistant widget, admin
+console, WhatsApp brand FAB) are recorded in `PLATFORM_PRD.md` §17.
 Screen-reader (assistive-technology) verification remains open — no AT available in any environment
 (OPEN_DECISIONS B-11).
 **Acceptance criteria:** every interactive element reachable and announced (open — AT pass); contrast
