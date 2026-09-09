@@ -1,1 +1,14 @@
-.lena-ambient{position:fixed;inset:0;z-index:-2;overflow:hidden;pointer-events:none}.lena-grid{position:absolute;inset:0;opacity:.24;background-image:linear-gradient(rgba(140,166,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(140,166,255,.05) 1px,transparent 1px);background-size:52px 52px;mask-image:linear-gradient(#000,transparent 88%)}.lena-orb,.lena-smoke{position:absolute;border-radius:999px;filter:blur(72px);will-change:transform}.lena-orb{opacity:.3;mix-blend-mode:screen}.light .lena-orb{opacity:.16;mix-blend-mode:multiply}.lena-orb-a{width:42rem;height:34rem;top:-12rem;left:-10rem;background:#2362ff;animation:lena-drift-a 18s ease-in-out infinite alternate}.lena-orb-b{width:38rem;height:30rem;top:8rem;right:-12rem;background:#9b46ff;animation:lena-drift-b 23s ease-in-out infinite alternate}.lena-orb-c{width:34rem;height:26rem;bottom:-9rem;left:32%;background:#ff6f4c;opacity:.18;animation:lena-drift-c 26s ease-in-out infinite alternate}.lena-smoke{opacity:.13;border-radius:46% 54% 62% 38%/42% 38% 62% 58%}.lena-smoke-a{width:36rem;height:16rem;top:25%;left:12%;background:linear-gradient(90deg,#567eff88,#56e5ff33);animation:lena-smoke-a 20s ease-in-out infinite alternate}.lena-smoke-b{width:32rem;height:18rem;top:52%;right:4%;background:linear-gradient(90deg,#964dff77,#ff67cc33);animation:lena-smoke-b 24s ease-in-out infinite alternate}@keyframes lena-drift-a{to{transform:translate(8rem,5rem) scale(1.12)}}@keyframes lena-drift-b{to{transform:translate(-7rem,7rem) scale(.92)}}@keyframes lena-drift-c{to{transform:translate(6rem,-5rem) scale(1.18)}}@keyframes lena-smoke-a{to{transform:translate(6rem,3rem) rotate(8deg) scale(1.08)}}@keyframes lena-smoke-b{to{transform:translate(-6rem,-2rem) rotate(-8deg) scale(1.12)}}
+/*
+   Ambient backdrop — retired 2026-09-09 (visual register completion).
+
+   The drifting orbs, smoke and grid lines belonged to the cosmic register,
+   retired by the House Ledger direction. The AmbientBackdrop component stays
+   mounted (harmless, pointer-events-none) but renders nothing visible; the
+   full animation CSS has been removed rather than kept dead.
+*/
+.lena-ambient,
+.lena-grid,
+.lena-orb,
+.lena-smoke {
+  display: none;
+}

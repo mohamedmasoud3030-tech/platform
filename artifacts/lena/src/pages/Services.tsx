@@ -43,7 +43,7 @@ export default function Services() {
               key={system.id}
               data-system={system.id}
             >
-              <i className="lena-card-glow" />
+              
 
               <div className="lena-system-top">
                 <small>{String(index + 1).padStart(2, "0")}</small>
