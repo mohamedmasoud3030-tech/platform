@@ -1,25 +1,30 @@
 /**
  * Rose Engine geometry — pure math for the fan.
  *
- * One module owns every angle so the blades, tow-ropes, bridges and chips
- * can never drift apart: six blades (22° half-width, 16° breathing gaps so
- * the mason's proof shows between them like a real fan), each trailing its
- * chip by a fixed tow lag, each rope running chip → blade tip, each bridge
- * spanning the ring between neighbouring chips.
+ * One module owns every angle so the blades, tow-ropes, bridges, streaks and
+ * chips can never drift apart: six blades (20° half-width, 20° breathing
+ * gaps so the mason's proof shows between them like a real fan), each
+ * trailing its chip by a fixed tow lag, each rope running chip → blade tip,
+ * each bridge spanning the ring between neighbouring chips, and each chip
+ * dragging a tapering motion streak behind it so the tow direction is
+ * unmistakable.
  *
  * Mirror: +1 for LTR, −1 for RTL. Every wheel reverses in RTL, so the tow
- * lag always falls on the trailing side of motion.
+ * lag and the streaks always fall on the trailing side of motion.
  */
 export const ROSE_CX = 300;
 export const ROSE_CY = 300;
 export const ROSE_R = 150;
 /** How far (in degrees) each system trails behind its chip. */
-export const ROSE_TRAIL_DEG = 28;
-export const ROSE_PETAL_HALF_DEG = 22;
+export const ROSE_TRAIL_DEG = 32;
+export const ROSE_PETAL_HALF_DEG = 20;
 export const ROSE_TIP_RADIUS = ROSE_R * 1.02;
 export const ROSE_HUB_RADIUS = 28;
 /** Half-gap (in degrees) where a light-bridge plugs into a chip. */
 export const ROSE_BRIDGE_GAP_DEG = 9;
+/** Motion-streak span behind each chip, in degrees of travel. */
+export const ROSE_STREAK_FROM_DEG = 10;
+export const ROSE_STREAK_TO_DEG = 24;
 
 export type RoseMirror = 1 | -1;
 
@@ -88,6 +93,17 @@ export function towEndpoints(
   return { x1: chip.x, y1: chip.y, x2: tip.x, y2: tip.y };
 }
 
+/** Circular arc through explicit sweep (bridges go with motion, streaks back). */
+export function arcPath(fromDeg: number, toDeg: number, radius: number, sweep: 0 | 1): string {
+  const from = (fromDeg * Math.PI) / 180;
+  const to = (toDeg * Math.PI) / 180;
+  const x1 = ROSE_CX + Math.cos(from) * radius;
+  const y1 = ROSE_CY + Math.sin(from) * radius;
+  const x2 = ROSE_CX + Math.cos(to) * radius;
+  const y2 = ROSE_CY + Math.sin(to) * radius;
+  return `M ${f2(x1)} ${f2(y1)} A ${f2(radius)} ${f2(radius)} 0 0 ${sweep} ${f2(x2)} ${f2(y2)}`;
+}
+
 /** Light-bridge arc angles joining chip *j* to chip *j+1*, in degrees. */
 export function bridgeAngles(
   j: number,
@@ -101,15 +117,16 @@ export function bridgeAngles(
 }
 
 export function bridgePath(fromDeg: number, toDeg: number, radius: number, mirror: RoseMirror): string {
-  const from = (fromDeg * Math.PI) / 180;
-  const to = (toDeg * Math.PI) / 180;
-  const x1 = ROSE_CX + Math.cos(from) * radius;
-  const y1 = ROSE_CY + Math.sin(from) * radius;
-  const x2 = ROSE_CX + Math.cos(to) * radius;
-  const y2 = ROSE_CY + Math.sin(to) * radius;
-  return (
-    `M ${f2(x1)} ${f2(y1)} ` +
-    `A ${f2(radius)} ${f2(radius)} 0 0 ${mirror === 1 ? 1 : 0} ` +
-    `${f2(x2)} ${f2(y2)}`
-  );
+  return arcPath(fromDeg, toDeg, radius, mirror === 1 ? 1 : 0);
+}
+
+/** Motion-streak arc angles trailing behind chip *i*, in degrees. */
+export function streakAngles(index: number, mirror: RoseMirror): { from: number; to: number } {
+  const a = chipAngleDeg(index, mirror);
+  return { from: a - ROSE_STREAK_FROM_DEG * mirror, to: a - ROSE_STREAK_TO_DEG * mirror };
+}
+
+export function streakPath(index: number, mirror: RoseMirror, orbitUnits: number): string {
+  const { from, to } = streakAngles(index, mirror);
+  return arcPath(from, to, orbitUnits, mirror === 1 ? 0 : 1);
 }

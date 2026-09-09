@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   bridgeAngles,
+  bridgePath,
   chipAngleDeg,
   petalCenterDeg,
   petalLeafPath,
@@ -8,6 +9,8 @@ import {
   petalTip,
   ROSE_CX,
   ROSE_CY,
+  streakAngles,
+  streakPath,
   towEndpoints,
   type RoseMirror,
 } from "./rose-geometry";
@@ -18,21 +21,21 @@ describe("rose fan geometry", () => {
   for (const mirror of [1, -1] as RoseMirror[]) {
     const dir = mirror === 1 ? "LTR" : "RTL";
 
-    it(`[${dir}] spaces the six blades 60 degrees apart with 16-degree gaps`, () => {
+    it(`[${dir}] spaces the six blades 60 degrees apart with 20-degree gaps`, () => {
       for (let i = 0; i < 6; i++) {
         const span = petalSpanDeg(i, mirror);
         const next = petalSpanDeg((i + 1) % 6, mirror);
         const width = mod((span.end - span.start) * mirror);
-        expect(width, `blade ${i} width`).toBeCloseTo(44, 9);
+        expect(width, `blade ${i} width`).toBeCloseTo(40, 9);
         const gap = mod((next.start - span.end) * mirror);
-        expect(gap, `gap after blade ${i}`).toBeCloseTo(16, 9);
+        expect(gap, `gap after blade ${i}`).toBeCloseTo(20, 9);
       }
     });
 
     it(`[${dir}] trails every blade behind its chip by the tow lag`, () => {
       for (let i = 0; i < 6; i++) {
         const lag = mod((chipAngleDeg(i, mirror) - petalCenterDeg(i, mirror)) * mirror);
-        expect(lag, `blade ${i} lag`).toBeCloseTo(28, 9);
+        expect(lag, `blade ${i} lag`).toBeCloseTo(32, 9);
       }
     });
 
@@ -57,8 +60,8 @@ describe("rose fan geometry", () => {
         const chipRadius = Math.hypot(ends.x1 - ROSE_CX, ends.y1 - ROSE_CY);
         expect(chipRadius, `rope ${i} chip end`).toBeCloseTo(226, 9);
         const length = Math.hypot(ends.x2 - ends.x1, ends.y2 - ends.y1);
-        expect(length, `rope ${i} length`).toBeGreaterThan(100);
-        expect(length, `rope ${i} length`).toBeLessThan(135);
+        expect(length, `rope ${i} length`).toBeGreaterThan(110);
+        expect(length, `rope ${i} length`).toBeLessThan(140);
       }
     });
 
@@ -67,6 +70,16 @@ describe("rose fan geometry", () => {
         const { from, to } = bridgeAngles(j, mirror);
         const span = mod((to - from) * mirror);
         expect(span, `bridge ${j} span`).toBeCloseTo(42, 9);
+        expect(bridgePath(from, to, 234, mirror)).toContain(mirror === 1 ? "0 0 1" : "0 0 0");
+      }
+    });
+
+    it(`[${dir}] trails a 14-degree motion streak behind every chip`, () => {
+      for (let i = 0; i < 6; i++) {
+        const { from, to } = streakAngles(i, mirror);
+        const span = mod((from - to) * mirror);
+        expect(span, `streak ${i} span`).toBeCloseTo(14, 9);
+        expect(streakPath(i, mirror, 234)).toContain(mirror === 1 ? "0 0 0" : "0 0 1");
       }
     });
   }
