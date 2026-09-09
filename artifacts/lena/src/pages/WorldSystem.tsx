@@ -8,6 +8,7 @@ import { OperatingSurfaces } from "@/features/world/components/OperatingSurfaces
 import { OPERATING_PRIMITIVES } from "@/features/world/content/operating-primitives";
 import { productContractFor } from "@/features/world/content/product-contract";
 import { findWorldEntity, worldSystem } from "@/features/world/content/world";
+import LedgerOperatorNote from "@/features/world/ledger/LedgerOperatorNote";
 import LedgerSeal from "@/features/world/ledger/LedgerSeal";
 import {
   entryNumberFor,
@@ -218,6 +219,8 @@ export default function WorldSystem() {
                 </ol>
               </section>
             ) : null}
+
+            <LedgerOperatorNote system={system} />
 
             <section className="ledger-roots-index" aria-label={isArabic ? "جذور التشغيل" : "Operating roots"}>
               <header className="ledger-sectionhead">
