@@ -1,7 +1,6 @@
 import { useMemo } from "react";
 import { ArrowDown, ArrowUpRight } from "lucide-react";
 import { Link } from "react-router";
-import CosmicBackdrop from "@/components/CosmicBackdrop";
 import LenaCta from "@/components/LenaCta";
 import SeoHead from "@/components/SeoHead";
 import SystemGrid from "@/components/SystemGrid";
@@ -42,7 +41,6 @@ export default function Home() {
 
   return (
     <PublicShell>
-      <CosmicBackdrop />
       <SeoHead
         title={seo.title}
         description={seo.description}

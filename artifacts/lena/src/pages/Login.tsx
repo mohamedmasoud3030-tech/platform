@@ -1,4 +1,5 @@
 import { ArrowLeft, ShieldCheck } from "lucide-react";
+import CosmicBackdrop from "@/components/CosmicBackdrop";
 import { Link, useLocation } from "react-router";
 import SeoHead from "@/components/SeoHead";
 import { pageSeo } from "@/content/seo";
@@ -69,6 +70,7 @@ export default function Login() {
 
   return (
     <div className="lena-login" dir={direction}>
+      <CosmicBackdrop />
       
       <SeoHead title={seo.title} description={seo.description} path="/login" noindex />
       <main className="lena-login-card-wrap">
