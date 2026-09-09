@@ -75,9 +75,13 @@ seals derived from the evidence registry instead («موثّق»/DOCUMENTED vs �
 visible on the card/chamber without a click. R6's original acceptance is therefore obsolete; the
 honest-state goal it served is met by the seals.
 
-### R7. Operator section on each application — **READY after owner content (OPEN_DECISIONS Part B-10)**
+### R7. Operator section on each application — **SCAFFOLD DONE 2026-09-09 (PR #88 → `0135c0c`)**
+Evidence-gated operator record + ledger-grammar chamber section live on the two evidence-bearing
+chambers (MALEK, Lara Beauty); remaining applications gain their record in the same tranche their
+evidence registers (checklist T1-x; content module ready in `features/world/content/operator.ts`).
 **Acceptance criteria:** each application answers what changes for daily staff, offline behaviour, and
-how mistakes are corrected, in under 80 words.
+how mistakes are corrected, in under 80 words — the delivered records answer from the B2 register;
+offline/corrections/training aspects stay declared-open until founder documentation exists.
 
 ---
 
