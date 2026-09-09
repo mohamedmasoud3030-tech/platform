@@ -102,7 +102,7 @@ Proceeding on the next pass unless told otherwise. Ordered by risk reduction.
 | **B-8** | Dashboard status filter for inquiries — **STATUS 2026-09-09: DONE** — filter over the eight pipeline statuses plus "all", bilingual, with no-match state; pure logic unit-tested; legacy `qualified` rows stay visible under "all" | Flat list stops working at volume | M |
 | **B-9** | Clean `src/const.ts` of the previous product's data — **STATUS 2026-09-09: DONE** — two-line stub only | Dead constants | XS |
 | **B-10** | Operator section on each product page (D6) | Needs B1/B2 content first | M |
-| **B-11** | Accessibility audit with assistive technology | **Blocked:** no browser can be installed in this environment | — |
+| **B-11** | Accessibility audit — **STATUS 2026-09-09: automated layer DONE** (axe-core WCAG 2.x A/AA suite in the guardian smoke project, both locales/themes, zero violations after ledger contrast fixes; guards CI); **assistive-technology pass still blocked** — no AT (screen reader) is available in any environment | Automated bar now enforced in CI | S |
 | **B-12** | Low-end device performance measurement | **Blocked:** same reason | — |
 | **B-13** | Pagination for `inquiries.list` | Deliberately deferred to ~500 inquiries | M |
 

@@ -1,20 +1,63 @@
 import { expect, test } from "@playwright/test";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import { openApp, VIEWPORTS } from "../helpers/app.mjs";
 
 /**
- * Phase 10 — lightweight accessibility sanity.
- * No months-long compliance project: duplicate IDs, unnamed interactives,
- * landmark presence, skip link, keyboard reachability, focus visibility.
+ * Phase 10 — accessibility.
+ *
+ * Two layers:
+ *  1. Lightweight sanity (duplicate IDs, unnamed interactives, landmark
+ *     presence, skip link, keyboard reachability, focus visibility).
+ *  2. Automated WCAG 2.x A/AA audit (axe-core) across the public route
+ *     matrix in both locales and both themes. Axe is an automated layer:
+ *     it guards the programmatically-checkable bar (contrast, names,
+ *     structure, ARIA); an assistive-technology pass remains a separate,
+ *     human-side activity (OPEN_DECISIONS B-11).
+ *
+ * The route matrix intentionally covers the ledger-heavy surfaces (World
+ * index, documented + pending chambers) where the register's restrained
+ * palette is most at risk of contrast regressions, plus marketing surfaces
+ * in both languages.
  */
 
-function annotate(testInfo, route, locale) {
+const specDir = dirname(fileURLToPath(import.meta.url));
+const AXE_SOURCE = resolve(specDir, "..", "node_modules", "axe-core", "axe.min.js");
+
+const WCAG_TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"];
+
+/** [route, locale, theme] — the audited public matrix. */
+const AXE_MATRIX = [
+  ["/", "en", "dark"],
+  ["/", "ar", "dark"],
+  ["/", "en", "light"],
+  ["/world", "en", "dark"],
+  ["/world", "ar", "dark"],
+  ["/world/property", "en", "dark"],
+  ["/world/property", "ar", "dark"],
+  ["/world/property", "en", "light"],
+  ["/world/rental", "en", "dark"],
+  ["/services", "en", "dark"],
+  ["/services", "ar", "dark"],
+  ["/about", "en", "dark"],
+  ["/portfolio", "en", "dark"],
+  ["/contact", "en", "dark"],
+  ["/world/command", "en", "dark"],
+  ["/world/atlas", "en", "dark"],
+];
+
+function annotate(testInfo, route, locale, theme = "dark") {
   testInfo.annotations.push(
     { type: "route", description: `/${locale}${route}` },
     { type: "viewport", description: "1280x800" },
-    { type: "theme", description: "dark" },
+    { type: "theme", description: theme },
     { type: "locale", description: locale },
   );
 }
+
+/* ------------------------------------------------------------------ */
+/* Layer 1 — lightweight sanity                                        */
+/* ------------------------------------------------------------------ */
 
 for (const route of ["/", "/world", "/world/property", "/contact"]) {
   test(`a11y sanity: ${route} (en)`, async ({ page }) => {
@@ -105,3 +148,43 @@ test("a11y sanity: keyboard reaches primary navigation with visible focus", asyn
     `focused navigation link must show a visible focus indicator (${JSON.stringify(navLink)})`,
   ).toBe(true);
 });
+
+/* ------------------------------------------------------------------ */
+/* Layer 2 — axe-core WCAG 2.x A/AA audit                              */
+/* ------------------------------------------------------------------ */
+
+for (const [route, locale, theme] of AXE_MATRIX) {
+  test(`axe WCAG A/AA: ${route} (${locale}, ${theme})`, async ({ page }) => {
+    annotate(test.info(), route, locale, theme);
+    test.setTimeout(60_000);
+    await openApp(page, { route, locale, theme, viewport: VIEWPORTS.desktop });
+    await page.addScriptTag({ path: AXE_SOURCE });
+
+    const rows = await page.evaluate(async (tags) => {
+      const r = await window.axe.run(document, {
+        runOnly: { type: "tag", values: tags },
+      });
+      return r.violations.flatMap((v) =>
+        v.nodes.map((n) => ({
+          id: v.id,
+          impact: v.impact,
+          target: n.target.join(" "),
+          why: (n.failureSummary ?? "").split("\n")[0],
+        })),
+      );
+    }, WCAG_TAGS);
+
+    // Automated bar: no serious/critical WCAG violations. Moderate/minor are
+    // reported in the failure message when present so they stay visible
+    // without blocking the build.
+    const blocking = rows.filter((r) => r.impact === "serious" || r.impact === "critical");
+    const advisory = rows.filter((r) => r.impact !== "serious" && r.impact !== "critical");
+    const describe = (list) =>
+      list
+        .slice(0, 12)
+        .map((r) => `${r.impact} ${r.id} @ ${r.target}`)
+        .join("\n      ");
+    expect(blocking, `serious/critical violations on ${locale}/${route}:\n      ${describe(blocking)}`).toEqual([]);
+    expect(advisory, `advisory (minor/moderate) violations on ${locale}/${route}:\n      ${describe(advisory)}`).toEqual([]);
+  });
+}
