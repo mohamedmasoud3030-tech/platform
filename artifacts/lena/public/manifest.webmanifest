@@ -1,0 +1,22 @@
+{
+  "name": "LENA Digital House",
+  "short_name": "LENA",
+  "description": "LENA Digital House — بيت رقمي يبني أنظمة تشغيل للأعمال الحقيقية ويجمعها داخل عالم LENA واحد.",
+  "id": ".",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#030612",
+  "theme_color": "#030612",
+  "lang": "ar",
+  "dir": "rtl",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

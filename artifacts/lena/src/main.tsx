@@ -11,6 +11,7 @@ import { configureAnalytics } from "./lib/analytics";
 import { firstPartySink } from "./lib/analytics/sink";
 import "./index.css";
 import "./App.css";
+import { registerServiceWorker } from "./lib/pwa";
 
 /**
  * Resolve the language before the app mounts, and move unprefixed links
@@ -24,6 +25,10 @@ import "./App.css";
  * (PRODUCT_MEASUREMENT_PLAN.md §5).
  */
 configureAnalytics({ sink: firstPartySink, enabled: true });
+
+// Minimal PWA: production builds on real https domains register the offline
+// shell; dev servers and visual-guardian preview hosts never do (pwa.ts).
+registerServiceWorker();
 
 const { locale, redirectTo } = bootstrapLocale(window.location);
 if (redirectTo) window.history.replaceState(null, "", redirectTo);

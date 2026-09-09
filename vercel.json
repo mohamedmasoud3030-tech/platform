@@ -31,6 +31,18 @@
       "destination": "/favicon.svg"
     },
     {
+      "source": "/lena/manifest.webmanifest",
+      "destination": "/manifest.webmanifest"
+    },
+    {
+      "source": "/lena/sw.js",
+      "destination": "/sw.js"
+    },
+    {
+      "source": "/lena/offline.html",
+      "destination": "/offline.html"
+    },
+    {
       "source": "/lena/lena-og.jpg",
       "destination": "/lena-og.jpg"
     },

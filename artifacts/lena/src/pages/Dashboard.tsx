@@ -25,6 +25,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useSiteCopy } from "@/hooks/useSiteCopy";
 import { usePreferences } from "@/providers/preferences";
 import { trpc } from "@/providers/trpc";
+import { matchesInquiryStatusFilter } from "@/lib/inquiryFilter";
 import "./dashboard.css";
 
 // The content tab was removed: no public page reads content_entries, so
@@ -114,6 +115,9 @@ const TEXT = {
     projectForm: "إضافة أو تعديل مشروع",
     contentForm: "إضافة أو تعديل محتوى",
     inquiriesHint: "راجع الاستفسارات الجديدة وحدّث حالتها بعد التواصل.",
+    filterStatus: "تصفية حسب الحالة",
+    allStatuses: "كل الحالات",
+    noFilteredInquiries: "لا توجد استفسارات بهذه الحالة.",
     newBadge: "جديد",
     retry: "إعادة المحاولة",
     failedTitle: "تعذر تحميل البيانات",
@@ -176,6 +180,9 @@ const TEXT = {
     projectForm: "Add or edit project",
     contentForm: "Add or edit content",
     inquiriesHint: "Review new inquiries and update their status after follow-up.",
+    filterStatus: "Filter by status",
+    allStatuses: "All statuses",
+    noFilteredInquiries: "No inquiries match this status.",
     newBadge: "new",
     retry: "Try again",
     failedTitle: "Could not load your data",
@@ -227,6 +234,7 @@ export default function Dashboard() {
   const text = TEXT[locale];
   const { user, isAdmin, isLoading, logout } = useAuth({ redirectOnUnauthenticated: true });
   const [activeTab, setActiveTab] = useState<DashboardTab>("inquiries");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
   const [projectForm, setProjectForm] = useState<ProjectForm>(EMPTY_PROJECT);
   const [editingProjectId, setEditingProjectId] = useState<number | null>(null);
   const [contentForm, setContentForm] = useState<ContentForm>(EMPTY_CONTENT);
@@ -235,6 +243,7 @@ export default function Dashboard() {
   const seo = pageSeo("dashboard", locale);
 
   const inquiriesQuery = trpc.inquiries.list.useQuery(undefined, { enabled: isAdmin });
+  const filteredInquiries = (inquiriesQuery.data ?? []).filter((row) => matchesInquiryStatusFilter(row, statusFilter));
   const projectsQuery = trpc.projects.list.useQuery(undefined, { enabled: isAdmin });
   const contentQuery = trpc.content.list.useQuery(undefined, { enabled: isAdmin });
   const newInquiriesQuery = trpc.inquiries.countNew.useQuery(undefined, { enabled: isAdmin });
@@ -381,6 +390,19 @@ export default function Dashboard() {
                   <h2 id="dashboard-inquiries-title">{copy.dashboard.inquiries}</h2>
                   <p>{text.inquiriesHint}</p>
                 </div>
+                <label>
+                  <span>{text.filterStatus}</span>
+                  <select
+                    value={statusFilter}
+                    aria-label={text.filterStatus}
+                    onChange={(event) => setStatusFilter(event.target.value)}
+                  >
+                    <option value="all">{text.allStatuses}</option>
+                    {PIPELINE.map((status) => (
+                      <option key={status} value={status}>{text.statuses[status]}</option>
+                    ))}
+                  </select>
+                </label>
               </div>
               {inquiriesQuery.isLoading ? (
                 <div className="empty-state">{text.loading}</div>
@@ -393,8 +415,9 @@ export default function Dashboard() {
                   </div>
                 </div>
               ) : inquiriesQuery.data?.length ? (
+                filteredInquiries.length ? (
                 <div className="dashboard-list">
-                  {inquiriesQuery.data.map((inquiry) => (
+                  {filteredInquiries.map((inquiry) => (
                     <article key={inquiry.id} className="dashboard-record">
                       <div className="dashboard-record-main">
                         <div className="dashboard-record-title-row">
@@ -426,6 +449,15 @@ export default function Dashboard() {
                     </article>
                   ))}
                 </div>
+                ) : (
+                  <div className="dashboard-guide">
+                    <h3>{text.filterStatus}</h3>
+                    <p>{text.noFilteredInquiries}</p>
+                    <div className="dashboard-guide-actions">
+                      <button type="button" onClick={() => setStatusFilter("all")}>{text.allStatuses}</button>
+                    </div>
+                  </div>
+                )
               ) : (
                 <div className="dashboard-guide">
                   <h3>{text.emptyInquiriesTitle}</h3>
