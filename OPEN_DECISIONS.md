@@ -3,14 +3,16 @@
 > **Historical owner-decision register — not a current work queue.** It records the 2026-08-20
 > intake and owner answers. Current product/runtime truth is owned by the canonical product,
 > evidence, ProductContract, graph, and merged role-contract code. Old technical tasks below may
-> already be completed or superseded and must be checked against `main` before execution. The two
-> owner-controlled values still intentionally unresolved here are the second admin identity value
-> and written permission to name the hospitality client.
+> already be completed or superseded and must be checked against `main` before execution. The three
+> owner-controlled values still intentionally unresolved here are the second admin identity value,
+> written permission to name the hospitality client, and the `materials` visibility decision (F1,
+> opened 2026-09-09).
 
 > **ALL ANSWERED by the owner on 2026-08-20.** The register below is kept for traceability; the
-> answers and what each one changed are recorded in §Answers at the end. Only two items remain open,
-> both because the owner does not yet have the value: a second admin account id (C1, approved in
-> principle) and permission to name the hospitality client (B4, deliberately withheld).
+> answers and what each one changed are recorded in §Answers at the end. Three items remain open:
+> a second admin account id (C1, approved in principle), permission to name the hospitality client
+> (B4, deliberately withheld), and the `materials` visibility decision (F1, opened 2026-09-09 —
+> deliberately undecided, awaiting the owner's word).
 
 **Date:** 2026-08-20 · **Purpose:** the owner asked for *every* deferred decision and task in one
 place, with nothing held back.
@@ -43,7 +45,7 @@ not claim that the current repository has no later work, and it does not superse
 
 | # | Needed | Why |
 |---|---|---|
-| **B1** | **3 screenshots per product** (6 products) | The site now says the right thing and shows nothing. This is the single biggest gap |
+| **B1** | **3 screenshots per product** (6 products) — **STATUS 2026-09-09: 2 of 6 products documented.** MALEK (7 real surfaces) and Lara Beauty (10 incl. mobile) are live in the canonical `evidence.ts` registry, rendered as chamber evidence plates and as real-capture windows on the Home cards; the remaining four (LENA Dress, Hospitality, Terranex, Kayyal) still have zero surfaces and await capture access | The site's claim is "show, not tell" — every product without a registered capture keeps the honest "not yet documented" state. The remaining gap is four products, not six |
 | **B2** | **One line per product: who exactly uses it** ("the warehouse owner and one worker at the weighbridge") | Turns a feature list into a recognisable person |
 | **B3** | **Stage for each product**: live / in pilot / built and available | Buyers of operational software buy evidence of real use |
 | **B4** | **Written permission** to name the hospitality client | Third-party proof is the strongest asset you have; the name cannot be published without it |
@@ -76,6 +78,12 @@ not claim that the current repository has no later work, and it does not superse
 | **E3** | Delivery lifecycle statuses (discovery → pilot → rollout) | Not yet. Add when a second engagement runs in parallel |
 | **E4** | Which contact number is **primary** for the floating button | Currently Oman. Say the word to change it |
 
+## F. Product and content visibility (opened 2026-09-09)
+
+| # | Question | My recommendation | Why it matters |
+|---|---|---|---|
+| **F1** | The seventh system — **`materials`** (Lenastore, construction project materials) — exists fully specified in `content/systems.ts` with `order: 7` and `visibility: "hidden"`. Reveal it publicly, keep it hidden, or formally deprecate it? | **Keep it hidden until real evidence exists** (the current state). Revealing later is a one-word flip (`visibility: "public"`) once the system has registered captures, so nothing is lost by waiting; formally deprecating it would delete an owner-controlled asset against the "nothing is deleted" rule | Every other fully specified system now has an explicit visibility decision on record; `materials` has none. It is real canonical product data with no decision trail, and if it ever surfaces without evidence it would break the register's evidence-first contract — a seventh public system with zero documented surfaces. The code comment already states the intent (deepen existing worlds before expanding the count); this row exists to make that an owner decision rather than an implicit one |
+
 ---
 
 # Part B — mine to do, no approval needed
@@ -102,8 +110,9 @@ Proceeding on the next pass unless told otherwise. Ordered by risk reduction.
 
 ## How to answer
 
-Answering **A1–A5, B1–B5, C1–C4, D1–D4, E1–E4** in any form — a sentence each is enough — clears
-every open decision in the project. Part B needs nothing from you.
+Answering **A1–A5, B1–B5, C1–C4, D1–D4, E1–E4**, plus **F1** (materials visibility, added
+2026-09-09), in any form — a sentence each is enough — clears every open decision in the project.
+Part B needs nothing from you.
 
 
 ---
@@ -117,7 +126,7 @@ every open decision in the project. Part B needs nothing from you.
 | A3 | Hosting **per product**; do not force one model | No architecture built. Recorded as a per-product decision taken at sale time |
 | A4 | Subscription → ongoing updates and support. Outright sale → a **separate support agreement per product** | Published as the after-delivery answer |
 | A5 | **Property (Malek) and Hospitality are in real use** | Both now carry an "In real use" badge — the strongest proof on the site |
-| B1 | Screenshots later | Portfolio keeps its honest "being prepared" state |
+| B1 | Screenshots later | Portfolio keeps its honest "being prepared" state — **superseded for 2 of 6 products on 2026-09-09** (MALEK + Lara Beauty evidence shipped; see the B1 row status above) |
 | B2 | Not a one-liner — **full detail per product**: what it is, how it is used, who benefits | Each product now has industry, stage, problem, how it is used, who benefits, and what it runs |
 | B3 | Everything is **trial**, except the two products in real use | Two stages implemented: `in-use` and `trial` |
 | B4 | **Do not name the hospitality client** until explicit approval | No client name appears. Still open |
