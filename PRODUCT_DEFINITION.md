@@ -175,13 +175,15 @@ Each requirement is independently testable. "Verified" means a person or a check
 without reading code.
 
 ### FR-1 — Founder identity is present and consistent
-> **Status (2026-08-20): name and photograph done; biography pending.** Mohamed Masoud /
+> **Status (2026-09-09): complete — name, photograph and bilingual biography all live.** Mohamed Masoud /
 > محمد مسعود appears on the About page, in `SITE_CONFIG.ownerName`, and as `founder` (with image) in
 > the Organization structured data. The photograph was processed by
 > `tools/prepare-founder-photo.sh` — metadata stripped, 1473KB reduced to 22KB. **FR-12 / M7 is also
 > resolved:** the same run produced a 1200×630 raster social card, replacing the SVG that WhatsApp and
-> LinkedIn could not render. The biography remains empty and its block does not render until the
-> founder writes it — nothing about him is invented.
+> LinkedIn could not render. **The biography is no longer pending:** the founder's own bilingual bio
+> lives in `content/founder.ts` and renders on the About page through `FounderCard`. The original
+> honesty rule is unchanged and still enforced in code — the bio block renders only because real text
+> exists (`hasFounderBio` gate) — nothing about him is invented.
 The About page presents the founder by name, photo, background and the reason the work is credible.
 Copy elsewhere never implies a team that does not exist.
 **Acceptance:** (a) About shows name, photo, and a bio of 60–150 words in both languages. (b) No public
