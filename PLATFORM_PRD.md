@@ -248,7 +248,7 @@ to MALEK's standard; and the accessibility layer guards the WCAG working bar.
 - [x] `PRODUCT_DEFINITION.md` / `OPEN_DECISIONS.md` staleness corrected — PR #75 (2026-09-09)
 - [x] All Chambers audited to MALEK's standard — PR #77 (2026-09-09); record in `docs/CHAMBER_AUDIT_2026-09-09.md`
 - [x] `ConstellationGraph` status resolved (active) — recorded 2026-09-09
-- [x] All guardian/verify contracts green on `main` — re-verified at `0a71eea` (PR #79, run `34302369502`)
+- [x] All guardian/verify contracts green on `main` — verified at `0a71eea` (main validate run `34302631539`; PR-head guardian run `34302369502`)
 - [ ] 6/6 public systems have real evidence registered — **BLOCKED: founder access** (2/6 today)
 - [ ] `materials` has an explicit, documented visibility decision — **F1 open, owner**
 - [x] Automated WCAG 2.2 audit layer green in CI — PR #78 (2026-09-09), run `34300315321`; zero violations across the audited matrix
@@ -260,7 +260,7 @@ to MALEK's standard; and the accessibility layer guards the WCAG working bar.
 ## AUTHORITATIVE STATUS (updated 2026-09-09)
 
 - **Working document:** this file — `PLATFORM_PRD.md` (root), maintained live per §0.
-- **Current main commit:** `0a71eea` (PR #79 merged; #74–#78 earlier today).
+- **Current main commit:** `05117c9` (PR #79 merged as `0a71eea`; #74–#78 earlier today).
 - **Milestone:** House Ledger register applied end-to-end — World/Chamber, Home copy + frontage hero, and every
   remaining old-register public surface; Chamber audit done; remediation Part B done; automated a11y layer
   done; visual-register completion done.
