@@ -1,7 +1,6 @@
 import { ArrowLeft, ShieldCheck } from "lucide-react";
 import { Link, useLocation } from "react-router";
 import SeoHead from "@/components/SeoHead";
-import AmbientBackdrop from "@/layouts/AmbientBackdrop";
 import { pageSeo } from "@/content/seo";
 import LenaLogo from "@/design-system/brand/LenaLogo";
 import { usePreferences } from "@/providers/preferences";
@@ -70,7 +69,7 @@ export default function Login() {
 
   return (
     <div className="lena-login" dir={direction}>
-      <AmbientBackdrop />
+      
       <SeoHead title={seo.title} description={seo.description} path="/login" noindex />
       <main className="lena-login-card-wrap">
         <div className="lena-glass lena-login-card">
