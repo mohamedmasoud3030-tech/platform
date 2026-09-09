@@ -87,7 +87,7 @@ process.
 |---|---|---|---|
 | A1 | Business owners find self-built applications persuasive enough to make contact, without client references | **Reduced from Low to Medium** — one of the six was built for a named client, and the founder's operator background is verifiable domain proof rather than a capability claim | Ship 5 app pages; measure app-page → inquiry rate over 30 days. Under 1%, the proof model is wrong, not the design |
 | A2 | The English market responds at a rate worth the cost of maintaining two languages | Medium | Compare inquiries by locale after 60 days; if English is under 15% of the total, stop investing in English content |
-| A3 | Five applications is enough breadth; a visitor finds one relevant to them | Medium | Track which app pages get opened; if one industry takes over 60% of the traffic, specialise instead of broadening |
+| A3 | Six applications is enough breadth; a visitor finds one relevant to them | Medium | Track which app pages get opened; if one industry takes over 60% of the traffic, specialise instead of broadening |
 | A4 | Visitors will contact a stranger through a form/WhatsApp with no pricing shown | Medium-high (normal for the category) | Already measurable via the existing entry-context attribution |
 | A5 | The founder can answer within one business day in both languages, sustainably | Medium | The promise is already published; measure median time to first status change |
 | A6 | Screens and a short recording persuade as well as a live demo | Medium | A/B is too expensive at this volume — instead, add a "request a live walkthrough" action and count requests |
@@ -397,12 +397,12 @@ analytics platform; CRM; newsletter.
 
 | # | Risk | Impact | Cheapest way to test it |
 |---|---|---|---|
-| R1 | Self-built applications do not convince buyers without client references (A1) | Fatal to the goal | Publish the five, measure application → inquiry rate for 30 days. Below 1% means the *proof model* failed, not the design — pivot to acquiring one real client reference at cost price |
+| R1 | Self-built applications do not convince buyers without client references (A1) | Fatal to the goal | Publish the six, measure application → inquiry rate for 30 days. Below 1% means the *proof model* failed, not the design — pivot to acquiring one real client reference at cost price |
 | R2 | Two languages double the content burden and both end up shallow | Both markets underperform | Complete English for the two strongest applications first; if the founder cannot sustain it, ship English for those two only and mark the rest clearly |
 | R3 | Founder cannot sustain one-business-day replies in two languages | Published promise broken — worse than never promising | Track median reply time for 30 days; if it slips, change the published promise before a client discovers it |
-| R4 | Five applications across five industries reads as unfocused | Weak positioning | Ask five people in the target segment which one they would open first; if answers scatter, lead with one industry and keep the rest as secondary |
+| R4 | Six applications across six industries reads as unfocused | Weak positioning | Ask five people in the target segment which one they would open first; if answers scatter, lead with one industry and keep the rest as secondary |
 | R5 | Demonstrations become stale or break | Credibility damage | Quarterly review; a broken or outdated application is unpublished, not left rotting |
-| R6 | Hosting five live applications introduces recurring cost against the binding constraint | Budget violation | Start with screens and recordings inside the existing site — zero new cost. See §14 |
+| R6 | Hosting six live applications introduces recurring cost against the binding constraint | Budget violation | Start with screens and recordings inside the existing site — zero new cost. See §14 |
 | R7 | Global positioning attracts unqualified enquiries from everywhere | Founder's time drains | Watch the qualified share; if it drops, add a light qualifying question rather than a barrier |
 | R8 | Language detection sends a bilingual Gulf visitor to the wrong version | Bounce | The switch is always visible and one tap; measure switch usage — high usage means detection is wrong |
 
