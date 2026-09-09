@@ -4,13 +4,11 @@ import {
   bridgePath,
   chipAngleDeg,
   petalCenterDeg,
-  petalLeafPath,
+  petalPath,
   petalSpanDeg,
   petalTip,
   ROSE_CX,
   ROSE_CY,
-  streakAngles,
-  streakPath,
   towEndpoints,
   type RoseMirror,
 } from "./rose-geometry";
@@ -21,46 +19,37 @@ describe("rose fan geometry", () => {
   for (const mirror of [1, -1] as RoseMirror[]) {
     const dir = mirror === 1 ? "LTR" : "RTL";
 
-    it(`[${dir}] spaces the six blades 60 degrees apart with 20-degree gaps`, () => {
+    it(`[${dir}] spaces the six petals 60 degrees apart in full sectors`, () => {
       for (let i = 0; i < 6; i++) {
         const span = petalSpanDeg(i, mirror);
         const next = petalSpanDeg((i + 1) % 6, mirror);
         const width = mod((span.end - span.start) * mirror);
-        expect(width, `blade ${i} width`).toBeCloseTo(40, 9);
+        expect(width, `petal ${i} width`).toBeCloseTo(60, 9);
         const gap = mod((next.start - span.end) * mirror);
-        expect(gap, `gap after blade ${i}`).toBeCloseTo(20, 9);
+        expect(gap, `gap after petal ${i}`).toBeCloseTo(0, 9);
       }
     });
 
-    it(`[${dir}] trails every blade behind its chip by the tow lag`, () => {
+    it(`[${dir}] trails every petal behind its chip by the tow lag`, () => {
       for (let i = 0; i < 6; i++) {
         const lag = mod((chipAngleDeg(i, mirror) - petalCenterDeg(i, mirror)) * mirror);
-        expect(lag, `blade ${i} lag`).toBeCloseTo(32, 9);
+        expect(lag, `petal ${i} lag`).toBeCloseTo(30, 9);
       }
     });
 
-    it(`[${dir}] draws a closed leaf with the tip on the blade centre`, () => {
+    it(`[${dir}] draws a thin two-stroke petal through the tip on its centre`, () => {
       for (let i = 0; i < 6; i++) {
-        const path = petalLeafPath(i, mirror);
-        expect(path.startsWith("M ")).toBe(true);
-        expect(path.endsWith(" Z")).toBe(true);
+        const path = petalPath(petalCenterDeg(i, mirror), mirror);
+        expect(path.startsWith(`M ${ROSE_CX.toFixed(2)} ${ROSE_CY.toFixed(2)}`)).toBe(true);
+        expect(path.split(" M ").length, "two strokes").toBe(2);
         const tip = petalTip(i, mirror);
         const radius = Math.hypot(tip.x - ROSE_CX, tip.y - ROSE_CY);
-        expect(radius, `blade ${i} tip radius`).toBeCloseTo(153, 9);
+        expect(radius, `petal ${i} tip radius`).toBeCloseTo(153, 9);
         expect(path).toContain(`${tip.x.toFixed(2)} ${tip.y.toFixed(2)}`);
       }
     });
 
-    it(`[${dir}] floats every blade free of the hub on a rounded base`, () => {
-      for (let i = 0; i < 6; i++) {
-        const [mx, my] = petalLeafPath(i, mirror).slice(2).split(" Q")[0].split(" ").map(Number);
-        const baseRadius = Math.hypot(mx - ROSE_CX, my - ROSE_CY);
-        // Path text rounds to 2 decimals, so 1-digit precision fits the output.
-        expect(baseRadius, `blade ${i} base corner radius`).toBeCloseTo(70, 1);
-      }
-    });
-
-    it(`[${dir}] runs every tow-rope from the chip ring to its own blade tip`, () => {
+    it(`[${dir}] runs every tow-rope from the chip ring to its own petal tip`, () => {
       for (let i = 0; i < 6; i++) {
         const ends = towEndpoints(i, mirror, 234);
         const tip = petalTip(i, mirror);
@@ -69,8 +58,8 @@ describe("rose fan geometry", () => {
         const chipRadius = Math.hypot(ends.x1 - ROSE_CX, ends.y1 - ROSE_CY);
         expect(chipRadius, `rope ${i} chip end`).toBeCloseTo(226, 9);
         const length = Math.hypot(ends.x2 - ends.x1, ends.y2 - ends.y1);
-        expect(length, `rope ${i} length`).toBeGreaterThan(110);
-        expect(length, `rope ${i} length`).toBeLessThan(140);
+        expect(length, `rope ${i} length`).toBeGreaterThan(105);
+        expect(length, `rope ${i} length`).toBeLessThan(135);
       }
     });
 
@@ -80,15 +69,6 @@ describe("rose fan geometry", () => {
         const span = mod((to - from) * mirror);
         expect(span, `bridge ${j} span`).toBeCloseTo(42, 9);
         expect(bridgePath(from, to, 234, mirror)).toContain(mirror === 1 ? "0 0 1" : "0 0 0");
-      }
-    });
-
-    it(`[${dir}] trails a 14-degree motion streak behind every chip`, () => {
-      for (let i = 0; i < 6; i++) {
-        const { from, to } = streakAngles(i, mirror);
-        const span = mod((from - to) * mirror);
-        expect(span, `streak ${i} span`).toBeCloseTo(14, 9);
-        expect(streakPath(i, mirror, 234)).toContain(mirror === 1 ? "0 0 0" : "0 0 1");
       }
     });
   }

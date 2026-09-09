@@ -7,44 +7,40 @@ import {
   bridgeAngles,
   bridgePath,
   chipAngleDeg,
-  petalLeafPath,
+  petalCenterDeg,
+  petalPath,
   petalTip,
-  petalVeinPath,
   ROSE_CX,
   ROSE_CY,
   ROSE_R,
-  streakPath,
   towEndpoints,
   type RoseMirror,
 } from "./rose-geometry";
 import { ROSE_READY_LABEL, roseBodies } from "./rose-system-bodies";
 
 /**
- * R5 — THE ROSE ENGINE (وردة الباني): a fan the masons built.
+ * R5 — THE ROSE ENGINE (وردة الباني).
  *
- * Six free-floating blades whirl like a fan — each blade IS a system,
- * attached to NOTHING but its chip's tow-rope. Lit blades gild across real
- * area (with their own aura) so ready systems are unmistakable; the two
- * pending blades breathe with a charging pulse while their chips shimmer
- * like something still powering up. Breathing gaps between the blades let
- * the crank-pinned motor core counter-rotating beneath show through like
- * light between fan blades.
+ * Sacred geometry as a builder's rite: a six-fold rose window draws itself
+ * the way master masons did — first the construction circles (compass arcs,
+ * scribing in sequence), then the thin petals resolve from their
+ * intersections, then gilding settles into the work that earned it.
  *
- * THE TOW: every chip rides the fan wheel and PULLS ITS BLADE BEHIND IT —
- * each blade trails its chip by a fixed lag, tethered ONLY by a prominent
- * rope of light (with its own aura) with energy flowing chip → system, a
- * glowing tow-node riding the blade's tip, and a tapering motion streak
- * dragging behind every chip so the tow direction reads at a glance. The
- * chips are also wired to each other: six light-bridges join every chip to
- * its two neighbours in one continuous circuit, a wave of light travels the
- * chips in owner order, and three comets circle the ring.
+ * Six petals = the six systems in owner order. Lit systems gild in brass;
+ * the two pending ones breathe with a quiet charging pulse while their
+ * stonework stays honest. THE CHIPS LEAD: every chip rides ahead of its
+ * petal in the rotation — the chip is the leader, the system follows —
+ * tethered by a visible rope of light with energy flowing chip → system and
+ * a glowing tow-node riding the petal's tip. The chips are also wired to
+ * each other: six light-bridges join every chip to its two neighbours in one
+ * continuous circuit, and three comets circle the ring.
  *
- * Hovering a chip lights its whole neighbourhood — its blade, its vein, its
- * proof circle, its tow-rope and tow-node, its streak, and the two bridges
- * that tie it to its neighbours — and the reading card names the two linked
- * systems. Rotation pauses while the visitor reads (hover / keyboard focus)
- * and under `prefers-reduced-motion` the window appears complete and still.
- * Chips are real links to chambers.
+ * Hovering a chip lights its whole neighbourhood — its petal, its proof
+ * circle, its tow-rope and tow-node, and the two bridges that tie it to its
+ * neighbours — and the reading card names the two linked systems. Rotation
+ * pauses while the visitor reads (hover / keyboard focus) and under
+ * `prefers-reduced-motion` the window appears complete and still. Chips are
+ * real links to chambers.
  */
 /** Chip ring radius, as a percentage of the stage edge. */
 const ORBIT_RADIUS_WIDE = 39;
@@ -130,7 +126,7 @@ export default function RoseEngine() {
             ))}
           </div>
 
-          {/* the crank-pinned motor core — construction proof + rings */}
+          {/* the counter-rotating core — construction proof + rings */}
           <div className="rose-geometry">
             <svg className="rose-svg" viewBox="0 0 600 600" aria-hidden="true">
               <defs>
@@ -138,11 +134,6 @@ export default function RoseEngine() {
                   <stop offset="0%" stopColor="rgba(255,232,180,1)" />
                   <stop offset="55%" stopColor="rgba(215,175,85,0.7)" />
                   <stop offset="100%" stopColor="rgba(170,135,70,0.3)" />
-                </radialGradient>
-                <radialGradient id="rose-gild-light" cx="50%" cy="40%" r="75%">
-                  <stop offset="0%" stopColor="rgba(226,178,74,0.95)" />
-                  <stop offset="55%" stopColor="rgba(190,145,55,0.6)" />
-                  <stop offset="100%" stopColor="rgba(154,123,61,0.25)" />
                 </radialGradient>
                 <radialGradient id="rose-stone" cx="50%" cy="50%" r="75%">
                   <stop offset="0%" stopColor="rgba(124,155,255,0.14)" />
@@ -179,24 +170,6 @@ export default function RoseEngine() {
               })}
               <circle className="rose-outer" cx={ROSE_CX} cy={ROSE_CY} r={ROSE_R * 1.06} pathLength={1} />
               <circle className="rose-outer faint" cx={ROSE_CX} cy={ROSE_CY} r={ROSE_R * 1.16} pathLength={1} />
-              {/* crank pin — the motor's timing mark, proving the core spins */}
-              {(() => {
-                const a = (-90 * mirror * Math.PI) / 180;
-                const crankX = ROSE_CX + Math.cos(a) * (ROSE_R * 1.06);
-                const crankY = ROSE_CY + Math.sin(a) * (ROSE_R * 1.06);
-                return (
-                  <>
-                    <circle
-                      className="rose-crank-halo"
-                      cx={crankX}
-                      cy={crankY}
-                      r={11}
-                      fill="url(#rose-halo-gold)"
-                    />
-                    <circle className="rose-crank" cx={crankX} cy={crankY} r={5} />
-                  </>
-                );
-              })()}
               <circle className="rose-center" cx={ROSE_CX} cy={ROSE_CY} r={30} />
             </svg>
           </div>
@@ -222,51 +195,20 @@ export default function RoseEngine() {
           <span className="rose-halo one" aria-hidden="true" />
           <span className="rose-halo two" aria-hidden="true" />
 
-          {/* the fan — every chip towing its blade on a rope of light */}
+          {/* the wheel — every chip leading its petal on a rope of light */}
           <div className="rose-orbit">
             <svg className="rose-threads" viewBox="0 0 600 600" aria-hidden="true">
-              {/* blade auras — soft static halo on lit blades only */}
-              {bodies.map((body, i) =>
-                body.lit ? (
-                  <path
-                    key={`u-${body.system.id}`}
-                    className="rose-petal-aura"
-                    d={petalLeafPath(i, mirror)}
-                    pathLength={1}
-                    style={{ animationDelay: `${2.1 + i * 0.22}s` }}
-                  />
-                ) : null,
-              )}
-              {/* blades — the towed systems, trailing their chips */}
+              {/* petals — the systems, trailing their chips */}
               {bodies.map((body, i) => (
                 <path
                   key={`p-${body.system.id}`}
                   className={`rose-petal${focusId === body.system.id ? " is-active" : ""}`}
                   data-documented={body.documented}
                   data-lit={body.lit}
-                  d={petalLeafPath(i, mirror)}
+                  d={petalPath(petalCenterDeg(i, mirror), mirror)}
                   pathLength={1}
                   style={{ animationDelay: `${2.1 + i * 0.22}s, 3.8s` }}
                   fill={body.lit ? "url(#rose-gild)" : "url(#rose-stone)"}
-                />
-              ))}
-              {/* veins — the blade centre-lines */}
-              {bodies.map((body, i) => (
-                <path
-                  key={`v-${body.system.id}`}
-                  className="rose-vein"
-                  data-lit={body.lit}
-                  d={petalVeinPath(i, mirror)}
-                  style={{ animationDelay: `${2.6 + i * 0.22}s` }}
-                />
-              ))}
-              {/* motion streaks — tapering wakes dragging behind the chips */}
-              {bodies.map((body, i) => (
-                <path
-                  key={`k-${body.system.id}`}
-                  className={`rose-streak${focusId === body.system.id ? " is-active" : ""}`}
-                  d={streakPath(i, mirror, orbitUnits)}
-                  style={{ animationDelay: `${3.6 + i * 0.06}s` }}
                 />
               ))}
               {/* tow-rope auras — soft static light under each rope */}
@@ -283,7 +225,7 @@ export default function RoseEngine() {
                   />
                 );
               })}
-              {/* tow-ropes — chip to blade tip, energy flowing with the pull */}
+              {/* tow-ropes — chip to petal tip, energy flowing with the pull */}
               {bodies.map((body, i) => {
                 const ends = towEndpoints(i, mirror, orbitUnits);
                 return (
@@ -311,7 +253,7 @@ export default function RoseEngine() {
                   />
                 );
               })}
-              {/* tow-nodes — glowing orbs riding the blade tips */}
+              {/* tow-nodes — glowing orbs riding the petal tips */}
               {bodies.map((body, i) => {
                 const tip = petalTip(i, mirror);
                 const active = focusId === body.system.id;
@@ -356,11 +298,7 @@ export default function RoseEngine() {
                   data-system={body.system.id}
                   data-documented={body.documented}
                   data-lit={body.lit}
-                  style={{
-                    left: `${x}%`,
-                    top: `${y}%`,
-                    animationDelay: `0s, ${i * 0.6}s, ${2.8 + i * 0.12}s, 3.8s`,
-                  }}
+                  style={{ left: `${x}%`, top: `${y}%` }}
                   onFocus={() => setFocusId(body.system.id)}
                   onBlur={() => setFocusId(null)}
                   onMouseEnter={() => setFocusId(body.system.id)}

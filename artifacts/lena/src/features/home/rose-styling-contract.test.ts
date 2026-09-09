@@ -18,8 +18,6 @@ describe("rose styling contract (data-lit wiring)", () => {
       '.rose-petal[data-lit="false"]',
       '.rose-chip[data-lit="true"]',
       '.rose-chip[data-lit="false"]',
-      '.rose-vein[data-lit="true"]',
-      '.rose-vein[data-lit="false"]',
       '.rose-tow-node[data-lit="true"]',
       '.light .rose-petal[data-lit="true"]',
       '.light .rose-petal[data-lit="false"]',
@@ -34,19 +32,8 @@ describe("rose styling contract (data-lit wiring)", () => {
     expect(css).not.toContain("data-documented");
   });
 
-  it("pins the motor crank mark", () => {
-    expect(css).toContain(".rose-crank");
-    expect(css).toContain(".rose-crank-halo");
-  });
-
-  it("defines the charging and glow animations the states invoke", () => {
-    for (const name of [
-      "@keyframes rose-charge",
-      "@keyframes rose-chip-charge",
-      "@keyframes rose-chip-charge-light",
-      "@keyframes rose-chip-glow",
-      "@keyframes rose-key-pulse",
-    ]) {
+  it("defines the charge animations the pending states invoke", () => {
+    for (const name of ["@keyframes rose-charge", "@keyframes rose-key-pulse"]) {
       expect(css, `missing ${name}`).toContain(name);
     }
   });
