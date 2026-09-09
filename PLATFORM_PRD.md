@@ -33,6 +33,7 @@ marked explicitly rather than assumed.*
 | 2026-09-09 | PROD-R1 / EVID-R1 (P0) evidence capture (LENA Dress, Terranex, Hospitality, Kayyal) | **BLOCKED — founder access required.** No fabrication. Capture tooling guidance committed so founder sessions are turnkey. |
 | 2026-09-09 | FR-4 "Five application case studies" staleness | **DONE** — corrected to the canonical six public systems with hospitality permission caveat (this PRD commit). |
 | 2026-09-09 | WCAG AA (P2 / B-11) | **DONE (automated layer)** — axe-core WCAG 2.x A/AA suite in the guardian smoke project (PR #78 → `0835808`; CI run `34300315321`): 16 route/locale/theme combos, zero violations of any impact after ledger contrast fixes (`--led-brass-dim` dark 4.12→4.96:1, light 2.58→4.99:1; light CTA bg 3.67→5.38:1). No visual baseline change needed. Assistive-technology (screen-reader) pass remains human-side. |
+| 2026-09-09 | HOME-R3 / §17 old-register visual surfaces (P2) | **DONE** — House Ledger register applied to every remaining public surface (PR #79 → `0a71eea`; final CI run `34302369502` green): tokens rewritten to the ledger palette both themes (`--lena-gradient-*` deleted, referenced nowhere); page/glass/primary/secondary flat ledger paper/brass; ambient orb/smoke/grid animation system retired (`ambient.css` = `display:none` guard; component stays mounted); orb/glow nodes removed from SystemGrid, Services, RelatedServices, ProjectVisual, CmsProjectDetails — grep clean across `src/**/*.tsx`. Axe regression fixes during the pass (no disable rules, contrast-only): footer channel `<small>` opacity `.65` removed, `.lena-memory-reset` dimming removed (dark `.62` / light alpha → full-strength muted), light accent small-text `#a37924` → `#845f13` (4.9–5.5:1 on paper), `.lena-front-num` opacity `.75` removed (light 3.43:1 → full-strength). Guardian suite 72/72 at PR head; `home-desktop-dark` baseline regenerated from CI Chromium actuals (run `34302010568`, artifact `10085325719`). Supersedes the HOME-R3 premature row above. |
 | — | C1 second admin, C3 CI `workflows` permission, C4 AI translation, A5/B1–B4 content, F1 | **OWNER-GATED** — answered only by the founder; rows stand in `OPEN_DECISIONS.md`. |
 
 ---
@@ -184,8 +185,9 @@ images and confirms no voids/clipping/missing content before accepting. Recent r
 ## 17. Cleanup Requirements
 
 - `ConstellationGraph` / `verify-constellation-graph.mjs` — **RESOLVED active** (WORLD-R1).
-- Cosmic CSS audit — `.lena-card-glow`, `.lena-visual-orb`, `.lena-glass` etc. still live on Services/projects/
-  SystemGrid surfaces; removal premature (HOME-R3) — revisit in the visual-register tranche.
+- Cosmic CSS audit — **RESOLVED (PR #79)** — `.lena-card-glow`, `.lena-visual-orb` rules and nodes, the ambient
+  orb/smoke/grid animation system, and the gradient/glass tokens are gone from all public surfaces; register
+  tranche shipped 2026-09-09.
 - No other dead code surfaced; sweep out of scope until the register tranche.
 
 ## 18. Remaining Work Inventory (as of 2026-09-09)
@@ -195,7 +197,7 @@ images and confirms no voids/clipping/missing content before accepting. Recent r
 | Evidence capture: LENA Dress, Hospitality, Terranex, Kayyal | **P0 — founder-access-blocked** |
 | `materials` visibility decision (F1) | **P1 — owner** |
 | Second admin identity (C1), CI `workflows` permission (C3), AI translation approval (C4), B4 permission, A5 answers | **owner-gated** |
-| Remaining old-register visual surfaces (Services/projects/SystemGrid glow) | **P2 candidate visual tranche** |
+| Remaining old-register visual surfaces (Services/projects/SystemGrid glow) | **COMPLETE (#79)** |
 | Full WCAG AA — assistive-technology pass | **P2 — AT pass remains owner/human-side**; automated layer DONE |
 | Hero visual/copy reconciliation (HOME-R1) | **COMPLETE (#74)** |
 | Direction doc parity (WORLD-R2) | **COMPLETE (#75)** |
@@ -211,16 +213,15 @@ images and confirms no voids/clipping/missing content before accepting. Recent r
 Active continuously, without per-task approval stops (founder directive 2026-09-09):
 1. Evidence capture sessions for the four undocumented products — **when the founder grants access**, starting
    with whichever is soonest; tranche = one product's evidence + any baseline updates, nothing else bundled.
-2. Everything engineering-side that remains sequenceable: the automated accessibility layer (§14), then the
-   remaining old-register visual surfaces (§17) as a dedicated tranche, then re-verify the full checklist.
+2. Everything engineering-side that remains sequenceable: automated accessibility layer (§14) — **DONE (#78)**;
+   old-register visual surfaces (§17) — **DONE (#79)**; remaining: re-verify the full checklist as items resolve.
 3. Keep §0 and §24 of this document current as each item resolves.
 
-## 20. Next Tranche (as of 2026-09-09)
+## 20. Next Tranche (as of 2026-09-09, superseded 2026-09-09)
 
-**"Automated accessibility layer."** Add an axe-based programmatic WCAG 2.2 audit to the Playwright guardian
-(CI Chromium), scanning the key public surfaces (Home AR/EN, World, Chamber, Services, Contact) for critical/
-serious violations, then fix what it finds and keep the suite green as a standing guard. After it lands: the
-visual-register tranche (§17), then founder evidence sessions as access arrives.
+**"Automated accessibility layer"** — **DONE (PR #78).** **"Visual-register completion"** (§17) — **DONE (PR #79).**
+Open sequence now: founder evidence sessions for the four undocumented products as access arrives; WCAG
+assistive-technology (screen-reader) pass (owner/human-side); then final full-checklist re-verification.
 
 ## 21. Later / Deferred Work
 
@@ -247,11 +248,11 @@ to MALEK's standard; and the accessibility layer guards the WCAG working bar.
 - [x] `PRODUCT_DEFINITION.md` / `OPEN_DECISIONS.md` staleness corrected — PR #75 (2026-09-09)
 - [x] All Chambers audited to MALEK's standard — PR #77 (2026-09-09); record in `docs/CHAMBER_AUDIT_2026-09-09.md`
 - [x] `ConstellationGraph` status resolved (active) — recorded 2026-09-09
-- [x] All guardian/verify contracts green on `main` — verified at `de962ab`
+- [x] All guardian/verify contracts green on `main` — re-verified at `0a71eea` (PR #79, run `34302369502`)
 - [ ] 6/6 public systems have real evidence registered — **BLOCKED: founder access** (2/6 today)
 - [ ] `materials` has an explicit, documented visibility decision — **F1 open, owner**
 - [x] Automated WCAG 2.2 audit layer green in CI — PR #78 (2026-09-09), run `34300315321`; zero violations across the audited matrix
-- [ ] Remaining old-register visual surfaces moved to the ledger register — **candidate tranche**
+- [x] Remaining old-register visual surfaces moved to the ledger register — PR #79 (2026-09-09), run `34302369502`; `home-desktop-dark` regenerated from CI actuals (run `34302010568`, artifact `10085325719`)
 - [ ] Assistive-technology (screen reader) pass — **owner/human-side, AT required**
 
 ---
@@ -259,11 +260,12 @@ to MALEK's standard; and the accessibility layer guards the WCAG working bar.
 ## AUTHORITATIVE STATUS (updated 2026-09-09)
 
 - **Working document:** this file — `PLATFORM_PRD.md` (root), maintained live per §0.
-- **Current main commit:** `de962ab` (PR #77 merged; #74, #75, #76 earlier today).
-- **Milestone:** House Ledger applied World/Chamber + Home copy + Home frontage hero; Chamber audit done;
-  remediation Part B done; automated a11y layer underway.
-- **Remaining REQUIRED work:** P0 evidence capture ×4 (founder-access-blocked); automated a11y suite +
-  fixes; then the register-completion visual tranche.
+- **Current main commit:** `0a71eea` (PR #79 merged; #74–#78 earlier today).
+- **Milestone:** House Ledger register applied end-to-end — World/Chamber, Home copy + frontage hero, and every
+  remaining old-register public surface; Chamber audit done; remediation Part B done; automated a11y layer
+  done; visual-register completion done.
+- **Remaining REQUIRED work:** P0 evidence capture ×4 (founder-access-blocked); WCAG assistive-technology
+  pass (owner/human-side); final full-checklist re-verification.
 - **Open owner items:** F1 `materials`; C1/C3/C4; B4 permission; A5 answers; evidence access sessions.
 - **Definition of done:** §23 — tracked live in §24.
 

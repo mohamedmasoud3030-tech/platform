@@ -86,6 +86,10 @@ how mistakes are corrected, in under 80 words.
 ### R8. Accessibility verification — **PARTIAL 2026-09-09**
 Automated layer DONE: an axe-core WCAG 2.x A/AA suite runs in the guardian on every push (16
 route/locale/theme combos; zero violations after AA contrast fixes on the ledger surfaces — PR #78).
+Register completion (PR #79, run `34302369502`) kept the automated matrix green: axe surfaced four
+opacity/alpha dimming spots on the old-register surfaces (footer `<small>`, `.lena-memory-reset`,
+`.lena-front-num`) and a pale light-theme brass — all fixed at the token level, no contrast disable rules;
+guardian suite 72/72 at PR head.
 Screen-reader (assistive-technology) verification remains open — no AT available in any environment
 (OPEN_DECISIONS B-11).
 **Acceptance criteria:** every interactive element reachable and announced (open — AT pass); contrast
