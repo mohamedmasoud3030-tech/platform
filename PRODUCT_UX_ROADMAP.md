@@ -84,8 +84,9 @@ how mistakes are corrected, in under 80 words.
 ## Later — real but not urgent
 
 ### R8. Accessibility verification — **PARTIAL 2026-09-09**
-Automated layer DONE: an axe-core WCAG 2.x A/AA suite runs in the guardian on every push (16
-route/locale/theme combos; zero violations after AA contrast fixes on the ledger surfaces — PR #78).
+Automated layer DONE: an axe-core WCAG 2.x A/AA suite runs in the guardian on every push (now 25
+route/locale/theme combos — every public chamber in both locales after PRs #83/#84; zero violations
+after AA contrast fixes on the ledger surfaces — PR #78 onward).
 Register completion (PR #79, run `34302369502`) kept the automated matrix green: axe surfaced four
 opacity/alpha dimming spots on the old-register surfaces (footer `<small>`, `.lena-memory-reset`,
 `.lena-front-num`) and a pale light-theme brass — all fixed at the token level, no contrast disable rules;
@@ -93,7 +94,9 @@ guardian suite 72/72 at PR head. Ledger remnant sweep (PR #80, main run `3430848
 flattened the remaining cosmos accents on ledger surfaces (CTA, nav-active, icon/chip tints, form
 fields, statuses, footer, mobile-menu blur) while keeping the axe matrix clean; intentionally-scoped
 non-ledger surfaces (studio/project concept art, World visualization, assistant widget, admin
-console, WhatsApp brand FAB) are recorded in `PLATFORM_PRD.md` §17.
+console, WhatsApp brand FAB) are recorded in `PLATFORM_PRD.md` §17. Guardian chamber guard extended to
+all six public chambers (`#83`) and to both locales/RTL (`#84`); smoke suite grew 45 → 63 while staying
+green, static integrity PASSED.
 Screen-reader (assistive-technology) verification remains open — no AT available in any environment
 (OPEN_DECISIONS B-11).
 **Acceptance criteria:** every interactive element reachable and announced (open — AT pass); contrast
