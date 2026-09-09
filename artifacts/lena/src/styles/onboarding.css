@@ -231,7 +231,7 @@
 .audit-list li.is-flagged { border-color: rgba(220,38,38,.45); background: rgba(220,38,38,.05); }
 .audit-line { display: flex; flex-wrap: wrap; align-items: center; gap: 9px; font-size: 13px; }
 .audit-line code { color: var(--platform-text-muted, #8a97b4); font-size: 12px; }
-.audit-outcome { border-radius: 99px; background: rgba(91,124,255,.14); padding: 2px 9px; font-size: 11px; font-weight: 700; }
+.audit-outcome { border-radius: 99px; background: var(--lena-line); padding: 2px 9px; font-size: 11px; font-weight: 700; }
 .audit-line time { margin-inline-start: auto; color: var(--platform-text-muted, #8a97b4); font-size: 12px; }
 .audit-reason { margin-top: 6px; font-size: 12px; }
 
@@ -246,7 +246,7 @@
 
 /* Founder card: works with a photograph, with a monogram, or with a broken image. */
 .lena-founder { display: grid; grid-template-columns: 220px 1fr; align-items: center; gap: 26px; padding: 26px; }
-.lena-founder-portrait { position: relative; display: grid; width: 220px; height: 220px; place-items: center; overflow: hidden; border: 1px solid var(--lena-line-strong); border-radius: 50%; background: linear-gradient(145deg, rgba(97,130,255,.22), rgba(160,86,255,.12)); }
+.lena-founder-portrait { position: relative; display: grid; width: 220px; height: 220px; place-items: center; overflow: hidden; border: 1px solid var(--lena-line-strong); border-radius: 50%; background: var(--lena-card-strong); }
 .lena-founder-portrait img { width: 100%; height: 100%; object-fit: cover; }
 .lena-founder-monogram { color: var(--lena-accent); font-size: 54px; font-weight: 800; letter-spacing: .08em; }
 .lena-founder-body h2 { margin: 10px 0 0; font-size: clamp(1.5rem, 3vw, 2.1rem); line-height: 1.3; letter-spacing: -.03em; }
