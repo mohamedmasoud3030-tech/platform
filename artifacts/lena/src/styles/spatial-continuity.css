@@ -55,7 +55,7 @@
   color: var(--lena-muted);
   font-size: 10.5px;
   font-weight: 700;
-  opacity: .62;
+  opacity: 1; /* AA: muted at full strength (was .62 = 4.0:1) */
   transition: opacity var(--lena-motion-fast) ease,
     color var(--lena-motion-fast) ease;
 }

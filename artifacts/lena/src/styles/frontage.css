@@ -132,7 +132,7 @@
   font-size: 7px;
   font-weight: 800;
   letter-spacing: 0.08em;
-  opacity: 0.75;
+  /* opacity removed 2026-09-09: full-strength muted is required for AA at 7px */
 }
 
 .lena-frontage-frieze {

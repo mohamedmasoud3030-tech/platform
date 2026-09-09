@@ -40,7 +40,6 @@ export default function SystemGrid({
           key={system.id}
           data-system={system.id}
         >
-          <i className="lena-card-glow" />
           <div className="lena-card-top">
             <small>{String(index + 1).padStart(2, "0")}</small>
             <SystemLogo systemId={system.id} size={32} />

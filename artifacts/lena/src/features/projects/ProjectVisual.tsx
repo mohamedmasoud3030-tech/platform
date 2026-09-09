@@ -7,6 +7,6 @@ export default function ProjectVisual({ project, asset, dense = false }: { proje
     <div className="lena-visual-window"><i /><i /><i /><b /><b /><b /></div>
     <div className="lena-visual-stack"><span /><span /><span /></div>
     <div className="lena-visual-nodes"><i /><i /><i /><i /></div>
-    <div className="lena-visual-orb" />
+    
   </div>;
 }

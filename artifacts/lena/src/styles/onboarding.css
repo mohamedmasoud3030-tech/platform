@@ -265,7 +265,7 @@
 .lena-contact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 13px; margin-top: 20px; }
 .lena-contact-card .lena-primary { margin-top: auto; }
 .lena-contact-card .lena-secondary { margin-top: 8px; }
-.lena-footer-links a small { margin-inline-start: 6px; opacity: .65; font-size: 11px; }
+.lena-footer-links a small { margin-inline-start: 6px; font-size: 11px; } /* opacity removed 2026-09-09: AA (4.5:1) requires full strength muted */
 
 /* Provenance: what a portfolio item actually is, stated without a click. */
 .lena-provenance {
