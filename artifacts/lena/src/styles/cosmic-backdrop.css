@@ -143,6 +143,28 @@
   backdrop-filter: blur(10px);
 }
 
+.lena-public:has(> .cosmic) .night-card {
+  background: rgba(16, 19, 29, 0.45);
+  -webkit-backdrop-filter: blur(10px) saturate(1.15);
+  backdrop-filter: blur(10px) saturate(1.15);
+}
+
+.lena-public:has(> .cosmic) .lena-continue {
+  background: rgba(16, 19, 29, 0.5);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+
+/* Chips turn sheer (no blur: they ride the wheel, and frosted motion is
+   expensive) — starlight breathes through while the pills keep leading. */
+.lena-public:has(> .cosmic) .rose-chip[data-lit="true"] {
+  background: rgba(24, 18, 6, 0.7);
+}
+
+.lena-public:has(> .cosmic) .rose-chip[data-lit="false"] {
+  background: rgba(10, 15, 32, 0.7);
+}
+
 /* --- light theme: starlight that reads on warm ground --------------------- */
 
 .light .cosmic-nebula.a {
@@ -194,6 +216,26 @@
   background: rgba(253, 248, 235, 0.4);
   -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
+}
+
+.light .lena-public:has(> .cosmic) .night-card {
+  background: rgba(253, 248, 235, 0.5);
+  -webkit-backdrop-filter: blur(10px) saturate(1.1);
+  backdrop-filter: blur(10px) saturate(1.1);
+}
+
+.light .lena-public:has(> .cosmic) .lena-continue {
+  background: rgba(253, 248, 235, 0.55);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+
+.light .lena-public:has(> .cosmic) .rose-chip[data-lit="true"] {
+  background: rgba(255, 250, 235, 0.72);
+}
+
+.light .lena-public:has(> .cosmic) .rose-chip[data-lit="false"] {
+  background: rgba(240, 244, 255, 0.72);
 }
 
 /* --- reduced motion: a complete, still sky -------------------------------- */
