@@ -178,6 +178,16 @@ export default function RoseEngine() {
                   <stop offset="0%" stopColor="rgba(124,155,255,0.1)" />
                   <stop offset="100%" stopColor="rgba(124,155,255,0.02)" />
                 </radialGradient>
+                <radialGradient id="rose-halo-gold">
+                  <stop offset="0%" stopColor="rgba(232,200,118,0.55)" />
+                  <stop offset="55%" stopColor="rgba(232,200,118,0.22)" />
+                  <stop offset="100%" stopColor="rgba(232,200,118,0)" />
+                </radialGradient>
+                <radialGradient id="rose-halo-slate">
+                  <stop offset="0%" stopColor="rgba(143,163,217,0.5)" />
+                  <stop offset="55%" stopColor="rgba(143,163,217,0.2)" />
+                  <stop offset="100%" stopColor="rgba(143,163,217,0)" />
+                </radialGradient>
               </defs>
               {/* construction circles — the mason's proof, scribed in sequence */}
               {bodies.map((body, i) => {
@@ -254,6 +264,20 @@ export default function RoseEngine() {
                     y1={CY + Math.sin(a) * (orbitUnits - 8)}
                     x2={tip.x}
                     y2={tip.y}
+                  />
+                );
+              })}
+              {/* tow-node halos — static gradient glow, zero per-frame cost */}
+              {bodies.map((body, i) => {
+                const tip = tipAt(petalCenter(i));
+                return (
+                  <circle
+                    key={`h-${body.system.id}`}
+                    className="rose-tow-halo"
+                    cx={tip.x}
+                    cy={tip.y}
+                    r={13}
+                    fill={body.lit ? "url(#rose-halo-gold)" : "url(#rose-halo-slate)"}
                   />
                 );
               })}

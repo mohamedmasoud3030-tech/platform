@@ -154,8 +154,7 @@
 }
 
 .rose-petal[data-documented="true"] {
-  stroke: rgba(226, 196, 120, 0.85);
-  filter: drop-shadow(0 0 6px rgba(200, 160, 78, 0.35));
+  stroke: rgba(240, 214, 140, 0.95);
   animation: rose-petal-in 1s ease-out forwards, rose-gild-shimmer 5s ease-in-out infinite;
 }
 
@@ -309,16 +308,14 @@
 }
 
 .rose-tow.is-active {
-  stroke: rgba(255, 226, 166, 0.95);
-  stroke-width: 1.75;
+  stroke: #ffe9bb;
+  stroke-width: 2;
   stroke-dasharray: none;
-  filter: drop-shadow(0 0 4px rgba(255, 226, 166, 0.7));
 }
 
 /* Tow-nodes — glowing orbs riding the petal tips. */
 .rose-tow-node {
   fill: #8fa3d9;
-  filter: drop-shadow(0 0 4px rgba(143, 163, 217, 0.8));
   opacity: 0;
   animation: rose-thread-in 0.8s ease-out 3.4s forwards, rose-tow-pulse 2.4s ease-in-out 4.2s infinite;
   transition: fill 0.3s ease;
@@ -326,17 +323,25 @@
 
 .rose-tow-node[data-lit="true"] {
   fill: #e8c876;
-  filter: drop-shadow(0 0 6px rgba(232, 200, 118, 0.9));
 }
 
 .rose-tow-node.is-active {
   fill: #fff3d6;
-  filter: drop-shadow(0 0 9px rgba(255, 226, 166, 1));
+  stroke: #ffe2a6;
+  stroke-width: 1.5;
 }
 
 @keyframes rose-tow-pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.72; }
+}
+
+/* Static halo discs behind the tow-nodes: radial-gradient glow with zero
+   per-frame cost (no filters anywhere in the rotating SVG layers). */
+.rose-tow-halo {
+  opacity: 0;
+  animation: rose-thread-in 0.8s ease-out 3.4s forwards;
+  pointer-events: none;
 }
 
 .rose-rope-body {
@@ -358,11 +363,10 @@
 
 .rose-rope-flow {
   fill: none;
-  stroke: #e8c876;
-  stroke-width: 2.5;
+  stroke: #f0d48a;
+  stroke-width: 3;
   stroke-linecap: round;
   stroke-dasharray: 2 26;
-  filter: drop-shadow(0 0 4px rgba(232, 200, 118, 0.8));
   opacity: 0;
   animation: rose-thread-in 0.8s ease-out 3s forwards, rose-rope-flow 2.6s linear infinite;
 }
@@ -375,19 +379,17 @@
 /* Light-bridges: each arc plugs one chip into its two neighbours. */
 .rose-bridge {
   fill: none;
-  stroke: rgba(232, 200, 118, 0.4);
+  stroke: rgba(232, 200, 118, 0.55);
   stroke-width: 2;
   stroke-linecap: round;
-  filter: drop-shadow(0 0 3px rgba(232, 200, 118, 0.5));
   opacity: 0;
   animation: rose-thread-in 0.8s ease-out forwards;
   transition: stroke 0.3s ease;
 }
 
 .rose-bridge.is-active {
-  stroke: #ffe2a6;
-  stroke-width: 2.5;
-  filter: drop-shadow(0 0 6px rgba(255, 226, 166, 0.9));
+  stroke: #ffedb8;
+  stroke-width: 3;
 }
 
 .rose-chip {
@@ -638,7 +640,6 @@
 
 .light .rose-tow-node {
   fill: #5a6fa8;
-  filter: drop-shadow(0 0 4px rgba(90, 111, 168, 0.8));
 }
 
 .light .rose-tow-node[data-lit="true"] {
@@ -654,8 +655,7 @@
 }
 
 .light .rose-bridge {
-  stroke: rgba(154, 123, 61, 0.55);
-  filter: drop-shadow(0 0 3px rgba(200, 160, 78, 0.5));
+  stroke: rgba(154, 123, 61, 0.65);
 }
 
 .light .rose-bridge.is-active {
@@ -718,6 +718,7 @@
   .rose-star,
   .rose-tow,
   .rose-tow-node,
+  .rose-tow-halo,
   .rose-bridge,
   .rose-rope-body,
   .rose-rope-echo {
@@ -734,6 +735,7 @@
 
   .rose-tow,
   .rose-tow-node,
+  .rose-tow-halo,
   .rose-bridge,
   .rose-rope-body,
   .rose-rope-echo,
