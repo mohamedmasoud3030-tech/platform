@@ -53,7 +53,7 @@ export default defineConfig({
   projects: [
     {
       name: "smoke",
-      testMatch: /(route-smoke|sacred-core|spatial-journey|a11y|console-network)\.spec\.ts/,
+      testMatch: /(b10-operator|route-smoke|sacred-core|spatial-journey|a11y|console-network)\.spec\.ts/,
       use: { viewport: { width: 1280, height: 800 } },
     },
     {
