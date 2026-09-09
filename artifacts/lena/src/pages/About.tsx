@@ -4,7 +4,7 @@ import LenaCta from "@/components/LenaCta";
 import ProcessSection from "@/features/home/ProcessSection";
 import PublicShell from "@/layouts/PublicShell";
 import SeoHead from "@/components/SeoHead";
-import SkyMap from "@/components/SkyMap";
+import Loom from "@/components/Loom";
 import { pageSeo } from "@/content/seo";
 import { useSiteCopy } from "@/hooks/useSiteCopy";
 import { usePreferences } from "@/providers/preferences";
@@ -36,8 +36,8 @@ export default function About() {
         </div>
       </section>
 
-      {/* Documentation sky — under the founder's intro */}
-      <SkyMap />
+      {/* Documentation loom — under the founder's intro */}
+      <Loom />
 
       {/* Approach */}
       <section className="lena-section">
