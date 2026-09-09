@@ -257,8 +257,8 @@ export default function WorldSystem() {
                 <small>{isArabic ? "اتصال المنتج" : "PRODUCT CONNECTION"}</small>
                 <p>
                   {isArabic
-                    ? "يفتح MALEK الفعلي في جلسة مستقلة. المصادقة تبقى لدى MALEK، ولا تشارك LENA أي بيانات تشغيلية أو بيانات عملاء."
-                    : "The real MALEK product opens in its own session. Authentication stays with MALEK; LENA shares no operational or customer data."}
+                    ? `يفتح ${system.name[locale]} الفعلي في جلسة مستقلة. المصادقة تبقى لدى ${system.name[locale]}، ولا تشارك LENA أي بيانات تشغيلية أو بيانات عملاء.`
+                    : `The real ${system.name[locale]} product opens in its own session. Authentication stays with ${system.name[locale]}; LENA shares no operational or customer data.`}
                 </p>
                 <span>
                   {isArabic
