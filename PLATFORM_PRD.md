@@ -39,6 +39,7 @@ marked explicitly rather than assumed.*
 | 2026-09-09 | Batch execution log (#81–#85) | **DONE** — merged: #81 `1288f23`, #82 `f4640f1`, #83 `ae9645a`, #84 `9c5e8ec`, #85 `6a67f78`; main validate runs `34309826466` + `34310112023` green. Full stack at head: typecheck OK, units 286+23, verify-all 328 assertions 0 failing (1 env skip: admin authorization needs live API), guardian static PASSED, smoke 63/63, guardian-browser (incl. visual) green on each PR. |
 | 2026-09-09 | Guardian chamber coverage (P2) | **DONE** — PR #83 → `ae9645a` and PR #84 → `9c5e8ec`: every public chamber (property, wellness, rental, investment, hospitality, recycling) is now in `routes.config.json` and the axe matrix in **both locales** (25 combos); wellness AR audited — no translation gap. Smoke suite 45 → 63, static integrity PASSED. |
 | 2026-09-09 | HOME-R3 / §17 old-register visual surfaces (P2) | **DONE** — House Ledger register applied to every remaining public surface (PR #79 → `0a71eea`; final CI run `34302369502` green): tokens rewritten to the ledger palette both themes (`--lena-gradient-*` deleted, referenced nowhere); page/glass/primary/secondary flat ledger paper/brass; ambient orb/smoke/grid animation system retired (`ambient.css` = `display:none` guard; component stays mounted); orb/glow nodes removed from SystemGrid, Services, RelatedServices, ProjectVisual, CmsProjectDetails — grep clean across `src/**/*.tsx`. Axe regression fixes during the pass (no disable rules, contrast-only): footer channel `<small>` opacity `.65` removed, `.lena-memory-reset` dimming removed (dark `.62` / light alpha → full-strength muted), light accent small-text `#a37924` → `#845f13` (4.9–5.5:1 on paper), `.lena-front-num` opacity `.75` removed (light 3.43:1 → full-strength). Guardian suite 72/72 at PR head; `home-desktop-dark` baseline regenerated from CI Chromium actuals (run `34302010568`, artifact `10085325719`). Supersedes the HOME-R3 premature row above. |
+| 2026-09-09 | V-R1 follow-up (audit ground truth @ d93660d) | **DONE** — PR #87 → `64e75bc` (main validate run `34311694330` green, incl. guardian-browser visual in CI Chromium — no baseline change): the last cosmos fills on public ledger surfaces neutralized in `onboarding.css` (`.lena-form-context`, `.lena-form-draft`, `.lena-help-search input` navy field → register ink/paper form family incl. `.light`, `.lena-support-reference`, `.lena-provenance`, `.lena-provenance-banner`, `.lena-stage-trial` → transparent/neutral, borders carry the chips; consumers Help/Contact/ErrorBoundary/ProjectCard/ProjectDetails) and the duplicate `responsive.css` `max-width:720px` blocks consolidated into one cascade-identical block (provably-dead `backdrop-filter` kills — none remains in any stylesheet — and base-rule bg re-asserts dropped; live rules preserved: mobile-menu solid fill, mobile art-float stop, `prefers-reduced-motion` untouched). Every audit-listed public.css item (CTA/nav/service-icon/tags/form/logo/footer) was verified already-flat from #80. **Selector-level scoped-surface register now recorded in §17.** Gate: typecheck OK; lena 286 + api 23 units OK; build OK; verify-all 24 suites/328 assertions 0 failing (1 env skip: admin authorization); guardian static PASSED; local smoke/axe 90 passed (8 visual diffs are the known local-env deviation — CI Chromium authoritative per §16). |
 | — | Owner-needed now: C1 (second admin identity value), B4 (written permission to name the hospitality client), F1 (`materials` visibility decision) | **OWNER-REQUIRED** — rows stand in `OPEN_DECISIONS.md`. A5 was answered 2026-08-20 (property + hospitality in real use) with a 2026-09-09 code-truth supersession note (canonical stage stays evidence-driven: hospitality `trial` until real evidence registers). B1 evidence capture ×4 is founder-dependent. C2 answered (defer), C3 answered (defer — reopening is the owner's call), C4 answered (no). |
 
 ---
@@ -194,9 +195,18 @@ images and confirms no voids/clipping/missing content before accepting. Recent r
   orb/smoke/grid system and the gradient/glass tokens are gone (#79); remaining cosmos accents on ledger
   surfaces (CTA gradient, nav-active/mobile-link blue, icon/chip blue tints, cosmos-tinted form fields,
   cold footer/logo shadows, light-theme status contrast, responsive.css cosmos fragments) flattened or
-  tokenized (#80). **Intentionally-scoped non-ledger surfaces (kept and recorded):** studio/project concept
-  presentation art (`ProjectVisual`, case pages, `art-float`), World graph/atlas/command visualization,
-  LENA Assistant widget, admin console, WhatsApp brand FAB.
+  tokenized (#80). **Intentionally-scoped non-ledger surfaces (kept and recorded, with code truth as of `64e75bc`):**
+  studio/project concept presentation art — `ProjectVisual`/`CmsProjectDetails`/`ProjectCard`/`ProjectGallery`/
+  `ProjectDetails`, case pages, `.lena-project-visual` + `.lena-visual-window`/`.lena-visual-stack`/
+  `.lena-visual-nodes` + case variants (`.visual-brand`/`.visual-campaign`/`.visual-dashboard`) and
+  `@keyframes lena-art-float` (live markup in `features/projects/*`, `pages/ProjectDetails.tsx`); World
+  graph/atlas/command visualization identity incl. `.lena-roots-chip` and per-scope `--dna-accent` tokens
+  in `ledger.css`; LENA Assistant widget identity (`assistant.css`); admin console platform styling
+  (`.dashboard-support-*`, `.inquiry-ops-*`, `.audit-*`, `--platform-accent #5b7cff` fallback); WhatsApp
+  brand FAB. These are the ONLY remaining blue/blue-family fills in the stylesheets.
+- Follow-up completion (**PR #87**): `public.css`/`onboarding.css` ledger chrome is fully flat at `64e75bc`
+  (last neutralization: public onboarding/help/provenance/stage fills); `responsive.css` has a single
+  `max-width:720px` block; no `.lena-orb`/`.lena-smoke`/ambient/backdrop-filter rules exist anywhere.
 - No other dead code surfaced; sweep out of scope until the register tranche.
 
 ## 18. Remaining Work Inventory (as of 2026-09-09)
@@ -265,6 +275,7 @@ to MALEK's standard; and the accessibility layer guards the WCAG working bar.
 - [x] Automated WCAG 2.2 audit layer green in CI — PR #78 (2026-09-09), run `34300315321`; zero violations across the audited matrix
 - [x] Remaining old-register visual surfaces moved to the ledger register — PR #79 (2026-09-09), run `34302369502`; `home-desktop-dark` regenerated from CI actuals (run `34302010568`, artifact `10085325719`)
 - [x] Ledger remnant sweep — remaining cosmos accents on ledger surfaces flattened; scoped non-ledger surfaces recorded — PR #80 (2026-09-09), run `34308483403`
+- [x] Ledger remnant sweep follow-up — last public fills neutralized (`onboarding.css` help/form/provenance/stage chips), duplicate `≤720px` responsive block consolidated, selector-level §17 register recorded — PR #87 (2026-09-09), run `34311694330`
 - [ ] Assistive-technology (screen reader) pass — **owner/human-side, AT required**
 
 ---
@@ -272,9 +283,10 @@ to MALEK's standard; and the accessibility layer guards the WCAG working bar.
 ## AUTHORITATIVE STATUS (updated 2026-09-09)
 
 - **Working document:** this file — `PLATFORM_PRD.md` (root), maintained live per §0.
-- **Current main commit:** `c9b0a92` (PRs #80–#86 merged 2026-09-09; main validate runs green — `34309826466`, `34310112023`, `34310491528`).
+- **Current main commit:** `64e75bc` (PRs #80–#87 merged 2026-09-09; main validate runs green — `34309826466`, `34310112023`, `34310491528`, `34311694330`).
 - **Milestone:** House Ledger register applied end-to-end — World/Chamber, Home copy + frontage hero, all
-  old-register public surfaces (#79), and the remaining cosmos accents on ledger surfaces flattened (#80);
+  old-register public surfaces (#79); cosmos accents on ledger surfaces flattened (#80) and fully
+  completed (#87 — every public fill neutral, single responsive ≤720 block, selector-level §17 register);
   Chamber audit done; Part B done; automated a11y layer done.
 - **Remaining REQUIRED work:** P0 evidence capture ×4 (founder-access-blocked); WCAG assistive-technology
   pass (owner/human-side); owner answers C1/B4/F1; final full-checklist re-verification.
