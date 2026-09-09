@@ -22,21 +22,22 @@ import { ROSE_READY_LABEL, roseBodies } from "./rose-system-bodies";
 /**
  * R5 — THE ROSE ENGINE (وردة الباني): a fan the masons built.
  *
- * Six filled blades whirl like a fan — each blade IS a system. Lit blades
- * gild across real area (with their own aura) so ready systems are
- * unmistakable; the two pending blades breathe with a charging pulse while
- * their chips shimmer like something still powering up. Breathing gaps
- * between the blades let the fast counter-rotating construction core show
- * through like light between fan blades.
+ * Six free-floating blades whirl like a fan — each blade IS a system,
+ * attached to NOTHING but its chip's tow-rope. Lit blades gild across real
+ * area (with their own aura) so ready systems are unmistakable; the two
+ * pending blades breathe with a charging pulse while their chips shimmer
+ * like something still powering up. Breathing gaps between the blades let
+ * the crank-pinned motor core counter-rotating beneath show through like
+ * light between fan blades.
  *
  * THE TOW: every chip rides the fan wheel and PULLS ITS BLADE BEHIND IT —
- * each blade trails its chip by a fixed lag, tethered by a prominent rope
- * of light (with its own aura) with energy flowing chip → system, a glowing
- * tow-node riding the blade's tip, and a tapering motion streak dragging
- * behind every chip so the tow direction reads at a glance. The chips are
- * also wired to each other: six light-bridges join every chip to its two
- * neighbours in one continuous circuit, a wave of light travels the chips in
- * owner order, and three comets circle the ring.
+ * each blade trails its chip by a fixed lag, tethered ONLY by a prominent
+ * rope of light (with its own aura) with energy flowing chip → system, a
+ * glowing tow-node riding the blade's tip, and a tapering motion streak
+ * dragging behind every chip so the tow direction reads at a glance. The
+ * chips are also wired to each other: six light-bridges join every chip to
+ * its two neighbours in one continuous circuit, a wave of light travels the
+ * chips in owner order, and three comets circle the ring.
  *
  * Hovering a chip lights its whole neighbourhood — its blade, its vein, its
  * proof circle, its tow-rope and tow-node, its streak, and the two bridges
@@ -129,7 +130,7 @@ export default function RoseEngine() {
             ))}
           </div>
 
-          {/* the counter-rotating core — construction proof + rings */}
+          {/* the crank-pinned motor core — construction proof + rings */}
           <div className="rose-geometry">
             <svg className="rose-svg" viewBox="0 0 600 600" aria-hidden="true">
               <defs>
@@ -178,6 +179,24 @@ export default function RoseEngine() {
               })}
               <circle className="rose-outer" cx={ROSE_CX} cy={ROSE_CY} r={ROSE_R * 1.06} pathLength={1} />
               <circle className="rose-outer faint" cx={ROSE_CX} cy={ROSE_CY} r={ROSE_R * 1.16} pathLength={1} />
+              {/* crank pin — the motor's timing mark, proving the core spins */}
+              {(() => {
+                const a = (-90 * mirror * Math.PI) / 180;
+                const crankX = ROSE_CX + Math.cos(a) * (ROSE_R * 1.06);
+                const crankY = ROSE_CY + Math.sin(a) * (ROSE_R * 1.06);
+                return (
+                  <>
+                    <circle
+                      className="rose-crank-halo"
+                      cx={crankX}
+                      cy={crankY}
+                      r={11}
+                      fill="url(#rose-halo-gold)"
+                    />
+                    <circle className="rose-crank" cx={crankX} cy={crankY} r={5} />
+                  </>
+                );
+              })()}
               <circle className="rose-center" cx={ROSE_CX} cy={ROSE_CY} r={30} />
             </svg>
           </div>

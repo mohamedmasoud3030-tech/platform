@@ -51,6 +51,15 @@ describe("rose fan geometry", () => {
       }
     });
 
+    it(`[${dir}] floats every blade free of the hub on a rounded base`, () => {
+      for (let i = 0; i < 6; i++) {
+        const [mx, my] = petalLeafPath(i, mirror).slice(2).split(" Q")[0].split(" ").map(Number);
+        const baseRadius = Math.hypot(mx - ROSE_CX, my - ROSE_CY);
+        // Path text rounds to 2 decimals, so 1-digit precision fits the output.
+        expect(baseRadius, `blade ${i} base corner radius`).toBeCloseTo(70, 1);
+      }
+    });
+
     it(`[${dir}] runs every tow-rope from the chip ring to its own blade tip`, () => {
       for (let i = 0; i < 6; i++) {
         const ends = towEndpoints(i, mirror, 234);

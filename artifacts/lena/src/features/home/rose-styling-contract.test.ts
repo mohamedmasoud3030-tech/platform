@@ -34,6 +34,11 @@ describe("rose styling contract (data-lit wiring)", () => {
     expect(css).not.toContain("data-documented");
   });
 
+  it("pins the motor crank mark", () => {
+    expect(css).toContain(".rose-crank");
+    expect(css).toContain(".rose-crank-halo");
+  });
+
   it("defines the charging and glow animations the states invoke", () => {
     for (const name of [
       "@keyframes rose-charge",

@@ -6,12 +6,13 @@
    order; documented systems gild in brass, the rest stay stonework linework
    (documentation status — never a lifecycle word).
 
-   THE FAN: six filled blades whirl visibly (30s) while the mason's proof
-   core counter-rotates beneath them (60s) — light breathing through the
-   gaps between the blades. Pending blades breathe with a charging pulse
-   while ready ones gild solid. THE TOW: every chip rides the fan wheel
-   and pulls its blade behind it by a fixed lag, tethered by a prominent
-   rope of light (with its own aura) with energy flowing chip → system,
+   THE FAN: six free-floating blades whirl visibly (30s) — attached to
+   nothing but their chips' tow-ropes — while the crank-pinned motor core
+   counter-rotates beneath them (60s), glimpsed through the gaps between
+   the blades. Pending blades breathe with a charging pulse while ready
+   ones gild solid. THE TOW: every chip rides the fan wheel and pulls its
+   blade behind it by a fixed lag, tethered ONLY by a prominent rope of
+   light (with its own aura) with energy flowing chip → system,
    a glowing tow-node riding the blade's tip, and a tapering motion
    streak dragging behind every chip. The chips are also wired to
    each other: six light-bridges join every chip to its two neighbours in
@@ -23,8 +24,8 @@
      is the fan wheel: once every 30s. Each chip counter-rotates at the
      same rate so its label stays upright while its position travels,
      towing its blade behind it.
-   - `.rose-geometry` (construction proof + rings) is the motor beneath:
-     60s counter-rotation, glimpsed between the blades.
+   - `.rose-geometry` (construction proof + rings + crank pin) is the
+     motor beneath: 60s counter-rotation, glimpsed between the blades.
    - `.rose-comets` is a third, swifter wheel (26s) carrying three light
      pulses around the circuit.
    - Chips/spokes/threads use the independent `rotate` / `translate` / `scale`
@@ -147,6 +148,17 @@
   stroke: rgba(200, 160, 78, 0.25);
   stroke-width: 1;
   animation-delay: 0.25s;
+}
+
+/* Crank pin — the motor's timing mark, proving the core spins. */
+.rose-crank-halo,
+.rose-crank {
+  opacity: 0;
+  animation: rose-thread-in 0.8s ease-out 1.8s forwards;
+}
+
+.rose-crank {
+  fill: #e8c876;
 }
 
 .rose-petal {
@@ -735,6 +747,10 @@
   fill: rgba(255, 252, 240, 0.95);
 }
 
+.light .rose-crank {
+  fill: #b98a1e;
+}
+
 .light .rose-star {
   background: #d9a83f;
   box-shadow: 0 0 6px rgba(200, 160, 78, 0.8);
@@ -858,6 +874,8 @@
   .rose-vein,
   .rose-streak,
   .rose-petal-aura,
+  .rose-crank,
+  .rose-crank-halo,
   .rose-bridge,
   .rose-rope-body,
   .rose-rope-echo {
@@ -879,6 +897,8 @@
   .rose-vein,
   .rose-streak,
   .rose-petal-aura,
+  .rose-crank,
+  .rose-crank-halo,
   .rose-bridge,
   .rose-rope-body,
   .rose-rope-echo,

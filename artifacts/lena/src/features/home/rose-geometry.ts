@@ -2,12 +2,13 @@
  * Rose Engine geometry — pure math for the fan.
  *
  * One module owns every angle so the blades, tow-ropes, bridges, streaks and
- * chips can never drift apart: six blades (20° half-width, 20° breathing
- * gaps so the mason's proof shows between them like a real fan), each
- * trailing its chip by a fixed tow lag, each rope running chip → blade tip,
- * each bridge spanning the ring between neighbouring chips, and each chip
- * dragging a tapering motion streak behind it so the tow direction is
- * unmistakable.
+ * chips can never drift apart: six FREE-FLOATING blades (20° half-width,
+ * 20° breathing gaps, rounded bases floating at r70 — attached to NOTHING
+ * but their chip's tow-rope), each trailing its chip by a fixed tow lag,
+ * each rope running chip → blade tip, each bridge spanning the ring between
+ * neighbouring chips, and each chip dragging a tapering motion streak
+ * behind it so the tow direction is unmistakable. The hub is a separate
+ * crank-pinned motor core, never a blade root.
  *
  * Mirror: +1 for LTR, −1 for RTL. Every wheel reverses in RTL, so the tow
  * lag and the streaks always fall on the trailing side of motion.
@@ -19,7 +20,10 @@ export const ROSE_R = 150;
 export const ROSE_TRAIL_DEG = 32;
 export const ROSE_PETAL_HALF_DEG = 20;
 export const ROSE_TIP_RADIUS = ROSE_R * 1.02;
-export const ROSE_HUB_RADIUS = 28;
+/** Blade base corners float here — clear of the r30 hub. */
+export const ROSE_BASE_RADIUS = 70;
+/** Control radius rounding the blade's butt inward. */
+export const ROSE_BASE_ROUND_RADIUS = 60;
 /** Half-gap (in degrees) where a light-bridge plugs into a chip. */
 export const ROSE_BRIDGE_GAP_DEG = 9;
 /** Motion-streak span behind each chip, in degrees of travel. */
@@ -52,27 +56,30 @@ export function polar(radius: number, deg: number): { x: number; y: number } {
 const f2 = (n: number) => n.toFixed(2);
 
 /**
- * A closed fan blade: a leaf from the hub to the tip, sides bowed along the
- * sector edges so the gild gradient has real area to live in.
+ * A closed free-floating fan blade: a leaf from its rounded floating base
+ * to the tip, sides bowed along the sector edges so the gild gradient has
+ * real area to live in. Nothing touches the hub.
  */
 export function petalLeafPath(index: number, mirror: RoseMirror): string {
   const c = petalCenterDeg(index, mirror);
   const half = ROSE_PETAL_HALF_DEG * mirror;
-  const b1 = polar(ROSE_HUB_RADIUS, c - half);
-  const b2 = polar(ROSE_HUB_RADIUS, c + half);
-  const c1 = polar(105, c - half);
-  const c2 = polar(105, c + half);
+  const b1 = polar(ROSE_BASE_RADIUS, c - half);
+  const b2 = polar(ROSE_BASE_RADIUS, c + half);
+  const c1 = polar(115, c - half);
+  const c2 = polar(115, c + half);
   const tip = polar(ROSE_TIP_RADIUS, c);
+  const butt = polar(ROSE_BASE_ROUND_RADIUS, c);
   return (
     `M ${f2(b1.x)} ${f2(b1.y)} Q ${f2(c1.x)} ${f2(c1.y)} ${f2(tip.x)} ${f2(tip.y)} ` +
-    `Q ${f2(c2.x)} ${f2(c2.y)} ${f2(b2.x)} ${f2(b2.y)} Z`
+    `Q ${f2(c2.x)} ${f2(c2.y)} ${f2(b2.x)} ${f2(b2.y)} Q ${f2(butt.x)} ${f2(butt.y)} ` +
+    `${f2(b1.x)} ${f2(b1.y)} Z`
   );
 }
 
-/** The blade's central vein, hub to near-tip. */
+/** The blade's central vein, base to near-tip. */
 export function petalVeinPath(index: number, mirror: RoseMirror): string {
   const c = petalCenterDeg(index, mirror);
-  const base = polar(ROSE_HUB_RADIUS + 6, c);
+  const base = polar(ROSE_BASE_RADIUS + 8, c);
   const tip = polar(ROSE_TIP_RADIUS - 4, c);
   return `M ${f2(base.x)} ${f2(base.y)} L ${f2(tip.x)} ${f2(tip.y)}`;
 }
