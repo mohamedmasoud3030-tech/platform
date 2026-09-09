@@ -25,7 +25,7 @@
   --led-rule-strong: rgba(226, 214, 178, 0.3);
   --led-brass: #c8a04e;
   --led-brass-ink: #e2c274;
-  --led-brass-dim: #8a7444;
+  --led-brass-dim: #9d8048;  /* AA ≥4.5:1 on ink sheets (labels, entry nos, plate figs) */
   --led-frame-bg: #0a0d15;       /* neutral ground behind screenshots */
   --led-cta-bg: #c8a04e;
   --led-cta-text: #171209;
@@ -43,9 +43,9 @@
   --led-rule-strong: rgba(36, 39, 53, 0.32);
   --led-brass: #a37924;
   --led-brass-ink: #8a6117;
-  --led-brass-dim: #b3945a;
+  --led-brass-dim: #82632a;  /* AA ≥4.5:1 on warm paper (labels, entry nos, plate figs) */
   --led-frame-bg: #e9e2d0;
-  --led-cta-bg: #a37924;
+  --led-cta-bg: #845f13;  /* AA ≥4.5:1 with cream CTA text (was 3.67:1) */
   --led-cta-text: #fdf6e6;
   --led-focus: #8a6117;
 }
