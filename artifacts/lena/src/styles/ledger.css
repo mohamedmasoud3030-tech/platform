@@ -683,6 +683,25 @@
   line-height: 1.9;
 }
 
+/* --- Operator record (D6/B-10) -------------------------------------------- */
+.ledger-operator {
+  margin-top: 30px;
+  padding-top: 22px;
+  border-top: 1px solid var(--led-rule);
+}
+.ledger-operator-answer {
+  margin: 14px 0 0;
+  color: var(--led-ink);
+  font-size: 13.5px;
+  line-height: 1.9;
+}
+.ledger-operator-open {
+  margin: 10px 2px 0;
+  color: var(--led-mut);
+  font-size: 11.5px;
+  line-height: 1.8;
+}
+
 /* --- Evidence plates ----------------------------------------------------- */
 .ledger-plates {
   margin-top: 30px;
