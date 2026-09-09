@@ -92,9 +92,12 @@ opacity/alpha dimming spots on the old-register surfaces (footer `<small>`, `.le
 `.lena-front-num`) and a pale light-theme brass — all fixed at the token level, no contrast disable rules;
 guardian suite 72/72 at PR head. Ledger remnant sweep (PR #80, main run `34308483403`) then
 flattened the remaining cosmos accents on ledger surfaces (CTA, nav-active, icon/chip tints, form
-fields, statuses, footer, mobile-menu blur) while keeping the axe matrix clean; intentionally-scoped
-non-ledger surfaces (studio/project concept art, World visualization, assistant widget, admin
-console, WhatsApp brand FAB) are recorded in `PLATFORM_PRD.md` §17. Guardian chamber guard extended to
+fields, statuses, footer, mobile-menu blur) while keeping the axe matrix clean; follow-up (PR #87,
+run `34311694330`) neutralized the last public fills (help-search field, help/form-context/draft,
+support-reference, provenance, stage-trial chips) and consolidated the duplicate ≤720px responsive
+block — axe matrix stayed clean throughout. Intentionally-scoped non-ledger surfaces (studio/project
+concept art, World visualization incl. `.lena-roots-chip` and `--dna-accent` scope tokens, assistant
+widget, admin console, WhatsApp brand FAB) are recorded with selectors in `PLATFORM_PRD.md` §17. Guardian chamber guard extended to
 all six public chambers (`#83`) and to both locales/RTL (`#84`); smoke suite grew 45 → 63 while staying
 green, static integrity PASSED.
 Screen-reader (assistive-technology) verification remains open — no AT available in any environment
