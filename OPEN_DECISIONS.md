@@ -92,15 +92,15 @@ Proceeding on the next pass unless told otherwise. Ordered by risk reduction.
 
 | # | Task | Evidence | Effort |
 |---|---|---|---|
-| **B-1** | Remove the unused `orval` / `api-client-react` chain | Zero files import it; it carries **5 high advisories** | S |
-| **B-2** | Resolve `multer` — remove if dead, upgrade if used | High advisory on a public server | S |
-| **B-3** | Security patch bumps: `react-router` ≥7.18, `nodemailer` ≥9.0.1, `vite` ≥7.3.5 | Advisories reaching shipped code | S |
-| **B-4** | Exclude `mockup-sandbox` from the production build | Ships nothing; ~25% of build time | XS |
-| **B-5** | Delete `artifacts/api-server/uploads/` (1.6 MB of a previous product) | Not served, not referenced | XS |
-| **B-6** | Align Node version across CI, sandbox and production | Declared 24, running 22 | S |
-| **B-7** | Minimal PWA: manifest + offline fallback page | Specified, never built | S |
-| **B-8** | Dashboard status filter for inquiries | Flat list stops working at volume | M |
-| **B-9** | Clean `src/const.ts` of the previous product's data | Dead constants | XS |
+| **B-1** | Remove the unused `orval` / `api-client-react` chain — **STATUS 2026-09-09: DONE** — orval absent from every manifest and the lockfile; the only residue is two generated zod schemas in `lib/api-zod` actively imported by the health route | Zero files import it; it carries **5 high advisories** | S |
+| **B-2** | Resolve `multer` — **STATUS 2026-09-09: DONE** — no `multer` reference anywhere in the tree or the lockfile | High advisory on a public server | S |
+| **B-3** | Security patch bumps — **STATUS 2026-09-09: DONE** — `vite` 7.3.6, `react-router` 7.18.3, `nodemailer` 9.1.1 in the lockfile (above the advisory floors); typecheck and all 300 tests green | Advisories reaching shipped code | S |
+| **B-4** | Exclude `mockup-sandbox` from the production build — **STATUS 2026-09-09: DONE** — zero references in any manifest, config or source; nothing includes it | Ships nothing; ~25% of build time | XS |
+| **B-5** | Delete `artifacts/api-server/uploads/` — **STATUS 2026-09-09: DONE** — absent from the git tree | Not served, not referenced | XS |
+| **B-6** | Align Node version across CI, sandbox and production — **STATUS 2026-09-09: DONE** — `.nvmrc` = 24 at the root, `engines.node >= 22` on root and both artifact packages; CI already runs 24 | Declared 24, running 22 | S |
+| **B-7** | Minimal PWA: manifest + offline fallback page — **STATUS 2026-09-09: DONE** — `manifest.webmanifest`, guarded `sw.js`, `offline.html` and `/lena` rewrites; registration gated to production builds on secure non-preview hosts (tested) | Specified, never built | S |
+| **B-8** | Dashboard status filter for inquiries — **STATUS 2026-09-09: DONE** — filter over the eight pipeline statuses plus "all", bilingual, with no-match state; pure logic unit-tested; legacy `qualified` rows stay visible under "all" | Flat list stops working at volume | M |
+| **B-9** | Clean `src/const.ts` of the previous product's data — **STATUS 2026-09-09: DONE** — two-line stub only | Dead constants | XS |
 | **B-10** | Operator section on each product page (D6) | Needs B1/B2 content first | M |
 | **B-11** | Accessibility audit with assistive technology | **Blocked:** no browser can be installed in this environment | — |
 | **B-12** | Low-end device performance measurement | **Blocked:** same reason | — |

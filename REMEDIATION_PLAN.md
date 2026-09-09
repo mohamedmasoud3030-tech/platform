@@ -84,9 +84,9 @@ enabling AI draft translation (recurring cost).
 | **M1** | Every verification harness lives in the repository and runs on one command | None — additive | **VERIFIED COMPLETE**, except CI automation which is **BLOCKED** on a GitHub permission |
 | **M2** | The owner cannot be permanently locked out | Low — config widening, default unchanged | **VERIFIED COMPLETE** |
 | **M3** | Regression suite proves M2 behaves correctly | None | **VERIFIED COMPLETE** |
-| **M4** | No surface lets the operator "publish" something invisible | Low — hides a tab, deletes no data | **NOT STARTED** |
-| **M5** | Minimal PWA (manifest + offline fallback); dev sandbox out of the production build | Low | **NOT STARTED** |
-| **M6** | Dashboard status filter; dead-code removal | Low | **NOT STARTED** |
+| **M4** | No surface lets the operator "publish" something invisible | Low — hides a tab, deletes no data | **VERIFIED COMPLETE** — recorded 2026-09-09 |
+| **M5** | Minimal PWA (manifest + offline fallback); dev sandbox out of the production build | Low | **VERIFIED COMPLETE** — 2026-09-09 |
+| **M6** | Dashboard status filter; dead-code removal | Low | **VERIFIED COMPLETE** — 2026-09-09 |
 
 ---
 
@@ -187,5 +187,60 @@ legacy single variable, new allowlist, both combined, surrounding whitespace, du
 entries (must not act as a wildcard), an unlisted identity, exact matching rather than prefix or
 substring, case sensitivity, a literal `*` treated as an ordinary string, whitespace-only identities,
 20 identities at once, and the unset case.
+
+**Status: VERIFIED COMPLETE**
+
+---
+
+### M4 — No surface lets the operator "publish" something invisible
+
+**Outcome:** nothing an operator publishes can be invisible to visitors; nothing is deleted to achieve it.
+
+**Where it lives:** (1) the hidden-not-deleted mechanism — systems with `visibility: "hidden"` in `content/systems.ts`
+stay fully specified and owner-controlled but never surface publicly (UX roadmap R4b, and OPEN_DECISIONS F1 for the
+one system still in that state); (2) every public read is gated server-side on `status == "published"` —
+`projects` list/slug queries and the `content` entries query all filter on it, so drafts and unpublished edits are
+author-only by construction, not by UI convention (`artifacts/api-server/src/trpc/routers/projects.ts`,
+`content.ts`; client contract guarded by `public-surface-authority.test.ts`).
+
+**Status: VERIFIED COMPLETE** — delivered across earlier passes (R2 tab removal, R4b), recorded 2026-09-09 in the
+Part B reconciliation.
+
+---
+
+### M5 — Minimal PWA; dev sandbox out of the production build
+
+**Outcome:** the site is installable and has an offline fallback; nothing from the dev sandbox ships.
+
+**Delivered (2026-09-09, `chore/part-b-completion`):**
+- `manifest.webmanifest` (name, theme, relative `start_url`/`scope`, SVG icon) linked from `index.html` via `%BASE_URL%`
+  so it works at the site root and under the `/lena` mount.
+- `sw.js` — deliberately minimal: GET-only, `/api/` traffic never cached, cross-origin untouched, navigations
+  network-first with the cached shell and `offline.html` as the final fallback.
+- `offline.html` — standalone house-register-styled page, inline styles only, Arabic-first, no external requests.
+- Registration gated in `src/lib/pwa.ts` (unit-tested): production builds on secure, non-preview hosts only —
+  dev servers and visual-guardian hosts never register a worker, so the guardian always verifies network bytes.
+- Vercel `/lena/*` rewrites added for the three new assets, mirroring the existing `favicon.svg` pattern.
+
+**Dev sandbox out of the build (B-4):** verified absent — `mockup-sandbox` has zero references in any manifest,
+config or source; no exclusion rule is needed because nothing includes it.
+
+**Status: VERIFIED COMPLETE**
+
+---
+
+### M6 — Dashboard status filter; dead-code removal
+
+**Outcome:** the inquiries list stops being an undifferentiated flat list; dead dependency chains are gone.
+
+**Delivered (2026-09-09, `chore/part-b-completion`):**
+- Dashboard inquiries panel gained a status filter (`all` + the eight pipeline statuses) with a clear no-match
+  state and bilingual copy; pure filter logic lives in `src/lib/inquiryFilter.ts` with unit tests. Legacy
+  `qualified` rows stay visible under "all".
+- Dead-code removals verified complete with repository evidence: `orval`/`api-client-react` absent from every
+  manifest and the lockfile (the only residue is two generated zod schemas actively consumed by the health route);
+  `multer` absent from tree and lockfile; `artifacts/api-server/uploads/` absent from the git tree;
+  `src/const.ts` reduced to a two-line stub with no previous-product data.
+- Advisory bumps applied in the same pass (see B-3): vite 7.3.6, react-router 7.18.3, nodemailer 9.1.1.
 
 **Status: VERIFIED COMPLETE**
