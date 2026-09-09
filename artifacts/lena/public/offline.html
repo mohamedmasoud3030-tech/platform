@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <meta name="theme-color" content="#030612" />
+    <title>لا يوجد اتصال — Offline · LENA Digital House</title>
+    <style>
+      :root {
+        color-scheme: dark;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background: #030612;
+        color: #e9e4d8;
+        font-family: "Noto Kufi Arabic", "Segoe UI", Tahoma, system-ui, sans-serif;
+        min-height: 100dvh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 1.25rem;
+        text-align: center;
+      }
+      .register {
+        max-width: 34rem;
+        width: 100%;
+        border: 1px solid rgba(233, 228, 216, 0.22);
+        border-radius: 14px;
+        background: rgba(233, 228, 216, 0.035);
+        padding: 3rem 2rem 2.5rem;
+      }
+      .lamp {
+        width: 56px;
+        height: 56px;
+        margin: 0 auto 1.5rem;
+        display: block;
+        color: #d9b25f;
+      }
+      h1 {
+        font-size: 1.35rem;
+        font-weight: 600;
+        letter-spacing: 0.01em;
+        margin-bottom: 0.75rem;
+      }
+      p {
+        color: rgba(233, 228, 216, 0.78);
+        font-size: 0.95rem;
+        line-height: 1.9;
+      }
+      p + p {
+        margin-top: 0.5rem;
+      }
+      .en {
+        font-family: Georgia, "Times New Roman", serif;
+        direction: ltr;
+        font-size: 0.85rem;
+        color: rgba(233, 228, 216, 0.55);
+      }
+      a {
+        display: inline-block;
+        margin-top: 1.75rem;
+        color: #e9e4d8;
+        text-decoration: none;
+        border: 1px solid rgba(233, 228, 216, 0.35);
+        border-radius: 999px;
+        padding: 0.55rem 1.6rem;
+        font-size: 0.9rem;
+        transition: border-color 0.2s ease, color 0.2s ease;
+      }
+      a:hover {
+        border-color: #d9b25f;
+        color: #d9b25f;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="register">
+      <svg class="lamp" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M12 3a7 7 0 0 0-4 12.7V18a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.3A7 7 0 0 0 12 3Z" />
+        <path d="M9 21h6" />
+      </svg>
+      <h1>لا يوجد اتصال بالشبكة الآن</h1>
+      <p>أنت في بيت LENA — لكن الطريق إلى البيت غير متاح مؤقتًا.<br />عند عودة الاتصال، سيُعاد فتح الصفحة تلقائيًا.</p>
+      <p class="en">You are offline. The house is still here — the road to it is not.<br />The page will reopen by itself once the connection returns.</p>
+      <a href=".">إعادة المحاولة · Try again</a>
+    </main>
+    <script>
+      (function () {
+        function retry() {
+          if (navigator.onLine && !document.hidden) location.replace(".");
+        }
+        window.addEventListener("online", retry);
+        document.addEventListener("visibilitychange", retry);
+      })();
+    </script>
+  </body>
+</html>
