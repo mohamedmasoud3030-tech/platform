@@ -5,7 +5,7 @@ acceptance criteria. Status labels: **DONE**, **READY** (specified, safe, not ye
 
 ---
 
-## Now — done in this pass
+## Now — done in this pass (record)
 
 ### R1. Provenance on every portfolio item — **DONE**
 *Defect · critical · all visitors*
@@ -31,7 +31,11 @@ table are untouched ✅; typecheck and build pass ✅.
 
 ---
 
-## Next — specified, safe, awaiting D1 approval
+## Then — the D1-approved sequence
+
+> D1 was approved (the 2026-08-20 owner correction + subsequent direction decisions, formalised in
+> `lena-direction-refined.md`). This section records where each sequenced item landed; current work
+> executes from `PLATFORM_PRD.md`. Statuses as of 2026-09-09.
 
 ### R3. Reposition the homepage and services around operations software — **DONE**
 **Acceptance criteria**
@@ -57,16 +61,21 @@ picker, related-service lookups, and the sitemap. Restoring any one of them is a
 industry page opens with a recognisable operational problem; each links to at least one application or
 states plainly that a demonstration is in progress.
 
-### R5. Publish the six real applications — **BLOCKED on owner content**
-Needs, per application: intended user in one line, and at least three screens.
-**Acceptance criteria:** each has industry, problem, user, 3–6 capabilities, ≥3 screens with alt text,
-provenance, one primary action, both languages, a stable URL, and appears in the sitemap.
+### R5. Publish the six real applications — **BLOCKED on owner access (2026-09-09)**
+Needs, per application: the owner's access to capture real evidence (the "≥3 screens" wording is
+superseded by the canonical evidence-registry standard — `docs/EVIDENCE_CAPTURE_GUIDE.md`).
+**Acceptance criteria:** each has industry, problem, user, 3–6 capabilities, real evidence surfaces in
+the registry (2 of 6 documented today), provenance, one primary action, both languages, a stable URL,
+and appears in the sitemap.
 
-### R6. Stage badge: live / pilot / available — **BLOCKED on owner facts**
-**Acceptance criteria:** every application shows exactly one stage; no metric is shown unless
-substantiated; the badge is visible on the card without a click.
+### R6. Stage badge: live / pilot / available — **SUPERSEDED (never built, by decision)**
+Lifecycle stage vocabulary (`in-use`/`trial`, live/pilot/available) is **internal-only** and must never
+surface publicly (`lena-direction-refined.md` D3, 2026-09-09). Public surfaces carry documentation
+seals derived from the evidence registry instead («موثّق»/DOCUMENTED vs «قيد التوثيق»/RECORD PENDING),
+visible on the card/chamber without a click. R6's original acceptance is therefore obsolete; the
+honest-state goal it served is met by the seals.
 
-### R7. Operator section on each application — **READY after R5**
+### R7. Operator section on each application — **READY after owner content (OPEN_DECISIONS Part B-10)**
 **Acceptance criteria:** each application answers what changes for daily staff, offline behaviour, and
 how mistakes are corrected, in under 80 words.
 
@@ -74,10 +83,14 @@ how mistakes are corrected, in under 80 words.
 
 ## Later — real but not urgent
 
-### R8. Accessibility verification with assistive technology
-Structural checks pass; no screen-reader or contrast-ratio audit has been run. **Not claimed as done.**
-**Acceptance criteria:** every interactive element reachable and announced; contrast ≥ 4.5:1 in both
-themes; the contact form completable by keyboard alone in both directions.
+### R8. Accessibility verification — **PARTIAL 2026-09-09**
+Automated layer DONE: an axe-core WCAG 2.x A/AA suite runs in the guardian on every push (16
+route/locale/theme combos; zero violations after AA contrast fixes on the ledger surfaces — PR #78).
+Screen-reader (assistive-technology) verification remains open — no AT available in any environment
+(OPEN_DECISIONS B-11).
+**Acceptance criteria:** every interactive element reachable and announced (open — AT pass); contrast
+≥ 4.5:1 in both themes (DONE — enforced in CI); the contact form completable by keyboard alone in both
+directions (covered by the guardian keyboard checks on the a11y spec).
 
 ### R9. Delivery lifecycle vocabulary
 Inquiry statuses suit lead capture, not software delivery. Add discovery → scoping → pilot → rollout
@@ -96,8 +109,9 @@ framework, database or design-system replacement · any third-party script.
 
 ---
 
-## The single next action
+## The single next action (2026-09-09)
 
-**Approve D1.** Everything from R3 to R7 is sequenced behind one decision: whether the site argues for
-the business the founder actually runs. Until then the funnel is well-built and pointed at the wrong
-audience.
+D1 and the full House Ledger direction are approved and shipped. **Current work executes from
+`PLATFORM_PRD.md`** (the committed authoritative PRD with its live execution log); remaining P0/P1 work
+is evidence capture for the four undocumented products (founder access) and the owner-gated rows in
+`OPEN_DECISIONS.md`.
