@@ -32,6 +32,11 @@ describe("rose styling contract (data-lit wiring)", () => {
     expect(css).not.toContain("data-documented");
   });
 
+  it("keeps every tow-rope a visible tether (bright, thick, long dashes)", () => {
+    expect(css).toContain("stroke-dasharray: 6 4;");
+    expect(css).toContain("rgba(240, 212, 140, 0.9)");
+  });
+
   it("defines the key pulse the night card invokes", () => {
     expect(css, "missing @keyframes rose-key-pulse").toContain("@keyframes rose-key-pulse");
   });

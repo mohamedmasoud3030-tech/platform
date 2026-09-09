@@ -296,29 +296,30 @@
 
 /* Tow-ropes — each chip pulling its blade; energy flows with the pull. */
 .rose-tow-aura {
-  stroke: rgba(232, 200, 118, 0.14);
-  stroke-width: 6;
+  stroke: rgba(232, 200, 118, 0.2);
+  stroke-width: 7;
   stroke-linecap: round;
   opacity: 0;
   animation: rose-thread-in 0.8s ease-out 3.2s forwards;
 }
 
 .rose-tow {
-  stroke: rgba(238, 206, 130, 0.6);
-  stroke-width: 2;
-  stroke-dasharray: 5 4;
+  stroke: rgba(240, 212, 140, 0.9);
+  stroke-width: 2.75;
+  stroke-linecap: round;
+  stroke-dasharray: 6 4;
   opacity: 0;
   animation: rose-thread-in 0.8s ease-out 3.2s forwards, rose-tow-flow 0.9s linear infinite;
   transition: stroke 0.3s ease;
 }
 
 @keyframes rose-tow-flow {
-  to { stroke-dashoffset: -9; }
+  to { stroke-dashoffset: -10; }
 }
 
 .rose-tow.is-active {
   stroke: #ffe9bb;
-  stroke-width: 2.75;
+  stroke-width: 3.25;
   stroke-dasharray: none;
 }
 
@@ -624,7 +625,7 @@
 }
 
 .light .rose-tow {
-  stroke: rgba(154, 123, 61, 0.45);
+  stroke: rgba(154, 123, 61, 0.65);
 }
 
 .light .rose-tow.is-active {
@@ -644,7 +645,7 @@
 }
 
 .light .rose-tow-aura {
-  stroke: rgba(154, 123, 61, 0.16);
+  stroke: rgba(154, 123, 61, 0.22);
 }
 
 .light .rose-rope-body {
