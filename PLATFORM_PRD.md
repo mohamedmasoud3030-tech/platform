@@ -272,7 +272,7 @@ to MALEK's standard; and the accessibility layer guards the WCAG working bar.
 ## AUTHORITATIVE STATUS (updated 2026-09-09)
 
 - **Working document:** this file — `PLATFORM_PRD.md` (root), maintained live per §0.
-- **Current main commit:** `6a67f78` (PRs #80–#85 merged 2026-09-09; main validate runs green — `34309826466`, `34310112023`).
+- **Current main commit:** `c9b0a92` (PRs #80–#86 merged 2026-09-09; main validate runs green — `34309826466`, `34310112023`, `34310491528`).
 - **Milestone:** House Ledger register applied end-to-end — World/Chamber, Home copy + frontage hero, all
   old-register public surfaces (#79), and the remaining cosmos accents on ledger surfaces flattened (#80);
   Chamber audit done; Part B done; automated a11y layer done.
