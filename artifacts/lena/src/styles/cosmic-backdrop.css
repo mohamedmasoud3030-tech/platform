@@ -134,27 +134,27 @@
 
 .lena-public:has(.cosmic) .lena-glass,
 .lena-public:has(.cosmic) .lena-cta {
-  background: rgba(16, 19, 29, 0.45);
-  -webkit-backdrop-filter: blur(10px) saturate(1.15);
-  backdrop-filter: blur(10px) saturate(1.15);
+  background: rgba(16, 19, 29, 0.25);
+  -webkit-backdrop-filter: blur(12px) saturate(1.15);
+  backdrop-filter: blur(12px) saturate(1.15);
 }
 
 .lena-public:has(.cosmic) .lena-footer {
-  background: rgba(5, 6, 9, 0.38);
+  background: rgba(5, 6, 9, 0.22);
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
 }
 
 .lena-public:has(.cosmic) .night-card {
-  background: rgba(16, 19, 29, 0.45);
-  -webkit-backdrop-filter: blur(10px) saturate(1.15);
-  backdrop-filter: blur(10px) saturate(1.15);
+  background: rgba(16, 19, 29, 0.25);
+  -webkit-backdrop-filter: blur(12px) saturate(1.15);
+  backdrop-filter: blur(12px) saturate(1.15);
 }
 
 .lena-public:has(.cosmic) .lena-continue {
-  background: rgba(16, 19, 29, 0.5);
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
+  background: rgba(16, 19, 29, 0.28);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
 }
 
 /* Chips turn sheer (no blur: they ride the wheel, and frosted motion is
@@ -203,33 +203,33 @@
 
 .light .lena-public:has(.cosmic) .lena-glass,
 .light .lena-public:has(.cosmic) .lena-cta {
-  background: rgba(253, 248, 235, 0.5);
-  -webkit-backdrop-filter: blur(10px) saturate(1.1);
-  backdrop-filter: blur(10px) saturate(1.1);
+  background: rgba(253, 248, 235, 0.3);
+  -webkit-backdrop-filter: blur(12px) saturate(1.1);
+  backdrop-filter: blur(12px) saturate(1.1);
 }
 
 .light .lena-public:has(.cosmic) .lena-footer {
-  background: rgba(253, 248, 235, 0.45);
+  background: rgba(253, 248, 235, 0.28);
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
 }
 
 .light .lena-public:has(.cosmic) .lena-founder-strip {
-  background: rgba(253, 248, 235, 0.4);
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
+  background: rgba(253, 248, 235, 0.25);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
 }
 
 .light .lena-public:has(.cosmic) .night-card {
-  background: rgba(253, 248, 235, 0.5);
-  -webkit-backdrop-filter: blur(10px) saturate(1.1);
-  backdrop-filter: blur(10px) saturate(1.1);
+  background: rgba(253, 248, 235, 0.3);
+  -webkit-backdrop-filter: blur(12px) saturate(1.1);
+  backdrop-filter: blur(12px) saturate(1.1);
 }
 
 .light .lena-public:has(.cosmic) .lena-continue {
-  background: rgba(253, 248, 235, 0.55);
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
+  background: rgba(253, 248, 235, 0.32);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
 }
 
 .light .lena-public:has(.cosmic) .rose-chip[data-lit="true"] {
@@ -244,16 +244,16 @@
 
 .lena-admin:has(.cosmic) .lena-glass,
 .lena-login:has(.cosmic) .lena-glass {
-  background: rgba(16, 19, 29, 0.45);
-  -webkit-backdrop-filter: blur(10px) saturate(1.15);
-  backdrop-filter: blur(10px) saturate(1.15);
+  background: rgba(16, 19, 29, 0.25);
+  -webkit-backdrop-filter: blur(12px) saturate(1.15);
+  backdrop-filter: blur(12px) saturate(1.15);
 }
 
 .light .lena-admin:has(.cosmic) .lena-glass,
 .light .lena-login:has(.cosmic) .lena-glass {
-  background: rgba(253, 248, 235, 0.5);
-  -webkit-backdrop-filter: blur(10px) saturate(1.1);
-  backdrop-filter: blur(10px) saturate(1.1);
+  background: rgba(253, 248, 235, 0.3);
+  -webkit-backdrop-filter: blur(12px) saturate(1.1);
+  backdrop-filter: blur(12px) saturate(1.1);
 }
 
 /* Dashboard tooling panels (platform.css surfaces): the light values are
@@ -261,14 +261,14 @@
    already sheer at night keep their wash and only gain the blur. */
 .lena-admin:has(.cosmic) .dashboard-panel,
 .lena-admin:has(.cosmic) .bento-card {
-  background: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.4);
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
 }
 
 .lena-admin:has(.cosmic) .dashboard-record,
 .lena-admin:has(.cosmic) .dashboard-form {
-  background: rgba(244, 244, 245, 0.6);
+  background: rgba(244, 244, 245, 0.4);
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
 }
@@ -282,7 +282,7 @@
 
 .dark .lena-admin:has(.cosmic) .dashboard-record,
 .dark .lena-admin:has(.cosmic) .dashboard-form {
-  background: rgba(10, 10, 12, 0.55);
+  background: rgba(10, 10, 12, 0.4);
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
 }
