@@ -7,6 +7,11 @@
     { "path": "/world/atlas", "name": "world-atlas", "owner": ".lena-world-atlas", "locales": ["en", "ar"] },
     { "path": "/world/property", "name": "chamber-property", "owner": "main.lena-system-chamber", "core": ".ledger-leaf", "locales": ["en", "ar"] },
     { "path": "/world/wellness", "name": "chamber-wellness", "owner": "main.lena-system-chamber", "core": ".ledger-leaf", "locales": ["en"] },
+    { "path": "/world/rental", "name": "chamber-rental", "owner": "main.lena-system-chamber", "core": ".ledger-leaf", "locales": ["en"] },
+    { "path": "/world/investment", "name": "chamber-investment", "owner": "main.lena-system-chamber", "core": ".ledger-leaf", "locales": ["en"] },
+    { "path": "/world/hospitality", "name": "chamber-hospitality", "owner": "main.lena-system-chamber", "core": ".ledger-leaf", "locales": ["en"] },
+    { "path": "/world/recycling", "name": "chamber-recycling", "owner": "main.lena-system-chamber", "core": ".ledger-leaf", "locales": ["en"] },
+
     { "path": "/services", "name": "services", "owner": "main", "locales": ["en"] },
     { "path": "/portfolio", "name": "portfolio", "owner": "main", "locales": ["en"] },
     { "path": "/about", "name": "about", "owner": "main", "locales": ["en"] },
