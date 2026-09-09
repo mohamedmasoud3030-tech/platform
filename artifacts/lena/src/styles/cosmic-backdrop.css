@@ -1,0 +1,135 @@
+/* ============================================================================
+   COSMIC BACKDROP — the rose's starfield, spread over the whole page.
+
+   One fixed layer pinned BEHIND everything (negative z-index inside the
+   shell's isolated stacking context: above the shell's own ground, below
+   all content), pointer-transparent and decorative only:
+   - 84 twinkling stars in three tints (gold, ice, blue), compositor-only
+     motion (opacity + scale), each on its own delay and period;
+   - two breath-soft nebula washes, static by design (calm + cheap);
+   - one rare meteor crossing the upper sky every 16s.
+
+   Light theme re-tints the starlight so it reads on warm ground; under
+   `prefers-reduced-motion` the sky appears complete and still.
+   ========================================================================== */
+
+.cosmic {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.cosmic-nebula {
+  position: absolute;
+  border-radius: 50%;
+}
+
+.cosmic-nebula.a {
+  width: 60vmax;
+  height: 60vmax;
+  left: -20vmax;
+  top: -20vmax;
+  background: radial-gradient(circle, rgba(200, 160, 78, 0.1), transparent 65%);
+}
+
+.cosmic-nebula.b {
+  width: 70vmax;
+  height: 70vmax;
+  right: -25vmax;
+  bottom: -25vmax;
+  background: radial-gradient(circle, rgba(113, 146, 255, 0.1), transparent 65%);
+}
+
+.cosmic-star {
+  position: absolute;
+  border-radius: 50%;
+  translate: -50% -50%;
+  animation: cosmic-twinkle 3.6s ease-in-out infinite;
+}
+
+.cosmic-star.t0 {
+  background: #ffe9b8;
+  box-shadow: 0 0 6px rgba(255, 226, 166, 0.8);
+}
+
+.cosmic-star.t1 {
+  background: #eef2ff;
+  box-shadow: 0 0 6px rgba(232, 238, 255, 0.7);
+}
+
+.cosmic-star.t2 {
+  background: #a7bcff;
+  box-shadow: 0 0 6px rgba(167, 188, 255, 0.7);
+}
+
+@keyframes cosmic-twinkle {
+  0%, 100% { opacity: 0.12; scale: 0.75; }
+  50% { opacity: 0.85; scale: 1.1; }
+}
+
+/* A rare meteor: invisible most of its 16s loop, one quiet streak across
+   the upper sky, then gone again. Delayed so it never fires on load. */
+.cosmic-meteor {
+  position: absolute;
+  top: 12%;
+  left: 85%;
+  width: 90px;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(255, 246, 221, 0), #fff6dd);
+  transform: rotate(-35deg);
+  transform-origin: right center;
+  opacity: 0;
+  animation: cosmic-meteor 16s linear 6s infinite;
+}
+
+@keyframes cosmic-meteor {
+  0%, 86% { opacity: 0; translate: 0 0; }
+  88% { opacity: 0.9; }
+  94% { opacity: 0; translate: -46vw 26vh; }
+  100% { opacity: 0; translate: 0 0; }
+}
+
+/* --- light theme: starlight that reads on warm ground --------------------- */
+
+.light .cosmic-nebula.a {
+  background: radial-gradient(circle, rgba(200, 160, 78, 0.12), transparent 65%);
+}
+
+.light .cosmic-nebula.b {
+  background: radial-gradient(circle, rgba(38, 72, 152, 0.1), transparent 65%);
+}
+
+.light .cosmic-star.t0 {
+  background: #b98a1e;
+  box-shadow: 0 0 6px rgba(185, 138, 30, 0.5);
+}
+
+.light .cosmic-star.t1 {
+  background: #8fa3d9;
+  box-shadow: 0 0 6px rgba(143, 163, 217, 0.5);
+}
+
+.light .cosmic-star.t2 {
+  background: #5a6fa8;
+  box-shadow: 0 0 6px rgba(90, 111, 168, 0.5);
+}
+
+.light .cosmic-meteor {
+  background: linear-gradient(90deg, rgba(38, 72, 152, 0), #264898);
+}
+
+/* --- reduced motion: a complete, still sky -------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .cosmic-star {
+    animation: none;
+    opacity: 0.35;
+  }
+
+  .cosmic-meteor {
+    display: none;
+  }
+}
