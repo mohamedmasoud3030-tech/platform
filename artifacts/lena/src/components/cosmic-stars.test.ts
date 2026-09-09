@@ -2,8 +2,8 @@ import { describe, expect, it } from "vitest";
 import { cosmicStars } from "./cosmic-stars";
 
 describe("cosmic star-chart", () => {
-  it("deals a full sky of 84 stars by default", () => {
-    expect(cosmicStars()).toHaveLength(84);
+  it("deals a full sky of 140 stars by default", () => {
+    expect(cosmicStars()).toHaveLength(140);
   });
 
   it("deals the same sky for the same seed", () => {

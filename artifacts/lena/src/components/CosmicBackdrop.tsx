@@ -8,7 +8,9 @@ const STARS = cosmicStars();
  * A fixed layer pinned behind everything (negative z-index inside the
  * shell's stacking context), pointer-transparent, purely decorative:
  * twinkling starlight in three tints, two breath-soft nebula washes, and
- * one rare meteor crossing the upper sky. Components above are untouched.
+ * three rare meteors crossing on slow staggered loops. The card surfaces
+ * above turn to frosted glass so the starlight glows through (scoped to
+ * pages rendering this backdrop; the header stays solid).
  */
 export default function CosmicBackdrop() {
   return (
@@ -29,7 +31,9 @@ export default function CosmicBackdrop() {
           }}
         />
       ))}
-      <span className="cosmic-meteor" />
+      <span className="cosmic-meteor m1" />
+      <span className="cosmic-meteor m2" />
+      <span className="cosmic-meteor m3" />
     </div>
   );
 }

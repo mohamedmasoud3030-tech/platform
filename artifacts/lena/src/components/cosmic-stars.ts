@@ -33,7 +33,7 @@ function mulberry32(seed: number): () => number {
 
 const f2 = (n: number) => Math.round(n * 100) / 100;
 
-export function cosmicStars(count = 84, seed = 20260909): CosmicStar[] {
+export function cosmicStars(count = 140, seed = 20260909): CosmicStar[] {
   const rand = mulberry32(seed);
   return Array.from({ length: count }, () => ({
     x: f2(rand() * 100),
