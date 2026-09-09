@@ -316,7 +316,7 @@ for (const locale of ["ar", "en"]) {
 
 /* ----------------------------- reduced motion ----------------------------- */
 
-test("reduced motion: Home core and orbit never vanish and navigation still works", async ({
+test("reduced motion: Home frontage and core never vanish and navigation still works", async ({
   page,
 }) => {
   test.info().annotations.push(
@@ -328,17 +328,71 @@ test("reduced motion: Home core and orbit never vanish and navigation still work
   await openApp(page, { route: "/", locale: "en", theme: "dark", viewport: VIEWPORTS.desktop });
 
   // The classic trap: animation removed → element left at opacity: 0.
-  // Each check waits for the scene to settle (lazy chunk + intersect flag),
-  // then asserts the settled value — a stuck opacity: 0 fails the poll.
+  // Each check waits for the scene to settle, then asserts the settled
+  // value — a stuck opacity: 0 fails the poll.
+  await expectSettledOpacity(page, ".lena-frontage", 0.9, "frontage opacity (reduced motion)");
   await expectSettledOpacity(page, ".lena-house", 0.99, "core opacity (reduced motion)");
-  await expectSettledOpacity(page, ".lena-orbit-field", 0.9, "orbit field opacity (reduced motion)");
-  await expectSettledOpacity(page, ".lena-sat", 0.5, "satellite opacity (reduced motion)");
-  const opacities = {
-    house: await page.locator(".lena-house").evaluate((el) => Number(getComputedStyle(el).opacity)),
-    orbitField: await page.locator(".lena-orbit-field").evaluate((el) => Number(getComputedStyle(el).opacity)),
-    satellite: await page.locator(".lena-sat").first().evaluate((el) => Number(getComputedStyle(el).opacity)),
-  };
-  expect(opacities.house, `core opacity under reduced motion (${JSON.stringify(opacities)})`).toBe(1);
+
+  // Real lit/dim correctness (House Ledger): the frontage shows exactly the
+  // six public systems; a window is lit iff the evidence registry documents
+  // that system — same rule as the card windows. Never a lifecycle word.
+  const windows = page.locator(".lena-front-window");
+  await expect(windows, "six frontage windows present").toHaveCount(6);
+  await expect(page.locator('.lena-front-window[data-documented="true"]'), "two documented windows").toHaveCount(2);
+  await expect(page.locator('.lena-front-window[data-documented="false"]'), "four not-yet-documented windows").toHaveCount(4);
+
+  // State classes must agree with the data flags, and the documented pair
+  // must be exactly MALEK (property) + Lara Beauty (wellness) — the two
+  // systems the canonical registry documents.
+  const roomStates = await page.evaluate(() =>
+    [...document.querySelectorAll(".lena-front-window")].map((node) => ({
+      id: node.getAttribute("data-system"),
+      documented: node.getAttribute("data-documented"),
+      lit: node.classList.contains("is-lit"),
+      unlit: node.classList.contains("is-unlit"),
+    })),
+  );
+  expect(roomStates).toHaveLength(6);
+  for (const room of roomStates) {
+    expect(room.lit, `"${room.id}" lit class must equal its evidence flag`).toBe(
+      room.documented === "true",
+    );
+    expect(room.unlit, `"${room.id}" unlit class must equal its evidence flag`).toBe(
+      room.documented === "false",
+    );
+  }
+  const documentedIds = roomStates
+    .filter((room) => room.documented === "true")
+    .map((room) => room.id)
+    .sort();
+  expect(documentedIds, "only registry-documented systems may be lit").toEqual(["property", "wellness"]);
+
+  // The light is real: lit panes and unlit panes render different,
+  // non-transparent surfaces (a lit window is never an empty frame).
+  const paneSurfaces = await page.evaluate(() => {
+    const read = (selector) => {
+      const node = document.querySelector(selector);
+      return node ? getComputedStyle(node).backgroundColor : null;
+    };
+    return {
+      lit: read('.lena-front-window[data-documented="true"] .lena-front-pane'),
+      unlit: read('.lena-front-window[data-documented="false"] .lena-front-pane'),
+    };
+  });
+  expect(paneSurfaces.lit, "lit pane has a rendered surface").not.toBe("rgba(0, 0, 0, 0)");
+  expect(paneSurfaces.unlit, "unlit pane has a rendered surface").not.toBe("rgba(0, 0, 0, 0)");
+  expect(paneSurfaces.lit, "lit pane visibly differs from an unlit pane").not.toBe(paneSurfaces.unlit);
+
+  // The documentation-status sign is visible (honesty at the surface, not
+  // only in data attributes).
+  await expect(page.locator(".lena-frontage-key"), "frontage key line visible").toBeVisible();
+  await expect(
+    page.getByText("Not yet documented", { exact: true }),
+    "unlit rooms carry the honest documentation-status sign",
+  ).toBeVisible();
+
+  const houseOpacity = await page.locator(".lena-house").evaluate((el) => Number(getComputedStyle(el).opacity));
+  expect(houseOpacity, `core opacity under reduced motion`).toBe(1);
 
   const probe = await probeCore(page, HOME_CORE, "Home core reduced motion");
   expectCoreCssContract(probe, page);
