@@ -76,6 +76,14 @@ function useOrbitRadius(): number {
   return radius;
 }
 
+function isCoarsePointer(): boolean {
+  return (
+    typeof window !== "undefined" &&
+    typeof window.matchMedia === "function" &&
+    window.matchMedia("(pointer:coarse)").matches
+  );
+}
+
 export default function RoseEngine() {
   const { locale, direction } = usePreferences();
   const bodies = roseBodies();
@@ -338,7 +346,9 @@ export default function RoseEngine() {
             </>
           ) : (
             <span className="night-card-idle">
-              {locale === "ar" ? "مرّر على شريحة لتقرأ نظامها" : "Hover a chip to read its system"}
+              {locale === "ar"
+  ? (isCoarsePointer() ? "المس شريحة لتقرأ نظامها" : "مرّر على شريحة لتقرأ نظامها")
+  : (isCoarsePointer() ? "Tap a chip to read its system" : "Hover a chip to read its system")}
             </span>
           )}
         </p>

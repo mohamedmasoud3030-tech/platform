@@ -93,5 +93,8 @@ export default defineConfig({
     port: resolvedPort,
     host: "0.0.0.0",
     allowedHosts: true,
+    // Preview only: never let the browser cache the shell, so a refresh
+    // always shows the latest build (hashed assets stay long-lived).
+    headers: { "Cache-Control": "no-store" },
   },
 });
