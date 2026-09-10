@@ -9,15 +9,6 @@ on:
 permissions:
   contents: read
 
-env:
-  # TEMPORARY (Rose-era one-shot): the committed baselines predate the Rose
-  # Engine and cannot be regenerated outside the CI rendering environment
-  # (local pixels fail the strict cross-build tolerance). While this flag is
-  # "true" the Guardian visual step runs in --update-snapshots mode and
-  # commits the CI-rendered baselines back to the branch via the Git Data
-  # API. Flip to "false" (strict gate) once the CI-born baselines land.
-  GUARDIAN_ADOPT_BASELINES: "true"
-
 jobs:
   validate:
     name: Typecheck, test, build, and verify
@@ -64,8 +55,6 @@ jobs:
     if: github.event_name == 'pull_request'
     needs: validate
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
 
     steps:
       - name: Checkout tested PR merge
@@ -110,51 +99,7 @@ jobs:
 
       - name: Visual regression
         working-directory: test/lena-runtime-visual-guardian-v1
-        run: |
-          if [ "$GUARDIAN_ADOPT_BASELINES" = "true" ]; then
-            echo "::notice::GUARDIAN_ADOPT_BASELINES=true — refreshing baselines instead of gating."
-            npm run test:update
-          else
-            npm run test:visual
-          fi
-
-      - name: Commit refreshed baselines back to the branch
-        if: env.GUARDIAN_ADOPT_BASELINES == 'true'
-        shell: bash
-        run: |
-          set -uo pipefail
-          fail() { echo "::error::baseline-commit: $1"; exit 1; }
-
-          git add test/lena-runtime-visual-guardian-v1/screenshots || fail "git add"
-          CHANGED=$(git diff --cached --name-only)
-          if [ -z "$CHANGED" ]; then
-            echo "Baselines unchanged — nothing to commit."
-            exit 0
-          fi
-          echo "Changed baselines:"; echo "$CHANGED"
-
-          BRANCH="${{ github.head_ref || github.ref_name }}"
-
-          # The checked-out ref is the PR merge commit; anchor the new commit
-          # on the actual branch tip so the history stays linear.
-          git fetch origin "refs/heads/$BRANCH" 2>/tmp/fetch.err || { echo "::error::baseline-commit: fetch failed: $(cat /tmp/fetch.err | tr '\n' ' ')"; exit 1; }
-          TIP=$(git rev-parse FETCH_HEAD)
-          echo "branch tip: $TIP"
-
-          git config user.name "github-actions[bot]" || fail "git config name"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com" || fail "git config email"
-
-          # Index now holds the CI-rendered baselines; write that tree and
-          # parent the commit on the branch tip.
-          TREE=$(git write-tree) || fail "write-tree"
-          COMMIT=$(git commit-tree "$TREE" -p "$TIP" -m "chore(guardian): refresh visual baselines for the Rose Engine era") || fail "commit-tree"
-          echo "new commit: $COMMIT"
-
-          PUSH_OUT=$(git push origin "$COMMIT:refs/heads/$BRANCH" 2>&1) || {
-            echo "::error::baseline-commit: push failed: $(echo "$PUSH_OUT" | tr '\n' ' ')"
-            exit 1
-          }
-          echo "Committed refreshed baselines as $COMMIT on $BRANCH"
+        run: npm run test:visual
 
       - name: Upload Guardian diagnostics
         if: always()
