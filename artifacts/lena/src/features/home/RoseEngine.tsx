@@ -37,7 +37,7 @@ import { ROSE_READY_LABEL, roseBodies } from "./rose-system-bodies";
  * Hovering a chip lights its whole neighbourhood — its petal, its proof
  * circle, its tow-rope and tow-node, and the two bridges that tie it to its
  * neighbours — and the reading card names the two linked systems. Rotation
- * pauses while the visitor reads (hover / keyboard focus) and under
+ * never pauses on hover, focus, or press; under
  * `prefers-reduced-motion` the window appears complete and still. Chips are
  * real links to chambers.
  */

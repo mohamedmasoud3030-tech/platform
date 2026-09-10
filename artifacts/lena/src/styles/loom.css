@@ -134,6 +134,12 @@ p.night-card.loom-card {
 /* --- small screens: labels rest, chips shrink, rows hold ------------------- */
 
 @media (max-width: 720px) {
+  .loom {
+    width: 100vw;
+    max-width: 100vw;
+    margin-inline: calc(50% - 50vw);
+  }
+
   .loom-roots {
     display: none;
   }

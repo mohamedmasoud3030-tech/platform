@@ -25,7 +25,7 @@
      pulses around the circuit.
    - Chips/threads use the independent `rotate` / `translate` / `scale`
      properties so positioning, counter-rotation and hover lift never fight.
-   - Rotation pauses while the visitor reads (hover / keyboard focus); under
+   - Rotation never pauses on hover, focus, or press; under
      `prefers-reduced-motion` the window appears complete and still.
    - RTL mirrors every station angle and reverses every wheel so the whole
      rite reads right-to-left.
@@ -452,25 +452,6 @@
   font-size: 10px;
   font-variant-numeric: tabular-nums;
   opacity: 0.75;
-}
-
-/* Reading pauses the wheels; the light itself keeps breathing. */
-.rose:hover .rose-geometry,
-.rose:focus-within .rose-geometry,
-.rose.is-focus .rose-geometry,
-.rose:hover .rose-orbit,
-.rose:focus-within .rose-orbit,
-.rose.is-focus .rose-orbit,
-.rose:hover .rose-chip,
-.rose:focus-within .rose-chip,
-.rose.is-focus .rose-chip,
-.rose:hover .rose-comets,
-.rose:focus-within .rose-comets,
-.rose.is-focus .rose-comets,
-.rose:hover .rose-halo,
-.rose:focus-within .rose-halo,
-.rose.is-focus .rose-halo {
-  animation-play-state: paused;
 }
 
 /* --- reading card + key ---------------------------------------------------- */

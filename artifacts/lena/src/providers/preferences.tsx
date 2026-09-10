@@ -25,10 +25,7 @@ const PreferencesContext = createContext<PreferencesContextValue | null>(null);
 const THEME_STORAGE_KEY = "lena-digital-house.theme";
 
 function getInitialTheme(): AppTheme {
-  if (typeof window === "undefined") return "dark";
-  const stored = window.localStorage.getItem(THEME_STORAGE_KEY);
-  if (stored === "light" || stored === "dark") return stored;
-  return window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+  return "dark";
 }
 
 export function PreferencesProvider({
@@ -38,17 +35,21 @@ export function PreferencesProvider({
   children: ReactNode;
   initialLocale?: AppLocale;
 }) {
-  const [theme, setTheme] = useState<AppTheme>(getInitialTheme);
+  const [theme, setThemeState] = useState<AppTheme>(getInitialTheme);
   const [locale, setLocaleState] = useState<AppLocale>(initialLocale);
   const direction = locale === "ar" ? "rtl" : "ltr";
 
   useEffect(() => {
     const root = document.documentElement;
     root.classList.remove("light", "dark");
-    root.classList.add(theme);
-    root.dataset.theme = theme;
-    window.localStorage.setItem(THEME_STORAGE_KEY, theme);
+    root.classList.add("dark");
+    root.dataset.theme = "dark";
+    window.localStorage.setItem(THEME_STORAGE_KEY, "dark");
   }, [theme]);
+
+  const setTheme = useCallback((_next?: AppTheme) => {
+    setThemeState("dark");
+  }, []);
 
   useEffect(() => {
     const root = document.documentElement;
@@ -89,10 +90,10 @@ export function PreferencesProvider({
       direction,
       setTheme,
       setLocale,
-      toggleTheme: () => setTheme((current) => (current === "dark" ? "light" : "dark")),
+      toggleTheme: () => setTheme("dark"),
       toggleLocale: () => setLocale(locale === "ar" ? "en" : "ar"),
     }),
-    [direction, locale, setLocale, theme],
+    [direction, locale, setLocale, setTheme, theme],
   );
 
   return <PreferencesContext.Provider value={value}>{children}</PreferencesContext.Provider>;

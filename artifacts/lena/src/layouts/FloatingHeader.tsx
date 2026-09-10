@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Languages, Menu, Moon, Sun, X } from "lucide-react";
+import { Languages, Menu, X } from "lucide-react";
 import { Link, useLocation } from "react-router";
 import LenaLogo from "@/design-system/brand/LenaLogo";
 import { PUBLIC_NAVIGATION } from "@/content/navigation";
@@ -9,7 +9,7 @@ import { usePreferences } from "@/providers/preferences";
 
 export default function FloatingHeader() {
   const copy = useSiteCopy();
-  const { locale, theme, toggleLocale, toggleTheme } = usePreferences();
+  const { locale, toggleLocale } = usePreferences();
   const { pathname } = useLocation();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -73,15 +73,6 @@ export default function FloatingHeader() {
             }
           >
             <Languages size={17} />
-          </button>
-
-          <button
-            type="button"
-            className="lena-icon-button"
-            onClick={toggleTheme}
-            aria-label={locale === "ar" ? "تبديل المظهر" : "Toggle theme"}
-          >
-            {theme === "dark" ? <Sun size={17} /> : <Moon size={17} />}
           </button>
 
           <Link
