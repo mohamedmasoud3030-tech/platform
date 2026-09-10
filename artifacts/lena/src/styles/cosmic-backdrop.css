@@ -1,0 +1,301 @@
+/* ============================================================================
+   COSMIC BACKDROP — the rose's starfield, spread over the whole page.
+
+   One fixed layer pinned BEHIND everything (negative z-index inside the
+   shell's isolated stacking context: above the shell's own ground, below
+   all content), pointer-transparent and decorative only:
+   - 140 twinkling stars in three tints (gold, ice, blue), compositor-only
+     motion (opacity + scale), each on its own delay and period;
+   - two breath-soft nebula washes, static by design (calm + cheap);
+   - three rare meteors crossing the sky on slow staggered loops.
+
+   GLASS ROOTS: inside any root rendering the backdrop (public shell,
+   admin shell, login screen — scoped with a descendant :has(), so a root
+   without the sky keeps its solid sheets) the card surfaces turn to
+   sheer glass — stars and nebulae glow through softly while text stays
+   legible. Headers and controls stay solid on purpose: chrome, not scenery.
+   The dashboard's bespoke tooling panels join the glass too.
+
+   Light theme re-tints the starlight so it reads on warm ground; under
+   `prefers-reduced-motion` the sky appears complete and still.
+   ========================================================================== */
+
+.cosmic {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.cosmic-nebula {
+  position: absolute;
+  border-radius: 50%;
+}
+
+.cosmic-nebula.a {
+  width: 60vmax;
+  height: 60vmax;
+  left: -20vmax;
+  top: -20vmax;
+  background: radial-gradient(circle, rgba(200, 160, 78, 0.1), transparent 65%);
+}
+
+.cosmic-nebula.b {
+  width: 70vmax;
+  height: 70vmax;
+  right: -25vmax;
+  bottom: -25vmax;
+  background: radial-gradient(circle, rgba(113, 146, 255, 0.1), transparent 65%);
+}
+
+.cosmic-star {
+  position: absolute;
+  border-radius: 50%;
+  translate: -50% -50%;
+  animation: cosmic-twinkle 3.6s ease-in-out infinite;
+}
+
+.cosmic-star.t0 {
+  background: #ffe9b8;
+  box-shadow: 0 0 6px rgba(255, 226, 166, 0.8);
+}
+
+.cosmic-star.t1 {
+  background: #eef2ff;
+  box-shadow: 0 0 6px rgba(232, 238, 255, 0.7);
+}
+
+.cosmic-star.t2 {
+  background: #a7bcff;
+  box-shadow: 0 0 6px rgba(167, 188, 255, 0.7);
+}
+
+@keyframes cosmic-twinkle {
+  0%, 100% { opacity: 0.12; scale: 0.75; }
+  50% { opacity: 0.85; scale: 1.1; }
+}
+
+/* Rare meteors: each invisible most of its long loop, then one slow quiet
+   streak — two gliding down-left, one answering down-right, staggered so
+   the sky never sits still yet never busies. Delayed past the first paint. */
+.cosmic-meteor {
+  position: absolute;
+  height: 2px;
+  border-radius: 999px;
+  opacity: 0;
+}
+
+.cosmic-meteor.m1 {
+  top: 10%;
+  left: 82%;
+  width: 110px;
+  background: linear-gradient(90deg, rgba(255, 246, 221, 0), #fff6dd);
+  transform: rotate(-35deg);
+  transform-origin: right center;
+  animation: cosmic-meteor 26s linear 5s infinite;
+}
+
+.cosmic-meteor.m2 {
+  top: 34%;
+  left: 6%;
+  width: 90px;
+  background: linear-gradient(270deg, rgba(232, 238, 255, 0), #e8eeff);
+  transform: rotate(32deg);
+  transform-origin: left center;
+  animation: cosmic-meteor-r 31s linear 15s infinite;
+}
+
+.cosmic-meteor.m3 {
+  top: 62%;
+  left: 74%;
+  width: 80px;
+  background: linear-gradient(90deg, rgba(255, 246, 221, 0), #fff6dd);
+  transform: rotate(-30deg);
+  transform-origin: right center;
+  animation: cosmic-meteor 34s linear 23s infinite;
+}
+
+@keyframes cosmic-meteor {
+  0%, 84% { opacity: 0; translate: 0 0; }
+  87% { opacity: 0.9; }
+  95% { opacity: 0; translate: -46vw 26vh; }
+  100% { opacity: 0; translate: 0 0; }
+}
+
+@keyframes cosmic-meteor-r {
+  0%, 84% { opacity: 0; translate: 0 0; }
+  87% { opacity: 0.85; }
+  95% { opacity: 0; translate: 42vw 24vh; }
+  100% { opacity: 0; translate: 0 0; }
+}
+
+/* --- glass pages: let the starlight through (backdrop pages only) ---------- */
+
+.lena-public:has(.cosmic) .lena-glass,
+.lena-public:has(.cosmic) .lena-cta {
+  background: rgba(16, 19, 29, 0.18);
+  -webkit-backdrop-filter: blur(2px) saturate(1.2);
+  backdrop-filter: blur(2px) saturate(1.2);
+}
+
+.lena-public:has(.cosmic) .lena-footer {
+  background: rgba(5, 6, 9, 0.15);
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+}
+
+.lena-public:has(.cosmic) .night-card {
+  background: rgba(16, 19, 29, 0.18);
+  -webkit-backdrop-filter: blur(2px) saturate(1.2);
+  backdrop-filter: blur(2px) saturate(1.2);
+}
+
+.lena-public:has(.cosmic) .lena-continue {
+  background: rgba(16, 19, 29, 0.2);
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+}
+
+/* Chips turn sheer (no blur: they ride the wheel, and frosted motion is
+   expensive) — starlight breathes through while the pills keep leading. */
+.lena-public:has(.cosmic) .rose-chip[data-lit="true"] {
+  background: rgba(24, 18, 6, 0.55);
+}
+
+.lena-public:has(.cosmic) .rose-chip[data-lit="false"] {
+  background: rgba(10, 15, 32, 0.55);
+}
+
+/* --- light theme: starlight that reads on warm ground --------------------- */
+
+.light .cosmic-nebula.a {
+  background: radial-gradient(circle, rgba(200, 160, 78, 0.12), transparent 65%);
+}
+
+.light .cosmic-nebula.b {
+  background: radial-gradient(circle, rgba(38, 72, 152, 0.1), transparent 65%);
+}
+
+.light .cosmic-star.t0 {
+  background: #b98a1e;
+  box-shadow: 0 0 6px rgba(185, 138, 30, 0.5);
+}
+
+.light .cosmic-star.t1 {
+  background: #8fa3d9;
+  box-shadow: 0 0 6px rgba(143, 163, 217, 0.5);
+}
+
+.light .cosmic-star.t2 {
+  background: #5a6fa8;
+  box-shadow: 0 0 6px rgba(90, 111, 168, 0.5);
+}
+
+.light .cosmic-meteor.m1,
+.light .cosmic-meteor.m3 {
+  background: linear-gradient(90deg, rgba(38, 72, 152, 0), #264898);
+}
+
+.light .cosmic-meteor.m2 {
+  background: linear-gradient(270deg, rgba(38, 72, 152, 0), #264898);
+}
+
+.light .lena-public:has(.cosmic) .lena-glass,
+.light .lena-public:has(.cosmic) .lena-cta {
+  background: rgba(253, 248, 235, 0.22);
+  -webkit-backdrop-filter: blur(2px) saturate(1.1);
+  backdrop-filter: blur(2px) saturate(1.1);
+}
+
+.light .lena-public:has(.cosmic) .lena-footer {
+  background: rgba(253, 248, 235, 0.2);
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+}
+
+.light .lena-public:has(.cosmic) .lena-founder-strip {
+  background: rgba(253, 248, 235, 0.2);
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+}
+
+.light .lena-public:has(.cosmic) .night-card {
+  background: rgba(253, 248, 235, 0.22);
+  -webkit-backdrop-filter: blur(2px) saturate(1.1);
+  backdrop-filter: blur(2px) saturate(1.1);
+}
+
+.light .lena-public:has(.cosmic) .lena-continue {
+  background: rgba(253, 248, 235, 0.25);
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+}
+
+.light .lena-public:has(.cosmic) .rose-chip[data-lit="true"] {
+  background: rgba(255, 250, 235, 0.6);
+}
+
+.light .lena-public:has(.cosmic) .rose-chip[data-lit="false"] {
+  background: rgba(240, 244, 255, 0.6);
+}
+
+/* --- admin + login roots share the same sheer glass ---------------------- */
+
+.lena-admin:has(.cosmic) .lena-glass,
+.lena-login:has(.cosmic) .lena-glass {
+  background: rgba(16, 19, 29, 0.18);
+  -webkit-backdrop-filter: blur(2px) saturate(1.2);
+  backdrop-filter: blur(2px) saturate(1.2);
+}
+
+.light .lena-admin:has(.cosmic) .lena-glass,
+.light .lena-login:has(.cosmic) .lena-glass {
+  background: rgba(253, 248, 235, 0.22);
+  -webkit-backdrop-filter: blur(2px) saturate(1.1);
+  backdrop-filter: blur(2px) saturate(1.1);
+}
+
+/* Dashboard tooling panels (platform.css surfaces): the light values are
+   the unqualified rules while `.dark` re-states the night values. Panels
+   already sheer at night keep their wash and only gain the blur. */
+.lena-admin:has(.cosmic) .dashboard-panel,
+.lena-admin:has(.cosmic) .bento-card {
+  background: rgba(255, 255, 255, 0.3);
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+}
+
+.lena-admin:has(.cosmic) .dashboard-record,
+.lena-admin:has(.cosmic) .dashboard-form {
+  background: rgba(244, 244, 245, 0.3);
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+}
+
+.dark .lena-admin:has(.cosmic) .dashboard-panel,
+.dark .lena-admin:has(.cosmic) .bento-card {
+  background: rgba(255, 255, 255, 0.045);
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+}
+
+.dark .lena-admin:has(.cosmic) .dashboard-record,
+.dark .lena-admin:has(.cosmic) .dashboard-form {
+  background: rgba(10, 10, 12, 0.3);
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+}
+
+/* --- reduced motion: a complete, still sky -------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .cosmic-star {
+    animation: none;
+    opacity: 0.35;
+  }
+
+  .cosmic-meteor {
+    display: none;
+  }
+}

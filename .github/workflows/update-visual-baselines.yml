@@ -1,0 +1,69 @@
+name: Update visual baselines
+
+# Regenerates the LENA Guardian visual-regression baselines on a target
+# branch using the exact CI rendering environment (ubuntu-latest Chromium),
+# then commits the new baselines back to that branch. Pixels captured
+# anywhere else (local sandboxes, different fonts) never match CI — the
+# baselines must be born where they are judged.
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: "Branch whose Guardian visual baselines should be regenerated"
+        required: true
+        default: "arena/01a086d4-platform"
+
+permissions:
+  contents: write
+
+jobs:
+  update-baselines:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout target branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.branch }}
+          fetch-depth: 0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install app dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build production app
+        run: pnpm run build
+
+      - name: Install Guardian dependencies
+        working-directory: test/lena-runtime-visual-guardian-v1
+        run: npm ci
+
+      - name: Install Chromium
+        working-directory: test/lena-runtime-visual-guardian-v1
+        run: npx playwright install --with-deps chromium
+
+      - name: Regenerate visual baselines
+        working-directory: test/lena-runtime-visual-guardian-v1
+        run: npm run test:update
+
+      - name: Commit baselines back to the branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add test/lena-runtime-visual-guardian-v1/screenshots
+          if git diff --cached --quiet; then
+            echo "No baseline changes to commit."
+          else
+            git commit -m "chore(guardian): refresh visual baselines for the Rose Engine era"
+            git push origin "HEAD:${{ inputs.branch }}"
+          fi

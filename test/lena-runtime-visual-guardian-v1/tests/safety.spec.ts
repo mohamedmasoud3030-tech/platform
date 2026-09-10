@@ -188,7 +188,7 @@ test("MALEK Chamber keeps the external auth boundary explicit", async ({ page })
   await expect(page.locator("iframe")).toHaveCount(0);
 });
 
-test("mobile (390x844): primary CTA and Sacred Core are visible and not clipped", async ({ page }) => {
+test("mobile (390x844): primary CTA and Rose core are visible and not clipped", async ({ page }) => {
   test.info().annotations.push(
     { type: "route", description: "/en" },
     { type: "viewport", description: "390x844" },
@@ -316,7 +316,7 @@ for (const locale of ["ar", "en"]) {
 
 /* ----------------------------- reduced motion ----------------------------- */
 
-test("reduced motion: Home frontage and core never vanish and navigation still works", async ({
+test("reduced motion: Home Rose never vanishes and navigation still works", async ({
   page,
 }) => {
   test.info().annotations.push(
@@ -330,69 +330,76 @@ test("reduced motion: Home frontage and core never vanish and navigation still w
   // The classic trap: animation removed → element left at opacity: 0.
   // Each check waits for the scene to settle, then asserts the settled
   // value — a stuck opacity: 0 fails the poll.
-  await expectSettledOpacity(page, ".lena-frontage", 0.9, "frontage opacity (reduced motion)");
-  await expectSettledOpacity(page, ".lena-house", 0.99, "core opacity (reduced motion)");
+  await expectSettledOpacity(page, ".rose-stage", 0.99, "rose stage opacity (reduced motion)");
 
-  // Real lit/dim correctness (House Ledger): the frontage shows exactly the
-  // six public systems; a window is lit iff the evidence registry documents
-  // that system — same rule as the card windows. Never a lifecycle word.
-  const windows = page.locator(".lena-front-window");
-  await expect(windows, "six frontage windows present").toHaveCount(6);
-  await expect(page.locator('.lena-front-window[data-documented="true"]'), "two documented windows").toHaveCount(2);
-  await expect(page.locator('.lena-front-window[data-documented="false"]'), "four not-yet-documented windows").toHaveCount(4);
+  // Real lit/dim correctness (House Ledger, Rose era): the Rose carries
+  // exactly the six public systems as chips; `documented` stays purely
+  // evidence-based (same rule as every other surface), while `lit` is the
+  // Rose's wider flame — documented systems plus the owner-declared READY
+  // pair (rental + hospitality). Never a lifecycle word.
+  const chips = page.locator(".rose-chip");
+  await expect(chips, "six rose chips present").toHaveCount(6);
+  await expect(page.locator('.rose-chip[data-documented="true"]'), "two documented chips").toHaveCount(2);
+  await expect(page.locator('.rose-chip[data-documented="false"]'), "four not-yet-documented chips").toHaveCount(4);
 
-  // State classes must agree with the data flags, and the documented pair
-  // must be exactly MALEK (property) + Lara Beauty (wellness) — the two
-  // systems the canonical registry documents.
-  const roomStates = await page.evaluate(() =>
-    [...document.querySelectorAll(".lena-front-window")].map((node) => ({
+  // Flags must agree with the rule, and the documented pair must be exactly
+  // MALEK (property) + Lara Beauty (wellness) — the two systems the
+  // canonical registry documents.
+  const chipStates = await page.evaluate(() =>
+    [...document.querySelectorAll(".rose-chip")].map((node) => ({
       id: node.getAttribute("data-system"),
       documented: node.getAttribute("data-documented"),
-      lit: node.classList.contains("is-lit"),
-      unlit: node.classList.contains("is-unlit"),
+      lit: node.getAttribute("data-lit"),
     })),
   );
-  expect(roomStates).toHaveLength(6);
-  for (const room of roomStates) {
-    expect(room.lit, `"${room.id}" lit class must equal its evidence flag`).toBe(
-      room.documented === "true",
-    );
-    expect(room.unlit, `"${room.id}" unlit class must equal its evidence flag`).toBe(
-      room.documented === "false",
+  expect(chipStates).toHaveLength(6);
+  const ownerReady = ["rental", "hospitality"];
+  for (const chip of chipStates) {
+    const expectedLit = chip.documented === "true" || ownerReady.includes(chip.id);
+    expect(chip.lit, `"${chip.id}" lit flag must equal documented || owner-ready`).toBe(
+      String(expectedLit),
     );
   }
-  const documentedIds = roomStates
-    .filter((room) => room.documented === "true")
-    .map((room) => room.id)
+  const documentedIds = chipStates
+    .filter((chip) => chip.documented === "true")
+    .map((chip) => chip.id)
     .sort();
-  expect(documentedIds, "only registry-documented systems may be lit").toEqual(["property", "wellness"]);
+  expect(documentedIds, "only registry-documented systems may be documented").toEqual(["property", "wellness"]);
+  const litIds = chipStates
+    .filter((chip) => chip.lit === "true")
+    .map((chip) => chip.id)
+    .sort();
+  expect(litIds, "lit chips are the documented pair plus the owner-declared READY pair").toEqual(
+    ["hospitality", "property", "rental", "wellness"],
+  );
 
-  // The light is real: lit panes and unlit panes render different,
-  // non-transparent surfaces (a lit window is never an empty frame).
-  const paneSurfaces = await page.evaluate(() => {
+  // The light is real: lit and dim chips render different, non-transparent
+  // surfaces (a lit chip is never an empty frame).
+  const chipSurfaces = await page.evaluate(() => {
     const read = (selector) => {
       const node = document.querySelector(selector);
       return node ? getComputedStyle(node).backgroundColor : null;
     };
     return {
-      lit: read('.lena-front-window[data-documented="true"] .lena-front-pane'),
-      unlit: read('.lena-front-window[data-documented="false"] .lena-front-pane'),
+      lit: read('.rose-chip[data-lit="true"]'),
+      dim: read('.rose-chip[data-lit="false"]'),
     };
   });
-  expect(paneSurfaces.lit, "lit pane has a rendered surface").not.toBe("rgba(0, 0, 0, 0)");
-  expect(paneSurfaces.unlit, "unlit pane has a rendered surface").not.toBe("rgba(0, 0, 0, 0)");
-  expect(paneSurfaces.lit, "lit pane visibly differs from an unlit pane").not.toBe(paneSurfaces.unlit);
+  expect(chipSurfaces.lit, "lit chip has a rendered surface").not.toBe("rgba(0, 0, 0, 0)");
+  expect(chipSurfaces.dim, "dim chip has a rendered surface").not.toBe("rgba(0, 0, 0, 0)");
+  expect(chipSurfaces.lit, "lit chip visibly differs from a dim chip").not.toBe(chipSurfaces.dim);
 
-  // The documentation-status sign is visible (honesty at the surface, not
-  // only in data attributes).
-  await expect(page.locator(".lena-frontage-key"), "frontage key line visible").toBeVisible();
+  // The status key is visible (honesty at the surface, not only in data
+  // attributes): READY for lit systems, RECORD PENDING for the rest.
+  await expect(page.locator(".night-key"), "rose key line visible").toBeVisible();
+  await expect(page.getByText("READY", { exact: true }), "ready key entry visible").toBeVisible();
   await expect(
-    page.getByText("Not yet documented", { exact: true }),
-    "unlit rooms carry the honest documentation-status sign",
+    page.getByText("RECORD PENDING", { exact: true }),
+    "pending key entry visible",
   ).toBeVisible();
 
-  const houseOpacity = await page.locator(".lena-house").evaluate((el) => Number(getComputedStyle(el).opacity));
-  expect(houseOpacity, `core opacity under reduced motion`).toBe(1);
+  const stageOpacity = await page.locator(".rose-stage").evaluate((el) => Number(getComputedStyle(el).opacity));
+  expect(stageOpacity, `rose stage opacity under reduced motion`).toBe(1);
 
   const probe = await probeCore(page, HOME_CORE, "Home core reduced motion");
   expectCoreCssContract(probe, page);

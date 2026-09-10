@@ -4,12 +4,14 @@ import FloatingHeader from "./FloatingHeader";
 import PublicFooter from "./PublicFooter";
 import WhatsAppFAB from "./WhatsAppFAB";
 import LenaAssistant from "@/features/assistant/LenaAssistant";
+import CosmicBackdrop from "@/components/CosmicBackdrop";
 
 export default function PublicShell({ children }: { children: ReactNode }) {
   const { locale } = usePreferences();
 
   return (
     <div className="lena-public">
+      <CosmicBackdrop />
       
 
       <a className="skip-link" href="#main-content">

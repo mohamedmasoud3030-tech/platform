@@ -1,0 +1,757 @@
+/* ==========================================================================
+   R5 — THE ROSE ENGINE (وردة الباني). Home hero scene.
+
+   A six-fold rose window that draws itself like a mason's rite, then turns
+   slowly like a great wheel. Six petals = the six public systems in owner
+   order; documented systems gild in brass, the rest stay stonework linework
+   (documentation status — never a lifecycle word).
+
+   THE TOW: every chip rides the wheel AHEAD of its petal — the chip is
+   the leader, the system follows — tethered by a visible rope of light
+   (with its own aura) with energy flowing chip → system and a glowing
+   tow-node riding the petal's tip. Pending petals breathe with a quiet
+   charging pulse while lit ones gild solid. The chips are also wired to
+   each other: six light-bridges join every chip to its two neighbours in
+   one continuous circuit, and three comets circle the ring.
+
+   Motion grammar:
+   - `.rose-orbit` (petals + tow-ropes + bridges + rope + six chips)
+     turns once every 30s. Each chip counter-rotates at the same rate so
+     its label stays upright while its position travels ahead of its
+     petal.
+   - `.rose-geometry` (construction proof + rings) counter-rotates at 60s
+     beneath the petals.
+   - `.rose-comets` is a third, swifter wheel (26s) carrying three light
+     pulses around the circuit.
+   - Chips/threads use the independent `rotate` / `translate` / `scale`
+     properties so positioning, counter-rotation and hover lift never fight.
+   - Rotation pauses while the visitor reads (hover / keyboard focus); under
+     `prefers-reduced-motion` the window appears complete and still.
+   - RTL mirrors every station angle and reverses every wheel so the whole
+     rite reads right-to-left.
+============================================================================= */
+
+.night-wrap {
+  width: min(560px, 100%);
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.rose {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.rose-stage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  animation: rose-enter 0.7s cubic-bezier(0.2, 0.7, 0.3, 1) 0.1s backwards;
+}
+
+@keyframes rose-enter {
+  from { opacity: 0; transform: scale(0.985); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes rose-thread-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* --- ambient sparkles ------------------------------------------------------- */
+
+.rose-stars {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.rose-star {
+  position: absolute;
+  border-radius: 50%;
+  background: #ffe9b8;
+  box-shadow: 0 0 6px rgba(255, 226, 166, 0.9);
+  translate: -50% -50%;
+  animation: rose-twinkle 3.2s ease-in-out infinite;
+}
+
+@keyframes rose-twinkle {
+  0%, 100% { opacity: 0.15; scale: 0.8; }
+  50% { opacity: 0.9; scale: 1.15; }
+}
+
+/* --- the turning window -------------------------------------------------- */
+
+.rose-geometry {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  animation: rose-spin-rev 60s linear infinite;
+}
+
+@keyframes rose-spin-rev {
+  to { rotate: -360deg; }
+}
+
+.rose-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.rose-construction {
+  fill: none;
+  stroke: rgba(167, 188, 255, 0.3);
+  stroke-width: 1;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  opacity: 0;
+  animation: rose-scribe 1s ease-out forwards;
+  transition: stroke 0.3s ease, opacity 0.3s ease;
+}
+
+.rose-construction.is-active {
+  stroke: rgba(232, 200, 118, 0.85);
+  stroke-width: 1.5;
+  opacity: 1;
+}
+
+@keyframes rose-scribe {
+  from { stroke-dashoffset: 1; opacity: 0; }
+  to { stroke-dashoffset: 0; opacity: 1; }
+}
+
+.rose-outer {
+  fill: none;
+  stroke: rgba(200, 160, 78, 0.55);
+  stroke-width: 1.5;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  opacity: 0;
+  animation: rose-scribe 1.2s ease-out 0.1s forwards;
+}
+
+.rose-outer.faint {
+  stroke: rgba(200, 160, 78, 0.25);
+  stroke-width: 1;
+  animation-delay: 0.25s;
+}
+
+.rose-petal {
+  stroke-width: 1.4;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  opacity: 0;
+  animation: rose-petal-in 1s ease-out forwards;
+  transition: stroke 0.3s ease;
+}
+
+.rose-petal[data-lit="true"] {
+  stroke: rgba(226, 196, 120, 0.85);
+  animation: rose-petal-in 1s ease-out forwards;
+}
+
+.rose-petal[data-lit="false"] {
+  stroke: rgba(167, 188, 255, 0.55);
+  animation: rose-petal-in 1s ease-out forwards;
+}
+
+.rose-petal.is-active {
+  stroke: #ffe2a6;
+  stroke-width: 2;
+}
+
+@keyframes rose-petal-in {
+  0% { stroke-dashoffset: 1; opacity: 0; }
+  35% { opacity: 1; }
+  100% { stroke-dashoffset: 0; opacity: 1; }
+}
+
+.rose-center {
+  fill: rgba(8, 10, 20, 0.92);
+  stroke: rgba(200, 160, 78, 0.6);
+  stroke-width: 1.5;
+}
+
+/* --- comets circling the circuit -------------------------------------------- */
+
+.rose-comets {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  animation: rose-comets-spin 26s linear infinite;
+}
+
+@keyframes rose-comets-spin {
+  to { rotate: 360deg; }
+}
+
+.rose-comet {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff6dd 0%, #e8c876 55%, rgba(232, 200, 118, 0) 100%);
+  box-shadow: 0 0 10px 3px rgba(232, 200, 118, 0.55);
+  translate: -50% -50%;
+  opacity: 0;
+  animation: rose-thread-in 0.8s ease-out 3.6s forwards;
+}
+
+/* --- halo rings around the hub ---------------------------------------------- */
+
+.rose-halo {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 2;
+  translate: -50% -50%;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.rose-halo.one {
+  width: 22%;
+  aspect-ratio: 1;
+  border: 1px dashed rgba(232, 200, 118, 0.5);
+  animation: rose-halo-spin 24s linear infinite;
+}
+
+.rose-halo.two {
+  width: 30%;
+  aspect-ratio: 1;
+  border: 1px dashed rgba(167, 188, 255, 0.3);
+  animation: rose-halo-spin-rev 46s linear infinite;
+}
+
+@keyframes rose-halo-spin {
+  to { rotate: 360deg; }
+}
+
+@keyframes rose-halo-spin-rev {
+  to { rotate: -360deg; }
+}
+
+/* --- the core sigil (the hub; steady while the wheels turn) --------------- */
+
+.rose-sigil {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 3;
+  translate: -50% -50%;
+  pointer-events: none;
+  animation: rose-sigil-breathe 5s ease-in-out infinite;
+}
+
+.rose-sigil img {
+  display: block;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  box-shadow: 0 0 24px rgba(200, 160, 78, 0.35);
+}
+
+@keyframes rose-sigil-breathe {
+  50% { scale: 1.045; }
+}
+
+/* --- the fan: blades, veins, tow-ropes, bridges, rope, chips ------------------- */
+
+.rose-orbit {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  animation: rose-orbit 30s linear infinite;
+}
+
+@keyframes rose-orbit {
+  to { rotate: 360deg; }
+}
+
+[dir="rtl"] .rose-geometry,
+[dir="rtl"] .rose-orbit,
+[dir="rtl"] .rose-comets,
+[dir="rtl"] .rose-halo.one,
+[dir="rtl"] .rose-halo.two {
+  animation-direction: reverse;
+}
+
+.rose-threads {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* Tow-ropes — each chip pulling its blade; energy flows with the pull. */
+.rose-tow-aura {
+  stroke: rgba(232, 200, 118, 0.2);
+  stroke-width: 7;
+  stroke-linecap: round;
+  opacity: 0;
+  animation: rose-thread-in 0.8s ease-out 3.2s forwards;
+}
+
+.rose-tow {
+  stroke: rgba(240, 212, 140, 0.9);
+  stroke-width: 2.75;
+  stroke-linecap: round;
+  stroke-dasharray: 6 4;
+  opacity: 0;
+  animation: rose-thread-in 0.8s ease-out 3.2s forwards, rose-tow-flow 0.9s linear infinite;
+  transition: stroke 0.3s ease;
+}
+
+@keyframes rose-tow-flow {
+  to { stroke-dashoffset: -10; }
+}
+
+.rose-tow.is-active {
+  stroke: #ffe9bb;
+  stroke-width: 3.25;
+  stroke-dasharray: none;
+}
+
+/* Tow-nodes — glowing orbs riding the petal tips. */
+.rose-tow-node {
+  fill: #8fa3d9;
+  opacity: 0;
+  animation: rose-thread-in 0.8s ease-out 3.4s forwards, rose-tow-pulse 2.4s ease-in-out 4.2s infinite;
+  transition: fill 0.3s ease;
+}
+
+.rose-tow-node[data-lit="true"] {
+  fill: #e8c876;
+}
+
+.rose-tow-node.is-active {
+  fill: #fff3d6;
+  stroke: #ffe2a6;
+  stroke-width: 1.5;
+}
+
+@keyframes rose-tow-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.72; }
+}
+
+/* Static halo discs behind the tow-nodes: radial-gradient glow with zero
+   per-frame cost (no filters anywhere in the rotating SVG layers). */
+.rose-tow-halo {
+  opacity: 0;
+  animation: rose-thread-in 0.8s ease-out 3.4s forwards;
+  pointer-events: none;
+}
+
+.rose-rope-body {
+  fill: none;
+  stroke: rgba(200, 160, 78, 0.22);
+  stroke-width: 1.5;
+  opacity: 0;
+  animation: rose-thread-in 0.8s ease-out 3s forwards;
+}
+
+.rose-rope-echo {
+  fill: none;
+  stroke: rgba(167, 188, 255, 0.14);
+  stroke-width: 1;
+  stroke-dasharray: 1 9;
+  opacity: 0;
+  animation: rose-thread-in 0.8s ease-out 3s forwards;
+}
+
+.rose-rope-flow {
+  fill: none;
+  stroke: #f0d48a;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: 2 26;
+  opacity: 0;
+  animation: rose-thread-in 0.8s ease-out 3s forwards, rose-rope-flow 2.6s linear infinite;
+}
+
+/* One dash period (2 + 26) so the light pulses loop seamlessly. */
+@keyframes rose-rope-flow {
+  to { stroke-dashoffset: -28; }
+}
+
+/* Light-bridges: each arc plugs one chip into its two neighbours. */
+.rose-bridge {
+  fill: none;
+  stroke: rgba(232, 200, 118, 0.55);
+  stroke-width: 2;
+  stroke-linecap: round;
+  opacity: 0;
+  animation: rose-thread-in 0.8s ease-out forwards;
+  transition: stroke 0.3s ease;
+}
+
+.rose-bridge.is-active {
+  stroke: #ffedb8;
+  stroke-width: 3;
+}
+
+.rose-chip {
+  position: absolute;
+  z-index: 4;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1;
+  white-space: nowrap;
+  text-decoration: none;
+  translate: -50% -50%;
+  animation: rose-chip-upright 30s linear infinite;
+  transition: border-color 0.25s ease, background 0.25s ease, color 0.25s ease;
+}
+
+@keyframes rose-chip-upright {
+  from { rotate: 0deg; }
+  to { rotate: -360deg; }
+}
+
+[dir="rtl"] .rose-chip {
+  animation-direction: reverse;
+}
+
+.rose-chip[data-lit="true"] {
+  border: 1px solid rgba(200, 160, 78, 0.55);
+  background: rgba(24, 18, 6, 0.9);
+  color: #f0e2b8;
+  box-shadow: 0 0 14px rgba(200, 160, 78, 0.18);
+}
+
+.rose-chip[data-lit="false"] {
+  border: 1px solid rgba(167, 188, 255, 0.35);
+  background: rgba(10, 15, 32, 0.9);
+  color: #c9d4f2;
+}
+
+.rose-chip:hover,
+.rose-chip:focus-visible {
+  border-color: #ffe2a6;
+  scale: 1.08;
+}
+
+.night-sat-num {
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.75;
+}
+
+/* Reading pauses the wheels; the light itself keeps breathing. */
+.rose:hover .rose-geometry,
+.rose:focus-within .rose-geometry,
+.rose.is-focus .rose-geometry,
+.rose:hover .rose-orbit,
+.rose:focus-within .rose-orbit,
+.rose.is-focus .rose-orbit,
+.rose:hover .rose-chip,
+.rose:focus-within .rose-chip,
+.rose.is-focus .rose-chip,
+.rose:hover .rose-comets,
+.rose:focus-within .rose-comets,
+.rose.is-focus .rose-comets,
+.rose:hover .rose-halo,
+.rose:focus-within .rose-halo,
+.rose.is-focus .rose-halo {
+  animation-play-state: paused;
+}
+
+/* --- reading card + key ---------------------------------------------------- */
+
+.night-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 56px;
+  width: 100%;
+  margin: 10px 0 0;
+  padding: 10px 16px;
+  border: 1px solid var(--lena-line);
+  border-radius: 14px;
+  background: var(--lena-card-strong);
+  font-size: 12px;
+  text-align: center;
+}
+
+.night-card-num {
+  color: var(--lena-accent);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.night-card-main {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.night-card-main strong {
+  color: var(--lena-text);
+  font-size: 13px;
+}
+
+.night-card-main small {
+  color: var(--lena-muted);
+  font-size: 11px;
+}
+
+.night-card-links {
+  color: var(--lena-accent);
+  font-size: 10px;
+  opacity: 0.9;
+}
+
+.night-card-status {
+  border-radius: 999px;
+  border: 1px solid var(--lena-line-strong);
+  padding: 4px 10px;
+  font-size: 10px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.night-card-status.is-lit {
+  border-color: rgba(200, 160, 78, 0.55);
+  color: #e8c876;
+}
+
+.night-card-status.is-dim {
+  color: var(--lena-muted);
+}
+
+.night-card-idle {
+  color: var(--lena-muted);
+  font-size: 12px;
+}
+
+.night-key {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px 14px;
+  margin: 10px 0 0;
+  color: var(--lena-muted);
+  font-size: 11px;
+}
+
+.night-key-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.night-swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.night-swatch.is-lit {
+  background: #e8c876;
+  box-shadow: 0 0 8px rgba(232, 200, 118, 0.7);
+}
+
+.night-swatch.is-dim {
+  border: 1px solid rgba(167, 188, 255, 0.6);
+  background: transparent;
+  animation: rose-key-pulse 2.8s ease-in-out infinite;
+}
+
+@keyframes rose-key-pulse {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 1; }
+}
+
+/* --- light theme ------------------------------------------------------------ */
+
+.light .rose-construction {
+  stroke: rgba(38, 72, 152, 0.4);
+}
+
+.light .rose-construction.is-active {
+  stroke: rgba(154, 123, 61, 0.9);
+}
+
+.light .rose-petal[data-lit="true"] {
+  stroke: #8a5f10;
+}
+
+.light .rose-petal[data-lit="false"] {
+  stroke: rgba(38, 72, 152, 0.6);
+}
+
+.light .rose-rope-flow {
+  stroke: #b98a1e;
+}
+
+.light .rose-center {
+  fill: rgba(255, 252, 240, 0.95);
+}
+
+.light .rose-star {
+  background: #d9a83f;
+  box-shadow: 0 0 6px rgba(200, 160, 78, 0.8);
+}
+
+.light .rose-comet {
+  background: radial-gradient(circle, #fff6dd 0%, #d9a83f 55%, rgba(217, 168, 63, 0) 100%);
+  box-shadow: 0 0 10px 3px rgba(200, 160, 78, 0.5);
+}
+
+.light .rose-halo.one {
+  border-color: rgba(154, 123, 61, 0.5);
+}
+
+.light .rose-halo.two {
+  border-color: rgba(38, 72, 152, 0.35);
+}
+
+.light .rose-tow {
+  stroke: rgba(154, 123, 61, 0.65);
+}
+
+.light .rose-tow.is-active {
+  stroke: #845f13;
+}
+
+.light .rose-tow-node {
+  fill: #5a6fa8;
+}
+
+.light .rose-tow-node[data-lit="true"] {
+  fill: #d9a83f;
+}
+
+.light .rose-tow-node.is-active {
+  fill: #845f13;
+}
+
+.light .rose-tow-aura {
+  stroke: rgba(154, 123, 61, 0.22);
+}
+
+.light .rose-rope-body {
+  stroke: rgba(154, 123, 61, 0.35);
+}
+
+.light .rose-bridge {
+  stroke: rgba(154, 123, 61, 0.65);
+}
+
+.light .rose-bridge.is-active {
+  stroke: #845f13;
+}
+
+.light .rose-chip[data-lit="true"] {
+  background: rgba(255, 250, 235, 0.95);
+  color: #6d4d0f;
+}
+
+.light .rose-chip[data-lit="false"] {
+  background: rgba(240, 244, 255, 0.95);
+  color: #2c3d6e;
+}
+
+.light .night-card-status.is-lit {
+  color: #845f13;
+}
+
+/* --- small screens ----------------------------------------------------------- */
+
+@media (max-width: 480px) {
+  .rose-chip {
+    padding: 6px 10px;
+    font-size: 10px;
+  }
+
+  .rose-comet {
+    width: 6px;
+    height: 6px;
+  }
+
+  .rose-sigil img {
+    width: 44px;
+    height: 44px;
+  }
+
+  .night-card {
+    font-size: 11px;
+  }
+}
+
+/* --- reduced motion: complete and still -------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .rose-stage,
+  .rose-geometry,
+  .rose-orbit,
+  .rose-chip,
+  .rose-sigil,
+  .rose-rope-flow,
+  .rose-halo,
+  .rose-comets,
+  .rose-comet,
+  .rose-star,
+  .rose-tow,
+  .rose-tow-aura,
+  .rose-tow-node,
+  .rose-tow-halo,
+  .rose-bridge,
+  .rose-rope-body,
+  .rose-rope-echo {
+    animation: none;
+  }
+
+  .rose-construction,
+  .rose-outer,
+  .rose-petal {
+    animation: none;
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+
+  .rose-tow,
+  .rose-tow-aura,
+  .rose-tow-node,
+  .rose-tow-halo,
+  .rose-bridge,
+  .rose-rope-body,
+  .rose-rope-echo,
+  .rose-rope-flow {
+    opacity: 1;
+  }
+
+  .rose-tow {
+    stroke-dasharray: none;
+  }
+
+  .rose-comets {
+    display: none;
+  }
+
+  .rose-star {
+    opacity: 0.3;
+  }
+
+  .night-swatch.is-dim {
+    animation: none;
+  }
+}

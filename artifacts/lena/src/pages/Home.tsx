@@ -4,7 +4,7 @@ import { Link } from "react-router";
 import LenaCta from "@/components/LenaCta";
 import SeoHead from "@/components/SeoHead";
 import SystemGrid from "@/components/SystemGrid";
-import DigitalHouseFrontage from "@/features/home/DigitalHouseFrontage";
+import RoseEngine from "@/features/home/RoseEngine";
 import ProcessSection from "@/features/home/ProcessSection";
 import { useGatewayToWorld } from "@/features/home/HomeGatewayTransition";
 import WorldContinuation from "@/features/world/spatial/WorldContinuation";
@@ -96,7 +96,7 @@ export default function Home() {
             {locale === "ar" ? "اختر غرفة… ثم ادخل" : "Pick a room… then step in"}
           </a>
         </div>
-        <DigitalHouseFrontage />
+        <RoseEngine />
       </section>
       <section className="lena-section" id="solutions">
         <div className="lena-container">

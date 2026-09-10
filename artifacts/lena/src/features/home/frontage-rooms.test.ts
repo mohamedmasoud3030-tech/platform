@@ -6,7 +6,7 @@ describe("home frontage rooms (House Ledger hero mapping)", () => {
     const rooms = frontageRooms();
     expect(rooms.map((room) => room.system.id)).toEqual([
       "wellness", // Lara Beauty — leads the row
-      "rental", // LENA Dress
+      "rental", // Carmen Gallery
       "property", // MALEK
       "hospitality",
       "investment", // Terranex

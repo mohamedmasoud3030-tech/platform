@@ -196,7 +196,7 @@ export const BUSINESS_SYSTEMS: BusinessSystem[] = [
     id: "rental",
     visibility: "public",
     order: 2,
-    name: { ar: "LENA Dress", en: "LENA Dress" },
+    name: { ar: "كارمن جالري", en: "Carmen Gallery" },
     stage: "trial",
     beneficiaries: {
       ar: ["صاحب المعرض", "موظف المعرض الذي يسلّم ويستلم", "العميلة التي تحجز موعدًا"],

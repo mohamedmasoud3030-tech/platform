@@ -4,6 +4,7 @@ import LenaCta from "@/components/LenaCta";
 import ProcessSection from "@/features/home/ProcessSection";
 import PublicShell from "@/layouts/PublicShell";
 import SeoHead from "@/components/SeoHead";
+import Loom from "@/components/Loom";
 import { pageSeo } from "@/content/seo";
 import { useSiteCopy } from "@/hooks/useSiteCopy";
 import { usePreferences } from "@/providers/preferences";
@@ -34,6 +35,9 @@ export default function About() {
           <FounderCard />
         </div>
       </section>
+
+      {/* Documentation loom — under the founder's intro */}
+      <Loom />
 
       {/* Approach */}
       <section className="lena-section">

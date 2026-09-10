@@ -6,7 +6,7 @@ import type { SystemId } from "@/content/systems";
  *
  * - property (MALEK):      geometric M mark (navy / cyan)
  * - wellness (Lara Beauty): elegant rose-gold mark on deep jewel tone
- * - rental (LENA Dress):    hangar & dress mark (gold / cyan)
+ * - rental (Carmen Gallery): hangar & dress mark (gold / cyan)
  * - investment (Terranex):  geometric growth mark (amber / orange)
  * - hospitality:            authentic dallah / coffee pot mark (warm cafe)
  * - recycling (Kayyal):     circular flow mark (emerald green)
@@ -127,7 +127,7 @@ export function SystemLogo({
           viewBox="0 0 512 512"
           fill="none"
           role="img"
-          aria-label="LENA Dress"
+          aria-label="Carmen Gallery"
           className={className}
         >
           <rect width="512" height="512" rx="96" fill="#0A2A3A" />

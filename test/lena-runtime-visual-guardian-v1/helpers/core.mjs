@@ -1,23 +1,27 @@
 import { expect } from "@playwright/test";
 
 /**
- * House Ledger: the Sacred Core artwork renders only on Home now — the World
- * register and chamber leaves are record surfaces and carry no sigil.
+ * House Ledger, Rose era: the Home hero is the Rose Engine (R5, owner
+ * direction) — the retired Sacred Core frontage artwork (`.lena-house`) is no
+ * longer rendered on Home. The canonical Sacred Core WebP survives as the
+ * Rose's center sigil (`.rose-sigil img`). The World register and chamber
+ * leaves remain record surfaces and carry no core.
  */
-export const HOME_CORE = ".lena-house";
+export const HOME_CORE = ".rose-stage";
+export const ROSE_SIGIL = ".rose-sigil img";
 export const WORLD_REGISTER = ".ledger-sheet";
 export const CHAMBER_LEAF = ".ledger-leaf";
 
 /**
- * Runtime probe of a Sacred Core element.
+ * Runtime probe of the Home core (Rose Engine stage).
  *
- * 1. The element is rendered with non-zero dimensions and a background-image
- *    pointing at the canonical Sacred Core WebP (never `none`, never a gradient
- *    stand-in, never a retired inline/v2 asset).
- * 2. The WebP is fetched from the built runtime and must decode in Chromium.
- * 3. The decoded artwork must paint real LENA warm/amber identity pixels.
- * 4. The eye/glow pseudo-element may exist, but it never masks a missing or
- *    undecodable artwork — asset health and glow health are asserted separately.
+ * 1. The stage renders with non-zero dimensions and settles at full opacity.
+ * 2. The center sigil is exactly one `<img>` pointing at the canonical
+ *    Sacred Core WebP (never `none`, never a retired inline/v2 asset) and it
+ *    must already be decoded (`complete` with natural dimensions).
+ * 3. The ambient atmosphere (halos + comets) is present — asset health and
+ *    atmosphere health are asserted separately so a broken sigil can never
+ *    hide behind a glowing window.
  */
 export async function probeCore(page, selector = HOME_CORE, label = "home core") {
   const el = page.locator(selector);
@@ -31,58 +35,66 @@ export async function probeCore(page, selector = HOME_CORE, label = "home core")
     )
     .toBeGreaterThan(0.9);
 
-  const info = await el.evaluate((node) => {
+  const info = await el.evaluate((node, sigilSelector) => {
     const style = getComputedStyle(node);
     const rect = node.getBoundingClientRect();
-    const before = getComputedStyle(node, "::before");
-    const after = getComputedStyle(node, "::after");
+
+    const sigilNodes = document.querySelectorAll(sigilSelector);
+    const sigil = sigilNodes[0];
+    const halos = document.querySelectorAll(".rose-halo");
+    const comets = document.querySelectorAll(".rose-comet");
+
     return {
       rect: { width: rect.width, height: rect.height, top: rect.top, left: rect.left },
       css: {
         display: style.display,
         visibility: style.visibility,
         opacity: style.opacity,
-        backgroundImage: style.backgroundImage,
-        backgroundColor: style.backgroundColor,
-        isBackgroundNone: style.backgroundImage === "none",
       },
-      pseudo: {
-        beforeOpacity: before.opacity,
-        afterOpacity: after.opacity,
-        afterWidth: after.width,
+      sigil: sigil
+        ? {
+            count: sigilNodes.length,
+            src: sigil.getAttribute("src"),
+            currentSrc: sigil.currentSrc || sigil.src,
+            complete: sigil.complete,
+            naturalWidth: sigil.naturalWidth,
+            naturalHeight: sigil.naturalHeight,
+          }
+        : { count: 0, src: null, currentSrc: null, complete: false, naturalWidth: 0, naturalHeight: 0 },
+      atmosphere: {
+        haloCount: halos.length,
+        cometCount: comets.length,
       },
     };
-  });
+  }, ROSE_SIGIL);
 
   return { selector, label, ...info };
 }
 
-/** Assert the CSS contract for a core element (canonical WebP, no stand-ins). */
+/** Assert the CSS contract for the Rose Engine core (canonical sigil, no stand-ins). */
 export function expectCoreCssContract(probe) {
-  const { css } = probe;
-  expect(css.isBackgroundNone, `${probe.label}: background-image must exist`).toBe(false);
-  expect(css.backgroundImage, `${probe.label}: must reference canonical Sacred Core WebP`).toMatch(
-    /lena-sacred-core-[A-Za-z0-9_-]+\.webp/,
-  );
-  expect(css.backgroundImage, `${probe.label}: retired inline/v2 artwork must not own the core`).not.toMatch(
-    /lena-sacred-core-v3-inline|lena-sacred-core-v2/,
-  );
-  expect(css.backgroundImage, `${probe.label}: gradient stand-in is forbidden`).not.toMatch(/gradient\(/i);
-  expect(css.backgroundColor, `${probe.label}: must stay transparent (no fake disk)`).toMatch(
-    /rgba\(0, 0, 0, 0\)|transparent/,
-  );
-  expect(Number(css.opacity), `${probe.label}: element must not be hidden`).toBeGreaterThan(0.9);
+  const { css, sigil } = probe;
   expect(css.visibility, `${probe.label}: must not be hidden`).toBe("visible");
+  expect(Number(css.opacity), `${probe.label}: element must not be hidden`).toBeGreaterThan(0.9);
   expect(probe.rect.width, `${probe.label}: width`).toBeGreaterThan(0);
   expect(probe.rect.height, `${probe.label}: height`).toBeGreaterThan(0);
+
+  expect(sigil.count, `${probe.label}: exactly one Rose sigil artwork`).toBe(1);
+  expect(sigil.src, `${probe.label}: sigil src must exist`).toBeTruthy();
+  expect(sigil.src, `${probe.label}: sigil must reference the canonical Sacred Core WebP`).toMatch(
+    /lena-sacred-core(-[A-Za-z0-9_-]+)?\.webp/,
+  );
+  expect(sigil.src, `${probe.label}: retired inline/v2 artwork must not own the sigil`).not.toMatch(
+    /lena-sacred-core-v3-inline|lena-sacred-core-v2/,
+  );
+  expect(sigil.complete, `${probe.label}: sigil must be decoded by the browser`).toBe(true);
+  expect(sigil.naturalWidth, `${probe.label}: sigil must have natural dimensions`).toBeGreaterThan(0);
 }
 
 /** In-browser fetch + decode + paint analysis of the canonical WebP. */
 export async function analyzeCoreArtwork(page, probe) {
-  return page.evaluate(async (backgroundImage) => {
-    const urlMatch = /url\(["']?([^"')]+)["']?\)/.exec(backgroundImage);
-    if (!urlMatch) return { ok: false, reason: "no background url found" };
-    const assetUrl = urlMatch[1];
+  return page.evaluate(async (assetUrl) => {
+    if (!assetUrl) return { ok: false, reason: "no sigil src found" };
 
     let response;
     try {
@@ -177,7 +189,7 @@ export async function analyzeCoreArtwork(page, probe) {
       payloadBytes: bytes.length,
       contentType,
     };
-  }, probe.css.backgroundImage);
+  }, probe.sigil.currentSrc ?? probe.sigil.src);
 }
 
 export async function expectSettledOpacity(page, selector, threshold, label, timeout = 15_000) {
@@ -194,7 +206,7 @@ export async function expectSettledOpacity(page, selector, threshold, label, tim
     .toBeGreaterThan(threshold);
 }
 
-/** Regression gate: glow may never survive without real, decodable artwork. */
+/** Regression gate: the Rose atmosphere may never survive without a real, decodable sigil. */
 export async function expectCoreArtworkHealthy(page, probe, { minPaintedRatio = 0.05, minIdentityRatio = 0.004 } = {}) {
   const artwork = await analyzeCoreArtwork(page, probe);
 
@@ -203,7 +215,8 @@ export async function expectCoreArtworkHealthy(page, probe, { minPaintedRatio = 
     selector: probe.selector,
     rect: probe.rect,
     css: probe.css,
-    glowOpacityAtFailure: probe.pseudo.afterOpacity,
+    sigil: probe.sigil,
+    atmosphere: probe.atmosphere,
     assetOk: artwork.ok,
     assetReason: artwork.reason ?? null,
     paint: artwork.ok
@@ -219,8 +232,8 @@ export async function expectCoreArtworkHealthy(page, probe, { minPaintedRatio = 
 
   if (!artwork.ok) {
     throw new Error(
-      `SACRED CORE ARTWORK MISSING (${probe.label}) — eye/glow is still visible ` +
-        `(after opacity ${probe.pseudo.afterOpacity}) while the artwork fails: ${artwork.reason}\n` +
+      `ROSE SIGIL ARTWORK MISSING (${probe.label}) — the Rose atmosphere is still glowing ` +
+        `(halos ${probe.atmosphere.haloCount}, comets ${probe.atmosphere.cometCount}) while the sigil artwork fails: ${artwork.reason}\n` +
         `Details: ${JSON.stringify(assertion)}`,
     );
   }
@@ -228,9 +241,10 @@ export async function expectCoreArtworkHealthy(page, probe, { minPaintedRatio = 
   expect(artwork.paintedRatio, `${probe.label}: artwork must paint visible pixels`).toBeGreaterThan(
     minPaintedRatio,
   );
-  expect(artwork.identityRatio, `${probe.label}: artwork must contain identity (warm) pixels`).toBeGreaterThan(
-    minIdentityRatio,
-  );
+  expect(
+    artwork.identityRatio,
+    `${probe.label}: artwork must paint real LENA warm/amber identity pixels`,
+  ).toBeGreaterThan(minIdentityRatio);
 
   return assertion;
 }
