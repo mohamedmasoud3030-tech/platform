@@ -119,16 +119,46 @@ jobs:
 
       - name: Commit refreshed baselines back to the branch
         if: env.GUARDIAN_ADOPT_BASELINES == 'true'
+        shell: bash
         run: |
-          if [ -n "$(git status --porcelain test/lena-runtime-visual-guardian-v1/screenshots)" ]; then
-            git config user.name "github-actions[bot]"
-            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add test/lena-runtime-visual-guardian-v1/screenshots
-            git commit -m "chore(guardian): refresh visual baselines for the Rose Engine era"
-            git push origin "HEAD:${{ github.head_ref || github.ref_name }}"
-          else
+          set -uo pipefail
+          fail() { echo "::error::baseline-commit: $1"; exit 1; }
+
+          git add test/lena-runtime-visual-guardian-v1/screenshots || fail "git add"
+          CHANGED=$(git diff --cached --name-only)
+          if [ -z "$CHANGED" ]; then
             echo "Baselines unchanged — nothing to commit."
+            exit 0
           fi
+          echo "Changed baselines:"; echo "$CHANGED"
+
+          BRANCH="${{ github.head_ref || github.ref_name }}"
+          REPO="mohamedmasoud3030-tech/platform"
+
+          BASE_SHA=$(gh api "repos/$REPO/git/ref/heads/$BRANCH" --jq '.object.sha') || fail "read branch ref"
+          BASE_TREE=$(gh api "repos/$REPO/git/commits/$BASE_SHA" --jq '.tree.sha') || fail "read base tree"
+
+          TREE_ITEMS="[]"
+          while IFS= read -r FILE; do
+            [ -z "$FILE" ] && continue
+            [ -f "$FILE" ] || fail "missing file $FILE"
+            B64=$(base64 -w0 "$FILE")
+            jq -n --arg c "$B64" '{content:$c, encoding:"base64"}' > /tmp/blob.json
+            BLOB_SHA=$(gh api "repos/$REPO/git/blobs" --input /tmp/blob.json --jq '.sha') || fail "create blob for $FILE"
+            TREE_ITEMS=$(jq -c --arg p "$FILE" --arg s "$BLOB_SHA" '. + [{path:$p, mode:"100644", type:"blob", sha:$s}]' <<< "$TREE_ITEMS")
+          done <<< "$CHANGED"
+
+          jq -n --arg base "$BASE_TREE" --argjson tree "$TREE_ITEMS" '{base_tree:$base, tree:$tree}' > /tmp/tree.json
+          TREE_SHA=$(gh api "repos/$REPO/git/trees" --input /tmp/tree.json --jq '.tree.sha') || fail "create tree"
+
+          jq -n --arg msg "chore(guardian): refresh visual baselines for the Rose Engine era" \
+                --arg tree "$TREE_SHA" --arg parent "$BASE_SHA" \
+                '{message:$msg, tree:$tree, parents:[$parent]}' > /tmp/commit.json
+          COMMIT_SHA=$(gh api "repos/$REPO/git/commits" --input /tmp/commit.json --jq '.sha') || fail "create commit"
+
+          PATCH_OUT=$(gh api -X PATCH "repos/$REPO/git/refs/heads/$BRANCH" -f sha="$COMMIT_SHA" 2>&1) \
+            || { echo "::error::baseline-commit: update ref failed: $PATCH_OUT"; exit 1; }
+          echo "Committed refreshed baselines as $COMMIT_SHA on $BRANCH"
 
       - name: Upload Guardian diagnostics
         if: always()
