@@ -1,7 +1,7 @@
 {
   "$schema": "Single source of truth for the routes and assets the Guardian must protect. Add routes here (and in App.tsx) — both the static integrity verifier and the browser suites pick them up automatically. World Command and Atlas are canonical protected routes; the approved Sacred Core WebP is the single canonical artwork.",
   "criticalRoutes": [
-    { "path": "/", "name": "home", "owner": ".lena-house", "core": ".lena-house", "locales": ["en", "ar"] },
+    { "path": "/", "name": "home", "owner": ".rose-stage", "core": ".rose-stage", "locales": ["en", "ar"] },
     { "path": "/world", "name": "world-ledger-index", "owner": ".ledger-sheet", "locales": ["en", "ar"] },
     { "path": "/world/command", "name": "world-command", "owner": ".lena-command", "locales": ["en", "ar"] },
     { "path": "/world/atlas", "name": "world-atlas", "owner": ".lena-world-atlas", "locales": ["en", "ar"] },
