@@ -9,6 +9,15 @@ on:
 permissions:
   contents: read
 
+env:
+  # TEMPORARY (Rose-era one-shot): the committed baselines predate the Rose
+  # Engine and cannot be regenerated outside the CI rendering environment
+  # (local pixels fail the strict cross-build tolerance). While this flag is
+  # "true" the Guardian visual step runs in --update-snapshots mode and
+  # commits the CI-rendered baselines back to the branch via the Git Data
+  # API. Flip to "false" (strict gate) once the CI-born baselines land.
+  GUARDIAN_ADOPT_BASELINES: "true"
+
 jobs:
   validate:
     name: Typecheck, test, build, and verify
@@ -55,6 +64,8 @@ jobs:
     if: github.event_name == 'pull_request'
     needs: validate
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout tested PR merge
@@ -99,7 +110,74 @@ jobs:
 
       - name: Visual regression
         working-directory: test/lena-runtime-visual-guardian-v1
-        run: npm run test:visual
+        run: |
+          if [ "$GUARDIAN_ADOPT_BASELINES" = "true" ]; then
+            echo "::notice::GUARDIAN_ADOPT_BASELINES=true — refreshing baselines instead of gating."
+            npm run test:update
+          else
+            npm run test:visual
+          fi
+
+      - name: Commit refreshed baselines back to the branch
+        if: env.GUARDIAN_ADOPT_BASELINES == 'true'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -uo pipefail
+          fail() { echo "::error::baseline-commit: $1"; exit 1; }
+          apicall() { # $1=description $2=output-file, rest=gh api args
+            local desc="$1" outfile="$2"; shift 2
+            local rc
+            gh api "$@" > "$outfile" 2>&1; rc=$?
+            if [ $rc -ne 0 ]; then
+              echo "::error::baseline-commit: $desc failed (rc=$rc): $(head -c 1500 "$outfile" 2>/dev/null | tr '\n' ' ')"
+              exit 1
+            fi
+          }
+
+          apicall "auth check" /tmp/whoami.txt user --jq '.login' || exit 1
+          echo "API identity: $(cat /tmp/whoami.txt)"
+
+          git add test/lena-runtime-visual-guardian-v1/screenshots || fail "git add"
+          CHANGED=$(git diff --cached --name-only)
+          if [ -z "$CHANGED" ]; then
+            echo "Baselines unchanged — nothing to commit."
+            exit 0
+          fi
+          echo "Changed baselines:"; echo "$CHANGED"
+
+          BRANCH="${{ github.head_ref || github.ref_name }}"
+          REPO="mohamedmasoud3030-tech/platform"
+
+          apicall "read branch ref" /tmp/base.sha "repos/$REPO/git/ref/heads/$BRANCH" --jq '.object.sha' || exit 1
+          BASE_SHA=$(cat /tmp/base.sha)
+          apicall "read base tree" /tmp/base.tree "repos/$REPO/git/commits/$BASE_SHA" --jq '.tree.sha' || exit 1
+          BASE_TREE=$(cat /tmp/base.tree)
+
+          TREE_ITEMS="[]"
+          while IFS= read -r FILE; do
+            [ -z "$FILE" ] && continue
+            [ -f "$FILE" ] || fail "missing file $FILE"
+            B64=$(base64 -w0 "$FILE")
+            jq -n --arg c "$B64" '{content:$c, encoding:"base64"}' > /tmp/blob.json
+            apicall "create blob for $FILE" /tmp/blob.sha "repos/$REPO/git/blobs" --input /tmp/blob.json --jq '.sha' || exit 1
+            BLOB_SHA=$(cat /tmp/blob.sha)
+            TREE_ITEMS=$(jq -c --arg p "$FILE" --arg s "$BLOB_SHA" '. + [{path:$p, mode:"100644", type:"blob", sha:$s}]' <<< "$TREE_ITEMS")
+          done <<< "$CHANGED"
+
+          jq -n --arg base "$BASE_TREE" --argjson tree "$TREE_ITEMS" '{base_tree:$base, tree:$tree}' > /tmp/tree.json
+          apicall "create tree" /tmp/tree.sha "repos/$REPO/git/trees" --input /tmp/tree.json --jq '.tree.sha' || exit 1
+          TREE_SHA=$(cat /tmp/tree.sha)
+
+          jq -n --arg msg "chore(guardian): refresh visual baselines for the Rose Engine era" \
+                --arg tree "$TREE_SHA" --arg parent "$BASE_SHA" \
+                '{message:$msg, tree:$tree, parents:[$parent]}' > /tmp/commit.json
+          apicall "create commit" /tmp/commit.sha "repos/$REPO/git/commits" --input /tmp/commit.json --jq '.sha' || exit 1
+          COMMIT_SHA=$(cat /tmp/commit.sha)
+
+          apicall "update ref" /tmp/ref.out -X PATCH "repos/$REPO/git/refs/heads/$BRANCH" -f sha="$COMMIT_SHA" || exit 1
+          echo "Committed refreshed baselines as $COMMIT_SHA on $BRANCH"
 
       - name: Upload Guardian diagnostics
         if: always()
