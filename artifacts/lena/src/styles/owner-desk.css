@@ -1,0 +1,215 @@
+/* Owner desk — the private workspace chrome. Phone is a drawer; desktop a rail. */
+
+.owner-desk-toggle {
+  position: fixed;
+  z-index: 80;
+  top: max(10px, env(safe-area-inset-top));
+  inset-inline-start: max(12px, env(safe-area-inset-left));
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(120, 170, 210, 0.18);
+  border-radius: 12px;
+  background: rgba(8, 12, 22, 0.92);
+  padding: 0 12px;
+  color: #d7e6f6;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.owner-desk-scrim {
+  display: none;
+}
+
+.owner-desk {
+  position: fixed;
+  z-index: 85;
+  inset-block: 0;
+  inset-inline-start: 0;
+  display: flex;
+  width: min(300px, 86vw);
+  flex-direction: column;
+  gap: 8px;
+  border-inline-end: 1px solid rgba(120, 170, 210, 0.12);
+  background: rgba(7, 10, 18, 0.97);
+  padding: max(16px, env(safe-area-inset-top)) 14px max(16px, env(safe-area-inset-bottom));
+  transform: translateX(-110%);
+  transition: transform 0.22s ease;
+}
+
+[dir="rtl"] .owner-desk {
+  transform: translateX(110%);
+}
+
+.lena-admin.is-desk-open .owner-desk {
+  transform: translateX(0);
+}
+
+.lena-admin.is-desk-open .owner-desk-scrim {
+  display: block;
+  position: fixed;
+  inset: 0;
+  z-index: 84;
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.owner-desk-brand {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.owner-desk-close {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border: 0;
+  background: transparent;
+  color: #9bb0c9;
+}
+
+.owner-desk-workspace {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 8px 0 12px;
+  border: 1px solid rgba(120, 170, 210, 0.14);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 10px;
+}
+
+.owner-desk-workspace-mark {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 10px;
+  background: #7ee0d2;
+  color: #07221e;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.owner-desk-workspace strong,
+.owner-desk-workspace small {
+  display: block;
+}
+
+.owner-desk-workspace strong {
+  color: #e8f1fb;
+  font-size: 13px;
+}
+
+.owner-desk-workspace small {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 3px;
+  color: #7ee0d2;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+}
+
+.owner-desk-workspace small i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #34d399;
+  box-shadow: 0 0 8px #34d399;
+}
+
+.owner-desk-nav {
+  display: grid;
+  gap: 4px;
+}
+
+.owner-desk-link {
+  display: flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 10px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  padding: 0 12px;
+  color: #9bb0c9;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: start;
+  text-decoration: none;
+}
+
+.owner-desk-link.is-active,
+.owner-desk-link.active {
+  background: rgba(126, 224, 210, 0.1);
+  color: #e8f1fb;
+}
+
+.owner-desk-link em {
+  margin-inline-start: auto;
+  min-width: 20px;
+  border-radius: 999px;
+  background: #7ee0d2;
+  color: #07221e;
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 800;
+  line-height: 20px;
+  text-align: center;
+}
+
+.owner-desk-live {
+  display: flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: auto;
+  border: 1px solid rgba(120, 170, 210, 0.16);
+  border-radius: 12px;
+  padding: 0 12px;
+  color: #d7e6f6;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.lena-admin-main {
+  min-height: 100vh;
+  padding-top: 64px;
+}
+
+.lena-admin .dashboard-shell {
+  padding-top: 16px;
+}
+
+.lena-admin .cms-page {
+  padding-top: 24px;
+}
+
+@media (min-width: 980px) {
+  .owner-desk-toggle,
+  .owner-desk-close,
+  .owner-desk-scrim {
+    display: none;
+  }
+
+  .owner-desk {
+    transform: none;
+    width: 248px;
+  }
+
+  [dir="rtl"] .owner-desk {
+    transform: none;
+  }
+
+  .lena-admin-main {
+    padding-top: 12px;
+    padding-inline-start: 248px;
+  }
+}

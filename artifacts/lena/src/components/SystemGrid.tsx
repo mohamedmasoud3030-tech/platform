@@ -42,6 +42,9 @@ export default function SystemGrid({
         >
           <div className="lena-card-top">
             <small>{String(index + 1).padStart(2, "0")}</small>
+            {windowFor(system.id) ? (
+              <span className="lena-flagship">{locale === "ar" ? "رئيسي" : "FLAGSHIP"}</span>
+            ) : null}
             <SystemLogo systemId={system.id} size={32} />
           </div>
           {system.id === visitedSystemId ? (
