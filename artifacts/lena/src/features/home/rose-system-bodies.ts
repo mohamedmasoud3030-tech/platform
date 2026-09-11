@@ -5,15 +5,18 @@ import { frontageRooms, type FrontageRoom } from "./frontage-rooms";
 /**
  * OWNER DIRECTIVE — Rose hero only, temporary.
  *
- * Rental (Carmen Gallery) and hospitality are declared ready in real
- * operation; their evidence captures land later. Until then the Rose gilds
- * them as READY: the petal and chip light up, but the reading card keeps the
- * honest distinction (موثّق for evidence-backed systems, جاهز for these two,
- * قيد التوثيق for the rest). Every other surface keeps the strict
- * evidence-only rule. Remove entries here as evidence lands — never add a
- * system the owner has not declared ready.
+ * Owner-declared ready in real operation; evidence captures land later.
+ * Terranex (~70%) and Kayyal (~85%) join Carmen Gallery and hospitality so
+ * they gild now, not last. The reading card keeps the honest distinction
+ * (موثّق for evidence-backed systems, جاهز for these). Every other surface
+ * keeps the strict evidence-only rule.
  */
-export const ROSE_OWNER_READY: readonly SystemId[] = ["rental", "hospitality"];
+export const ROSE_OWNER_READY: readonly SystemId[] = [
+  "rental",
+  "hospitality",
+  "investment",
+  "recycling",
+];
 
 export const ROSE_READY_LABEL: Record<AppLocale, string> = { ar: "جاهز", en: "READY" };
 

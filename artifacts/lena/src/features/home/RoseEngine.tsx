@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import sacredCoreUrl from "@/assets/lena-sacred-core.webp?url";
 import { ledgerPad, RECORD_STATUS_LABEL } from "@/features/world/ledger/format";
@@ -90,20 +90,6 @@ export default function RoseEngine() {
   const mirror: RoseMirror = direction === "rtl" ? -1 : 1;
   const orbitRadius = useOrbitRadius();
   const [focusId, setFocusId] = useState<string | null>(null);
-  const stageRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const el = stageRef.current;
-    if (!el || typeof IntersectionObserver === "undefined") return;
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        el.classList.toggle("is-offscreen", !entry.isIntersecting);
-      },
-      { threshold: 0.08 },
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
 
   const orbitUnits = (orbitRadius / 100) * 600;
   const focusedIndex = focusId ? bodies.findIndex((b) => b.system.id === focusId) : -1;
@@ -129,7 +115,7 @@ export default function RoseEngine() {
             : "The Rose Engine: six systems around the LENA core"
         }
       >
-        <div className="rose-stage" ref={stageRef}>
+        <div className="rose-stage">
           {/* ambient sparkles */}
           <div className="rose-stars" aria-hidden="true">
             {STARS.map((star, i) => (

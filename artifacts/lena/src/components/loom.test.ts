@@ -61,8 +61,13 @@ describe("the loom", () => {
   it("sees the temporary owner-ready middle state alive today", () => {
     const bodies = roseBodies();
     expect(bodies.some((b) => b.documented)).toBe(true);
-    expect(bodies.some((b) => b.ownerReady)).toBe(true);
-    expect(bodies.some((b) => !b.lit)).toBe(true);
+    expect(
+      bodies
+        .filter((b) => b.ownerReady)
+        .map((b) => b.system.id)
+        .sort(),
+    ).toEqual(["hospitality", "investment", "recycling", "rental"]);
+    expect(bodies.every((b) => b.lit)).toBe(true);
   });
 
   it("pins the loom selectors, the three chip states and the light theme", () => {

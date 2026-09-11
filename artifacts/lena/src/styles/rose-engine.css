@@ -50,21 +50,7 @@
   position: relative;
   width: 100%;
   aspect-ratio: 1 / 1;
-  contain: layout;
   animation: rose-enter 0.35s cubic-bezier(0.2, 0.7, 0.3, 1) backwards;
-}
-
-.rose-stage.is-offscreen .rose-geometry,
-.rose-stage.is-offscreen .rose-orbit,
-.rose-stage.is-offscreen .rose-chip,
-.rose-stage.is-offscreen .rose-sigil,
-.rose-stage.is-offscreen .rose-halo,
-.rose-stage.is-offscreen .rose-comets,
-.rose-stage.is-offscreen .rose-star,
-.rose-stage.is-offscreen .rose-tow,
-.rose-stage.is-offscreen .rose-tow-node,
-.rose-stage.is-offscreen .rose-rope-flow {
-  animation-play-state: paused;
 }
 
 @keyframes rose-enter {
@@ -258,7 +244,7 @@
   position: absolute;
   left: 50%;
   top: 50%;
-  z-index: 3;
+  z-index: 6;
   translate: -50% -50%;
   pointer-events: none;
   animation: rose-sigil-breathe 5s ease-in-out infinite;
@@ -266,10 +252,12 @@
 
 .rose-sigil img {
   display: block;
-  width: 56px;
-  height: 56px;
+  width: 108px;
+  height: 108px;
   border-radius: 50%;
-  box-shadow: 0 0 24px rgba(200, 160, 78, 0.35);
+  box-shadow:
+    0 0 18px rgba(255, 226, 166, 0.45),
+    0 0 42px rgba(200, 160, 78, 0.38);
 }
 
 @keyframes rose-sigil-breathe {
@@ -415,7 +403,7 @@
 
 .rose-chip {
   position: absolute;
-  z-index: 4;
+  z-index: 2;
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -669,24 +657,6 @@
 /* --- small screens ----------------------------------------------------------- */
 
 @media (max-width: 720px) {
-  .rose-star {
-    animation: none;
-    opacity: 0.35;
-    box-shadow: none;
-  }
-
-  .rose-comets {
-    display: none;
-  }
-
-  .rose-tow {
-    animation: rose-thread-in 0.4s ease-out 0.4s forwards;
-  }
-
-  .rose-rope-flow {
-    animation: rose-thread-in 0.4s ease-out 0.35s forwards;
-  }
-
   .rose-sigil img {
     width: 88px;
     height: 88px;
@@ -769,10 +739,6 @@
   }
 
   .night-swatch.is-dim {
-    animation: none;
-  }
-}
-ht-swatch.is-dim {
     animation: none;
   }
 }

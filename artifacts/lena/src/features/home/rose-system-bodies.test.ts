@@ -31,13 +31,13 @@ describe("rose engine bodies (R5 hero mapping)", () => {
         .filter((body) => body.lit)
         .map((body) => body.system.id)
         .sort(),
-    ).toEqual(["hospitality", "property", "rental", "wellness"]);
+    ).toEqual(["hospitality", "investment", "property", "recycling", "rental", "wellness"]);
     expect(
       bodies
         .filter((body) => body.ownerReady)
         .map((body) => body.system.id)
         .sort(),
-    ).toEqual(["hospitality", "rental"]);
+    ).toEqual(["hospitality", "investment", "recycling", "rental"]);
   });
 
   it("holds bilingual names for every chip label", () => {

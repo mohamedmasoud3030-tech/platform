@@ -90,7 +90,10 @@ export default function Loom() {
 
   const layout = () => {
     const { w, h } = state.current;
-    const padX = w < 560 ? 132 : Math.max(96, w * 0.13);
+    const edgeToEdge = w <= 720;
+    // On the phone the weft must reach the screen edges. Chips sit on the
+    // thread instead of outside it, so the side pad can collapse.
+    const padX = edgeToEdge ? 8 : w < 560 ? 132 : Math.max(96, w * 0.13);
     const padTop = 68;
     const padBottom = 92;
     return {
@@ -100,6 +103,7 @@ export default function Loom() {
       y1: h - padBottom,
       rowGap: (h - padTop - padBottom) / (bodies.length - 1 || 1),
       colGap: (w - padX * 2) / (ROOT_ORDER.length - 1 || 1),
+      edgeToEdge,
     };
   };
 
@@ -164,9 +168,11 @@ export default function Loom() {
       ctx.lineWidth = lit ? (isFocused ? 2.1 : 1.5) : isFocused ? 1.3 : 0.9;
       ctx.setLineDash(lit ? [] : [3, 7]);
       ctx.beginPath();
-      for (let x = L.x0 - 40; x <= L.x1 + 40; x += 5) {
+      const xStart = L.edgeToEdge ? 0 : L.x0 - 40;
+      const xEnd = L.edgeToEdge ? w : L.x1 + 40;
+      for (let x = xStart; x <= xEnd; x += 5) {
         const py = y + wave(x, row, t);
-        if (x === L.x0 - 40) ctx.moveTo(x, py);
+        if (x === xStart) ctx.moveTo(x, py);
         else ctx.lineTo(x, py);
       }
       ctx.stroke();
@@ -227,16 +233,20 @@ export default function Loom() {
       const el = chipRefs.current[i];
       if (!el) continue;
       const y = L.y0 + i * L.rowGap;
-      // Anchor each chip just outside its thread's starting edge. In RTL the
-      // weave starts at the right, and inset-inline-start resolves to `right`,
-      // so the chip is pushed outward with a positive physical translate.
-      const anchorX = rtl ? L.x1 : L.x0;
-      const py = y + wave(anchorX, i, t);
+      const py = y + wave(rtl ? L.x1 : L.x0, i, t);
       el.style.top = `${py}px`;
-      el.style.insetInlineStart = `${rtl ? state.current.w - anchorX : anchorX}px`;
-      el.style.transform = rtl
-        ? "translate(calc(100% + 14px), -50%)"
-        : "translate(calc(-100% - 14px), -50%)";
+      if (L.edgeToEdge) {
+        el.style.insetInlineStart = "8px";
+        el.style.transform = "translateY(-50%)";
+      } else {
+        // Anchor each chip just outside its thread's starting edge. In RTL the
+        // weave starts at the right, and inset-inline-start resolves to `right`.
+        const anchorX = rtl ? L.x1 : L.x0;
+        el.style.insetInlineStart = `${rtl ? state.current.w - anchorX : anchorX}px`;
+        el.style.transform = rtl
+          ? "translate(calc(100% + 14px), -50%)"
+          : "translate(calc(-100% - 14px), -50%)";
+      }
     }
   };
 
@@ -307,7 +317,7 @@ export default function Loom() {
   const focusedStatus = focused ? loomStatus(focused, locale).text : null;
 
   return (
-    <section className="lena-section" aria-labelledby="loom-title">
+    <section className="lena-section loom-section" aria-labelledby="loom-title">
       <div className="lena-container">
         <p className="lena-kicker">
           {locale === "ar" ? "خريطة التوثيق" : "The documentation map"}
@@ -317,6 +327,7 @@ export default function Loom() {
             ? "النواة هادئة — والنور من حولها هو التوثيق"
             : "The core is calm — and the light around it is documentation"}
         </h2>
+      </div>
         <div
           ref={rootRef}
           className={`loom${focusId ? " is-focus" : ""}`}
@@ -389,6 +400,7 @@ export default function Loom() {
             )}
           </p>
         </div>
+      <div className="lena-container">
         <p className="night-key">
           <span className="night-key-item">
             <i className="night-swatch is-lit" aria-hidden="true" />

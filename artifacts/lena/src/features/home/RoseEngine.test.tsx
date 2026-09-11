@@ -60,7 +60,7 @@ describe("RoseEngine", () => {
       .filter((chip) => chip.getAttribute("data-lit") === "true")
       .map((chip) => chip.getAttribute("data-system"))
       .sort();
-    expect(lit).toEqual(["hospitality", "property", "rental", "wellness"]);
+    expect(lit).toEqual(["hospitality", "investment", "property", "recycling", "rental", "wellness"]);
   });
 
   it("renders the renamed Carmen Gallery chip in both locales", () => {
