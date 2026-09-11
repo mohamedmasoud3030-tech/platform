@@ -55,7 +55,7 @@ describe("rose fan geometry", () => {
       for (let i = 0; i < 6; i++) {
         const span = petalSpanDeg(i, mirror);
         const width = mod((span.end - span.start) * mirror);
-        expect(width, `petal ${i} width`).toBeCloseTo(32, 9);
+        expect(width, `petal ${i} width`).toBeCloseTo(42, 9);
       }
     });
 

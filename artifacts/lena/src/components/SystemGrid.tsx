@@ -80,10 +80,17 @@ export default function SystemGrid({
               </div>
 
               {dashboard ? (
-                <figure className="lena-opus-dash">
+                <figure
+                  className="lena-opus-dash"
+                  style={{
+                    aspectRatio: system.id === "property" ? "1440 / 1000" : "1440 / 900",
+                  }}
+                >
                   <img
                     src={withBase(dashboard.src)}
                     alt={dashboard.alt[locale]}
+                    width={1440}
+                    height={system.id === "property" ? 1000 : 900}
                     loading="lazy"
                     decoding="async"
                   />

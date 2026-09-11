@@ -15,7 +15,7 @@ export const ROSE_CY = 300;
 export const ROSE_R = 150;
 /** How far (in degrees) each chip trails behind its petal. */
 export const ROSE_TRAIL_DEG = 15;
-export const ROSE_PETAL_HALF_DEG = 16;
+export const ROSE_PETAL_HALF_DEG = 21;
 export const ROSE_TIP_RADIUS = ROSE_R * 1.24;
 /** Half-gap (in degrees) where a light-bridge plugs into a chip. */
 export const ROSE_BRIDGE_GAP_DEG = 9;
@@ -73,10 +73,10 @@ export function petalPath(centerDeg: number, mirror: RoseMirror): string {
   const mid = (a1 + a2) / 2;
   const tip = ROSE_CX + Math.cos(mid) * ROSE_TIP_RADIUS;
   const tipY = ROSE_CY + Math.sin(mid) * ROSE_TIP_RADIUS;
-  const p1x = ROSE_CX + Math.cos(a1) * (ROSE_R * 0.7);
-  const p1y = ROSE_CY + Math.sin(a1) * (ROSE_R * 0.7);
-  const ctr = ROSE_CX + Math.cos(mid) * (ROSE_R * 1.48);
-  const ctrY = ROSE_CY + Math.sin(mid) * (ROSE_R * 1.48);
+  const p1x = ROSE_CX + Math.cos(a1) * (ROSE_R * 0.82);
+  const p1y = ROSE_CY + Math.sin(a1) * (ROSE_R * 0.82);
+  const ctr = ROSE_CX + Math.cos(mid) * (ROSE_R * 1.42);
+  const ctrY = ROSE_CY + Math.sin(mid) * (ROSE_R * 1.42);
   return (
     `M ${f2(ROSE_CX)} ${f2(ROSE_CY)} ` +
     `Q ${f2(p1x * 1.2 - ROSE_CX * 0.2)} ${f2(p1y * 1.2 - ROSE_CY * 0.2)} ` +
