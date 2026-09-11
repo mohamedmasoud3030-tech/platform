@@ -9,7 +9,9 @@ import {
   petalTip,
   ROSE_CX,
   ROSE_CY,
+  ROSE_VACANT_AFTER,
   towEndpoints,
+  vacantPetalCenterDeg,
   type RoseMirror,
 } from "./rose-geometry";
 
@@ -72,6 +74,17 @@ describe("rose fan geometry", () => {
       }
     });
   }
+
+  it("sits four unlit vacant seats in the open gaps, not on system centres", () => {
+    expect([...ROSE_VACANT_AFTER]).toEqual([1, 2, 4, 5]);
+    for (const after of ROSE_VACANT_AFTER) {
+      const vacant = vacantPetalCenterDeg(after, 1);
+      const here = petalCenterDeg(after, 1);
+      const next = petalCenterDeg((after + 1) % 6, 1);
+      expect(mod(vacant - here)).toBeCloseTo(30, 9);
+      expect(mod(next - vacant)).toBeCloseTo(30, 9);
+    }
+  });
 
   it("mirrors every station angle between LTR and RTL", () => {
     for (let i = 0; i < 6; i++) {

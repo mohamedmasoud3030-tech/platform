@@ -50,6 +50,19 @@ describe("RoseEngine", () => {
     ]);
   });
 
+  it("draws four unlit vacant petals with no chamber chips", () => {
+    renderEngine();
+    const vacants = document.querySelectorAll(".rose-petal[data-vacant=\"true\"]");
+    expect(vacants).toHaveLength(4);
+    for (const petal of vacants) {
+      expect(petal.getAttribute("data-lit")).toBe("false");
+    }
+    const group = screen.getByRole("group", {
+      name: "The Rose Engine: six systems around the LENA core",
+    });
+    expect(within(group).getAllByRole("link")).toHaveLength(6);
+  });
+
   it("lights documented systems plus the owner-ready directive", () => {
     renderEngine();
     const group = screen.getByRole("group", {

@@ -13,7 +13,9 @@ import {
   ROSE_CX,
   ROSE_CY,
   ROSE_R,
+  ROSE_VACANT_AFTER,
   towEndpoints,
+  vacantPetalCenterDeg,
   type RoseMirror,
 } from "./rose-geometry";
 import { roseBodies } from "./rose-system-bodies";
@@ -186,6 +188,19 @@ export default function RoseEngine() {
           {/* the wheel — the core pulling each system on a rope of light */}
           <div className="rose-orbit">
             <svg className="rose-threads" viewBox="0 0 600 600" aria-hidden="true">
+              {/* vacant seats — unlit slices in the open gaps, no chip, no tow */}
+              {ROSE_VACANT_AFTER.map((after, v) => (
+                <path
+                  key={`v-${after}`}
+                  className="rose-petal"
+                  data-lit="false"
+                  data-vacant="true"
+                  d={petalPath(vacantPetalCenterDeg(after, mirror), mirror)}
+                  pathLength={1}
+                  style={{ animationDelay: `${0.34 + v * 0.06}s` }}
+                  fill="url(#rose-stone)"
+                />
+              ))}
               {/* petals — the systems, trailing their chips */}
               {bodies.map((body, i) => (
                 <path

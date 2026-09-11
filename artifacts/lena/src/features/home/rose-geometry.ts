@@ -20,6 +20,11 @@ export const ROSE_PETAL_HALF_DEG = 30;
 export const ROSE_TIP_RADIUS = ROSE_R * 1.24;
 /** Half-gap (in degrees) where a light-bridge plugs into a chip. */
 export const ROSE_BRIDGE_GAP_DEG = 9;
+/**
+ * Four vacant seats — unlit petals in the gaps after these system indices
+ * (Terranex, Lara, Hospitality, Kayyal). Empty places ready for systems.
+ */
+export const ROSE_VACANT_AFTER = [1, 2, 4, 5] as const;
 
 export type RoseMirror = 1 | -1;
 
@@ -31,6 +36,11 @@ export function chipAngleDeg(index: number, mirror: RoseMirror): number {
 /** Petal-centre angle — the chip's angle plus the tow lag, so the petal leads. */
 export function petalCenterDeg(index: number, mirror: RoseMirror): number {
   return chipAngleDeg(index, mirror) + ROSE_TRAIL_DEG * mirror;
+}
+
+/** Vacant-seat centre — sits in the gap after system `afterIndex`. */
+export function vacantPetalCenterDeg(afterIndex: number, mirror: RoseMirror): number {
+  return petalCenterDeg(afterIndex, mirror) + ROSE_PETAL_HALF_DEG * mirror;
 }
 
 /** Petal angular span [start, end] in degrees of travel. */

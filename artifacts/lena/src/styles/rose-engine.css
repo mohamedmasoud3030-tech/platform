@@ -161,6 +161,17 @@
   animation: rose-petal-in 0.55s ease-out forwards;
 }
 
+.rose-petal[data-vacant="true"] {
+  stroke: rgba(167, 188, 255, 0.28);
+  animation: rose-vacant-in 0.55s ease-out forwards;
+}
+
+@keyframes rose-vacant-in {
+  0% { stroke-dashoffset: 1; opacity: 0; }
+  40% { opacity: 0.42; }
+  100% { stroke-dashoffset: 0; opacity: 0.42; }
+}
+
 .rose-petal.is-active {
   stroke: #ffe2a6;
   stroke-width: 2;
@@ -713,6 +724,10 @@
     animation: none;
     stroke-dashoffset: 0;
     opacity: 1;
+  }
+
+  .rose-petal[data-vacant="true"] {
+    opacity: 0.42;
   }
 
   .rose-tow,
