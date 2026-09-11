@@ -270,6 +270,13 @@ export function evidenceFor(systemId: string): EvidenceSurface[] | undefined {
   return SYSTEM_EVIDENCE[systemId as SystemId];
 }
 
+/** The operating dashboard plate only — never a mobile crop, never a stand-in. */
+export function dashboardEvidenceFor(systemId: string): EvidenceSurface | undefined {
+  return evidenceFor(systemId)?.find(
+    (surface) => /(?:^|-)dashboard$/.test(surface.id) && !surface.id.includes("mobile"),
+  );
+}
+
 /** First surface of a system that demonstrates a given operating root. */
 export function evidenceForPrimitive(
   systemId: string,

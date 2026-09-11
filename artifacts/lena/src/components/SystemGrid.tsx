@@ -1,9 +1,9 @@
-import { ArrowUpRight, ShieldCheck } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { Link } from "react-router";
 import { publicSystems } from "@/content/systems";
 import { SystemLogo } from "@/design-system/brand/SystemLogo";
 import { withBase } from "@/lib/base-path";
-import { evidenceFor } from "@/features/world/content/evidence";
+import { dashboardEvidenceFor } from "@/features/world/content/evidence";
 import { usePreferences } from "@/providers/preferences";
 
 /** Industry-first entry points, as decided in PRODUCT_DECISIONS.md D4. */
@@ -19,83 +19,84 @@ export default function SystemGrid({
   const { locale } = usePreferences();
   const systems = limit ? publicSystems().slice(0, limit) : publicSystems();
 
-  /** Real capture window for documented systems — the operating dashboard
-   *  when the evidence registry tags one, otherwise the first surface. The
-   *  window renders only from canonical evidence; nothing is fabricated. */
-  const windowFor = (systemId: string) => {
-    const surfaces = evidenceFor(systemId) ?? [];
-    if (surfaces.length === 0) return null;
-    return (
-      surfaces.find((surface) => /dashboard/.test(surface.id)) ?? surfaces[0]
-    );
-  };
-
   return (
     <div className="lena-bento lena-showcase-grid">
-      {systems.map((system, index) => (
-        <article
-          className={`lena-glass lena-service-card${index === 0 || index === 3 ? " wide" : ""}${
-            system.id === visitedSystemId ? " is-visited" : ""
-          }`}
-          key={system.id}
-          data-system={system.id}
-        >
-          <div className="lena-card-top">
-            <small>{String(index + 1).padStart(2, "0")}</small>
-            <SystemLogo systemId={system.id} size={32} />
-          </div>
-          {system.id === visitedSystemId ? (
-            <span className="lena-visited-mark">
-              {locale === "ar" ? "آخر نظام زرتَه" : "LAST VISITED"}
-            </span>
-          ) : null}
-          <h3>{system.name[locale]}</h3>
-          {system.tagline ? <p className="lena-system-tagline">{system.tagline[locale]}</p> : null}
-          <p className="lena-system-industry">{system.industry[locale]}</p>
-          <span className="lena-roots-chip">
-            {system.operatingPrimitives.length}{" "}
-            {locale === "ar" ? "جذور تشغيل" : "operating roots"}
-          </span>
-          <p>{system.problem[locale]}</p>
+      {systems.map((system, index) => {
+        const dashboard = dashboardEvidenceFor(system.id);
+        const highlights = system.trustHighlights?.[locale] ?? [];
+        const shown = highlights.slice(0, 3);
+        const extra = highlights.length - shown.length;
+        const flagship = system.id === "property";
+        const blurb = system.tagline?.[locale] ?? system.problem[locale];
 
-          {system.trustHighlights ? (
-            <div className="lena-system-highlights" aria-label={locale === "ar" ? "ضمانات التشغيل" : "Operational highlights"}>
-              {system.trustHighlights[locale].slice(0, 3).map((item) => (
-                <span key={item} className="lena-trust-chip">
-                  <ShieldCheck size={12} aria-hidden="true" />
-                  {item}
-                </span>
-              ))}
+        return (
+          <article
+            className={`lena-glass lena-service-card${
+              system.id === visitedSystemId ? " is-visited" : ""
+            }`}
+            key={system.id}
+            data-system={system.id}
+            data-flagship={flagship ? "true" : "false"}
+            style={{ animationDelay: `${index * 0.06}s` }}
+          >
+            <header className="lena-opus-head">
+              <span className="lena-opus-mark" aria-hidden="true">
+                <SystemLogo systemId={system.id} size={36} />
+              </span>
+              <h3 className="lena-opus-name">{system.name[locale]}</h3>
+              <div className="lena-opus-meta">
+                {flagship ? (
+                  <span className="lena-flagship">{locale === "ar" ? "الرائد" : "FLAGSHIP"}</span>
+                ) : null}
+                <p className="lena-system-industry">{system.industry[locale]}</p>
+              </div>
+            </header>
+
+            {system.id === visitedSystemId ? (
+              <span className="lena-visited-mark">
+                {locale === "ar" ? "آخر نظام زرتَه" : "LAST VISITED"}
+              </span>
+            ) : null}
+
+            <div className="lena-opus-main">
+              <div className="lena-opus-copy">
+                <p className="lena-opus-blurb">{blurb}</p>
+                {shown.length > 0 ? (
+                  <div
+                    className="lena-system-highlights"
+                    aria-label={locale === "ar" ? "ضمانات التشغيل" : "Operational highlights"}
+                  >
+                    {shown.map((item) => (
+                      <span key={item} className="lena-trust-chip">
+                        {item}
+                      </span>
+                    ))}
+                    {extra > 0 ? <span className="lena-trust-chip is-more">+{extra}</span> : null}
+                  </div>
+                ) : null}
+              </div>
+
+              {dashboard ? (
+                <figure className="lena-opus-dash">
+                  <img
+                    src={withBase(dashboard.src)}
+                    alt={dashboard.alt[locale]}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </figure>
+              ) : null}
             </div>
-          ) : null}
 
-          {windowFor(system.id) ? (
-            <figure className="lena-window">
-              <img
-                src={withBase(windowFor(system.id)!.src)}
-                alt={windowFor(system.id)!.alt[locale]}
-                loading="lazy"
-                decoding="async"
-              />
-              <figcaption>
-                {locale === "ar"
-                  ? "واجهة فعلية من داخل النظام"
-                  : "The actual interface from inside the system"}
-              </figcaption>
-            </figure>
-          ) : null}
-
-          <div style={{ display: "flex", gap: "12px", marginTop: "auto", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between" }}>
-            <Link className="lena-more" to={`/world/${system.id}`}>
-              {locale === "ar" ? "افتح غرفة النظام" : "Open system chamber"}
-              <ArrowUpRight size={15} />
-            </Link>
-            <Link style={{ fontSize: "11px", color: "var(--lena-muted)", textDecoration: "none" }} to={`/services#${system.id}`}>
-              {locale === "ar" ? "المواصفات" : "Specs"}
-            </Link>
-          </div>
-        </article>
-      ))}
+            <footer className="lena-opus-foot">
+              <Link className="lena-more" to={`/world/${system.id}`}>
+                {locale === "ar" ? "افتح النظام" : "Open system"}
+                <ArrowUpRight size={15} />
+              </Link>
+            </footer>
+          </article>
+        );
+      })}
     </div>
   );
 }

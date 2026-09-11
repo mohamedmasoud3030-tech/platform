@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { evidenceFor, SYSTEM_EVIDENCE } from "./evidence";
+import { dashboardEvidenceFor, evidenceFor, SYSTEM_EVIDENCE } from "./evidence";
 
 describe("product evidence authority", () => {
   it("uses the evidence registry itself as the publication truth", () => {
