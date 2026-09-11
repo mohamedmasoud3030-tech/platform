@@ -5,7 +5,7 @@ describe("product evidence authority", () => {
   it("uses the evidence registry itself as the publication truth", () => {
     expect(evidenceFor("property")).toBe(SYSTEM_EVIDENCE.property);
     expect(evidenceFor("wellness")).toBe(SYSTEM_EVIDENCE.wellness);
-    expect(evidenceFor("rental")).toBeUndefined();
+    expect(evidenceFor("rental")).toBe(SYSTEM_EVIDENCE.rental);
   });
 
   it("has substantive real MALEK operating evidence", () => {
@@ -41,6 +41,30 @@ describe("product evidence authority", () => {
         "wellness-mobile-pos",
       ]),
     );
+  });
+
+  it("has substantive real Carmen Gallery operating evidence", () => {
+    const carmen = evidenceFor("rental") ?? [];
+    expect(carmen.length).toBeGreaterThanOrEqual(11);
+    expect(carmen.map((surface) => surface.id)).toEqual(
+      expect.arrayContaining([
+        "carmen-entry",
+        "carmen-dashboard",
+        "carmen-inventory",
+        "carmen-availability",
+        "carmen-reservations",
+        "carmen-delivery",
+        "carmen-payments",
+        "carmen-customers",
+        "carmen-appointments",
+        "carmen-sales",
+        "carmen-reports",
+        "carmen-mobile-dashboard",
+        "carmen-mobile-reservations",
+        "carmen-mobile-delivery",
+      ]),
+    );
+    expect(dashboardEvidenceFor("rental")?.src).toBe("/world/evidence/carmen/dashboard.png");
   });
 
   it("keeps evidence ids and asset paths unique", () => {

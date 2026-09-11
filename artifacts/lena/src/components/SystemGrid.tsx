@@ -58,34 +58,28 @@ export default function SystemGrid({
               </span>
             ) : null}
 
+            <p className="lena-opus-blurb">{blurb}</p>
+
             <div className={`lena-opus-main${dashboard ? " has-dash" : ""}`}>
-              <div className="lena-opus-copy">
-                <p className="lena-opus-blurb">{blurb}</p>
-                {shown.length > 0 ? (
-                  <div
-                    className="lena-system-highlights"
-                    aria-label={locale === "ar" ? "ضمانات التشغيل" : "Operational highlights"}
-                  >
-                    {shown.slice(0, -1).map((item) => (
-                      <span key={item} className="lena-trust-chip">
-                        {item}
-                      </span>
-                    ))}
-                    <div className="lena-chip-row">
-                      <span className="lena-trust-chip">{shown[shown.length - 1]}</span>
-                      {extra > 0 ? <span className="lena-trust-chip is-more">+{extra}</span> : null}
-                    </div>
+              {shown.length > 0 ? (
+                <div
+                  className="lena-system-highlights"
+                  aria-label={locale === "ar" ? "ضمانات التشغيل" : "Operational highlights"}
+                >
+                  {shown.slice(0, -1).map((item) => (
+                    <span key={item} className="lena-trust-chip">
+                      {item}
+                    </span>
+                  ))}
+                  <div className="lena-chip-row">
+                    <span className="lena-trust-chip">{shown[shown.length - 1]}</span>
+                    {extra > 0 ? <span className="lena-trust-chip is-more">+{extra}</span> : null}
                   </div>
-                ) : null}
-              </div>
+                </div>
+              ) : null}
 
               {dashboard ? (
-                <figure
-                  className="lena-opus-dash"
-                  style={{
-                    aspectRatio: system.id === "property" ? "1440 / 1000" : "1440 / 900",
-                  }}
-                >
+                <figure className="lena-opus-dash">
                   <img
                     src={withBase(dashboard.src)}
                     alt={dashboard.alt[locale]}

@@ -263,6 +263,192 @@ export const SYSTEM_EVIDENCE: Partial<Record<SystemId, EvidenceSurface[]>> = {
       primitive: "money",
     },
   ],
+
+  /**
+   * Carmen Gallery — real application surfaces captured from the running
+   * showroom system (signed in as the gallery manager). The public landing
+   * is not included here: it may be shown as a separate project.
+   */
+  rental: [
+    {
+      id: "carmen-entry",
+      src: "/world/evidence/carmen/login.png",
+      alt: {
+        ar: "شاشة تسجيل الدخول إلى كارمن جالري",
+        en: "The Carmen Gallery sign-in screen",
+      },
+      capability: {
+        ar: "نقطة دخول إدارة المعرض: جلسة واحدة تدخل إلى المخزون والحجز والتسليم.",
+        en: "Showroom operations entry: one session into inventory, reservations and handover.",
+      },
+    },
+    {
+      id: "carmen-dashboard",
+      src: "/world/evidence/carmen/dashboard.png",
+      alt: {
+        ar: "لوحة تشغيل كارمن جالري على الكمبيوتر: التحصيل والمتابعات وحالة اليوم",
+        en: "Carmen Gallery computer dashboard: collection, follow-ups and the day at a glance",
+      },
+      capability: {
+        ar: "نظرة تشغيل عامة تجمع التحصيل والمتأخرات وتسليمات اليوم.",
+        en: "An operating overview that gathers collection, arrears and today's handovers.",
+      },
+    },
+    {
+      id: "carmen-inventory",
+      src: "/world/evidence/carmen/inventory.png",
+      alt: {
+        ar: "شاشة مخزون القطع في كارمن جالري: الحالة والمقاس والسعر",
+        en: "The piece inventory screen in Carmen Gallery: status, size and price",
+      },
+      capability: {
+        ar: "كل قطعة لها سجل: متاحة أو محجوزة أو خارجة، مع المقاس والسعر.",
+        en: "Every piece has a record: available, reserved or out, with size and price.",
+      },
+      primitive: "assets",
+    },
+    {
+      id: "carmen-availability",
+      src: "/world/evidence/carmen/availability.png",
+      alt: {
+        ar: "شاشة المتاح في فترة المناسبة في كارمن جالري",
+        en: "The occasion-window availability screen in Carmen Gallery",
+      },
+      capability: {
+        ar: "ما هو متاح فعلًا لتاريخ المناسبة، لا ما يبدو متاحًا اليوم.",
+        en: "What is genuinely free for the occasion dates, not what merely looks free today.",
+      },
+      primitive: "time",
+    },
+    {
+      id: "carmen-reservations",
+      src: "/world/evidence/carmen/reservations.png",
+      alt: {
+        ar: "شاشة الحجوزات والتقويم في كارمن جالري",
+        en: "The reservations and calendar screen in Carmen Gallery",
+      },
+      capability: {
+        ar: "الحجز مرتبط بتاريخ المناسبة، فلا تُحجز القطعة مرتين.",
+        en: "A reservation is tied to the occasion date, so nothing is double-booked.",
+      },
+      primitive: "time",
+    },
+    {
+      id: "carmen-delivery",
+      src: "/world/evidence/carmen/delivery-return.png",
+      alt: {
+        ar: "شاشة التسليم والاسترجاع في كارمن جالري",
+        en: "The handover and return screen in Carmen Gallery",
+      },
+      capability: {
+        ar: "خروج القطعة وعودتها يُسجَّلان حتى تُغلق العملية.",
+        en: "Piece checkout and return are logged through to close.",
+      },
+      primitive: "workflow",
+    },
+    {
+      id: "carmen-payments",
+      src: "/world/evidence/carmen/payments.png",
+      alt: {
+        ar: "دفتر التحصيل اليدوي والتأمينات في كارمن جالري",
+        en: "The cash collection and deposit ledger in Carmen Gallery",
+      },
+      capability: {
+        ar: "العربون والتحصيل والمتبقي في دفتر واحد داخل المعرض.",
+        en: "Deposits, collection and remaining balances in one in-showroom ledger.",
+      },
+      primitive: "money",
+    },
+    {
+      id: "carmen-customers",
+      src: "/world/evidence/carmen/customers.png",
+      alt: {
+        ar: "شاشة العميلات والحجوزات المرتبطة في كارمن جالري",
+        en: "The customers screen in Carmen Gallery, with linked reservations",
+      },
+      capability: {
+        ar: "سجل العميلة وحجوزاتها والمبالغ عليها في مكان واحد.",
+        en: "Each customer's record, reservations and outstanding amounts in one place.",
+      },
+      primitive: "relationships",
+    },
+    {
+      id: "carmen-appointments",
+      src: "/world/evidence/carmen/appointments.png",
+      alt: {
+        ar: "شاشة مواعيد التجربة في كارمن جالري",
+        en: "The fitting-appointment screen in Carmen Gallery",
+      },
+      capability: {
+        ar: "مواعيد التجربة تُثبَّت على التقويم بدل الرسائل المتفرقة.",
+        en: "Fitting appointments sit on the calendar instead of scattered messages.",
+      },
+      primitive: "time",
+    },
+    {
+      id: "carmen-sales",
+      src: "/world/evidence/carmen/sales.png",
+      alt: {
+        ar: "شاشة المبيعات والمرتجعات في كارمن جالري",
+        en: "The sales and returns screen in Carmen Gallery",
+      },
+      capability: {
+        ar: "البيع والإرجاع يُسجَّلان على القطعة لا في دفتر جانبي.",
+        en: "Sales and returns are recorded against the piece, not a side notebook.",
+      },
+      primitive: "money",
+    },
+    {
+      id: "carmen-reports",
+      src: "/world/evidence/carmen/reports.png",
+      alt: {
+        ar: "شاشة التقارير التشغيلية والمالية في كارمن جالري",
+        en: "The operating and financial reports screen in Carmen Gallery",
+      },
+      capability: {
+        ar: "صورة واحدة للتحصيل والمصروف وحركة القطع.",
+        en: "One view of collection, costs and piece movement.",
+      },
+    },
+    {
+      id: "carmen-mobile-dashboard",
+      src: "/world/evidence/carmen/mobile-dashboard.png",
+      alt: {
+        ar: "لوحة كارمن جالري على الجوال",
+        en: "The Carmen Gallery dashboard on a phone",
+      },
+      capability: {
+        ar: "متابعة التحصيل والمتأخرات من الجوال أثناء العمل في المعرض.",
+        en: "Collection and arrears followed from a phone on the showroom floor.",
+      },
+    },
+    {
+      id: "carmen-mobile-reservations",
+      src: "/world/evidence/carmen/mobile-reservations.png",
+      alt: {
+        ar: "الحجوزات على جوال كارمن جالري",
+        en: "Reservations on the Carmen Gallery phone interface",
+      },
+      capability: {
+        ar: "الحجز والتواريخ تُدار من الجوال داخل المعرض.",
+        en: "Reservations and dates operated from a phone inside the showroom.",
+      },
+      primitive: "time",
+    },
+    {
+      id: "carmen-mobile-delivery",
+      src: "/world/evidence/carmen/mobile-delivery.png",
+      alt: {
+        ar: "التسليم والاسترجاع على جوال كارمن جالري",
+        en: "Handover and return on the Carmen Gallery phone interface",
+      },
+      capability: {
+        ar: "تسليم القطعة واسترجاعها يُسجَّلان من الجوال لحظة الحركة.",
+        en: "Handover and return logged from a phone at the moment of movement.",
+      },
+      primitive: "workflow",
+    },
+  ],
 };
 
 /** Real evidence for one system, or undefined when none exists yet. */

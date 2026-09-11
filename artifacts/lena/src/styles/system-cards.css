@@ -104,9 +104,13 @@
 
 .lena-opus-head {
   display: grid;
-  grid-template-columns: 52px minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 12px;
+  grid-template-columns: 52px minmax(0, 1fr) minmax(7.5rem, 0.95fr);
+  align-items: start;
+  gap: 10px 12px;
+  min-width: 0;
+}
+
+.lena-opus-id {
   min-width: 0;
 }
 
@@ -147,8 +151,8 @@
   flex-direction: column;
   align-items: flex-end;
   gap: 6px;
+  min-width: 0;
   text-align: end;
-  max-width: 42%;
 }
 
 .lena-flagship {
@@ -162,15 +166,23 @@
   font-weight: 800;
   letter-spacing: 0.18em;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .lena-showcase-grid .lena-system-industry {
   margin: 0;
   color: var(--card-accent);
-  font-size: 10px;
+  font-size: 8.5px;
   font-weight: 800;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
+  line-height: 1.25;
+  max-width: 100%;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+  overflow-wrap: anywhere;
 }
 
 .lena-opus-main {
@@ -181,8 +193,7 @@
 }
 
 .lena-opus-main.has-dash {
-  align-items: start;
-  grid-template-columns: minmax(0, 1fr) minmax(150px, 48%);
+  grid-template-columns: minmax(0, 1.05fr) minmax(36%, 46%);
 }
 
 .lena-opus-copy {
@@ -236,18 +247,22 @@
   position: relative;
   margin: 0;
   width: 100%;
+  min-height: 118px;
   overflow: hidden;
   border: 1px solid color-mix(in srgb, var(--card-accent) 22%, rgba(140, 170, 220, 0.12));
   border-radius: 18px;
   background: rgba(4, 8, 18, 0.55);
-  aspect-ratio: 16 / 10;
+  align-self: stretch;
+  aspect-ratio: 16 / 11;
 }
 
 .lena-opus-dash img {
+  position: absolute;
+  inset: 0;
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
   object-position: top center;
 }
 
@@ -302,8 +317,9 @@
   }
 
   .lena-opus-head {
-    grid-template-columns: 48px minmax(0, 1fr) auto;
-    gap: 10px;
+    grid-template-columns: 48px minmax(0, 1fr) minmax(6.8rem, 1fr);
+    gap: 8px 10px;
+    align-items: start;
   }
 
   .lena-opus-mark {
@@ -316,15 +332,16 @@
   }
 
   .lena-opus-meta {
-    max-width: 38%;
+    max-width: none;
   }
 
   .lena-opus-main.has-dash {
-    grid-template-columns: minmax(0, 1fr) minmax(108px, 40%);
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
   }
 
   .lena-opus-dash {
-    min-height: 128px;
+    min-height: 112px;
+    aspect-ratio: 16 / 11;
   }
 
   .lena-showcase-grid .lena-trust-chip {
