@@ -166,6 +166,8 @@ export default function Loom() {
       const litLength = span * completion;
       const xLitFrom = rtl ? xEnd - litLength : xStart;
       const xLitTo = rtl ? xEnd : xStart + litLength;
+      const slots = ROOT_ORDER.length;
+      const kinds = knotKindsFor(body.system.id, slots);
 
       const strokeWeft = (from: number, to: number, solid: boolean) => {
         const lo = Math.min(from, to);
@@ -173,9 +175,9 @@ export default function Loom() {
         if (hi - lo < 1) return;
         ctx.strokeStyle = solid
           ? `rgba(${C.threadLit}, ${Math.min(alpha, 1)})`
-          : `rgba(${C.threadDim}, ${Math.min((lit ? 0.28 : 0.34) * dim, 1)})`;
-        ctx.lineWidth = solid ? (isFocused ? 2.1 : 1.5) : isFocused ? 1.3 : 0.9;
-        ctx.setLineDash(solid ? [] : [3, 7]);
+          : `rgba(${C.threadDim}, ${0.08 * dim})`;
+        ctx.lineWidth = solid ? (isFocused ? 2.1 : 1.5) : 0.7;
+        ctx.setLineDash(solid ? [] : [2, 10]);
         ctx.beginPath();
         let started = false;
         for (let x = lo; x <= hi; x += 5) {
@@ -192,42 +194,34 @@ export default function Loom() {
       if (completion > 0) strokeWeft(xLitFrom, xLitTo, true);
       if (completion < 1) strokeWeft(rtl ? xStart : xLitTo, rtl ? xLitFrom : xEnd, false);
 
-      // knots — light follows completion from the start of the thread
-      const systemRoots = ROOT_ORDER.filter((root) => body.system.operatingPrimitives.includes(root));
-      const orderedRoots = rtl ? [...systemRoots].reverse() : systemRoots;
-      const kinds = knotKindsFor(body.system.id, orderedRoots.length);
-      ROOT_ORDER.forEach((root, col) => {
-        if (!body.system.operatingPrimitives.includes(root)) return;
-        const knotPos = orderedRoots.indexOf(root);
+      // Knots sit on every warp, filled from the chip (start) by completion.
+      // Dim slots are not drawn. The last lit slot blinks fully on/off.
+      const blinkOn = state.current.reduced || Math.floor(t * 1.7) % 2 === 0;
+      ROOT_ORDER.forEach((_root, col) => {
+        const knotPos = rtl ? slots - 1 - col : col;
         const kind = kinds[knotPos] ?? "dim";
         if (kind === "dim") return;
-        const blinkOn =
-          kind !== "blink" || state.current.reduced || Math.sin(t * 6.4 + row) >= 0;
-        if (!blinkOn) return;
+        if (kind === "blink" && !blinkOn) return;
         const x = L.x0 + col * L.colGap;
         const py = y + wave(x, row, t);
-        const pulse = state.current.reduced
-          ? 1
-          : 1 + 0.28 * Math.sin(t * 1.5 + col * 0.7 + row);
-        const r = 2.9 * (isFocused ? 1.45 : 1) * pulse;
+        const r = 3.1 * (isFocused ? 1.35 : 1);
         const g = ctx.createRadialGradient(x, py, 0, x, py, r * 4.5);
-        g.addColorStop(0, `rgba(${C.knotHalo}, ${0.55 * dim})`);
+        g.addColorStop(0, `rgba(${C.knotHalo}, ${0.6 * dim})`);
         g.addColorStop(1, "rgba(0,0,0,0)");
         ctx.fillStyle = g;
         ctx.beginPath();
         ctx.arc(x, py, r * 4.5, 0, Math.PI * 2);
         ctx.fill();
-        ctx.fillStyle = `rgba(${C.knotCore}, ${0.95 * dim})`;
+        ctx.fillStyle = `rgba(${C.knotCore}, ${0.96 * dim})`;
         ctx.beginPath();
         ctx.arc(x, py, r, 0, Math.PI * 2);
         ctx.fill();
       });
 
-      // shuttle of light — only documented systems carry one
-      if (body.documented && !state.current.reduced) {
-        const travelSpan = L.x1 - L.x0;
-        const travel = ((t * 0.13 + row * 0.5) % 1) * (travelSpan + 160) - 80;
-        const sx = rtl ? L.x1 - travel : L.x0 + travel;
+      if (body.documented && completion >= 1 && !state.current.reduced) {
+        const travelSpan = Math.max(1, (rtl ? xEnd - xLitFrom : xLitTo - xStart));
+        const travel = ((t * 0.13 + row * 0.5) % 1) * travelSpan;
+        const sx = rtl ? xEnd - travel : xStart + travel;
         const sy = y + wave(sx, row, t);
         const sg = ctx.createRadialGradient(sx, sy, 0, sx, sy, 26);
         sg.addColorStop(0, `rgba(${C.shuttleCore}, ${0.5 * dim})`);
@@ -282,6 +276,7 @@ export default function Loom() {
       const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
       s.w = rect.width;
       s.h = rect.height;
+      s.visible = true;
       canvas.width = Math.round(rect.width * dpr);
       canvas.height = Math.round(rect.height * dpr);
       canvas.style.width = `${rect.width}px`;

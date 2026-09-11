@@ -71,20 +71,16 @@ describe("the loom", () => {
   });
 
   it("lights knots from the start of the thread by completion, last knot blinking when unfinished", () => {
-    const malek = publicSystems().find((s) => s.id === "property")!;
-    expect(knotKindsFor("property", malek.operatingPrimitives.length).every((k) => k === "solid")).toBe(
-      true,
-    );
-    const terranex = publicSystems().find((s) => s.id === "investment")!;
-    const terranexKnots = knotKindsFor("investment", terranex.operatingPrimitives.length);
-    expect(terranexKnots.at(-1)).toBe("dim");
-    expect(terranexKnots.filter((k) => k === "blink")).toHaveLength(1);
+    const slots = ROOT_ORDER.length;
+    expect(knotKindsFor("property", slots).every((k) => k === "solid")).toBe(true);
+    const terranexKnots = knotKindsFor("investment", slots);
     expect(terranexKnots[0]).toBe("solid");
-    const kayyal = publicSystems().find((s) => s.id === "recycling")!;
-    const kayyalKnots = knotKindsFor("recycling", kayyal.operatingPrimitives.length);
-    expect(kayyalKnots.at(-1)).toBe("dim");
-    expect(kayyalKnots.filter((k) => k === "blink")).toHaveLength(1);
+    expect(terranexKnots.filter((k) => k === "blink")).toHaveLength(1);
+    expect(terranexKnots.at(-1)).toBe("dim");
+    const kayyalKnots = knotKindsFor("recycling", slots);
     expect(kayyalKnots[0]).toBe("solid");
+    expect(kayyalKnots.filter((k) => k === "blink")).toHaveLength(1);
+    expect(kayyalKnots.at(-1)).toBe("dim");
   });
 
   it("pins the loom selectors, the three chip states and the light theme", () => {
