@@ -7,6 +7,7 @@ import { track, trackOnce } from "@/lib/analytics";
 import { SITE_CONFIG } from "@/config/site";
 import { HELP_ARTICLES } from "@/content/help";
 import { greetingAudioUrl } from "./greeting-audio";
+import { localAssistantReply } from "./local-answer";
 
 /**
  * LENA Assistant — the visitor help bot.
@@ -268,12 +269,26 @@ function AssistantPanel({ locale, onClose }: { locale: "ar" | "en"; onClose: () 
         },
         onError: (error) => {
           const rateLimited = error.data?.code === "TOO_MANY_REQUESTS";
-          setMessages((current) => [...current, { role: "assistant", text: rateLimited ? copy.rateLimited : copy.error }]);
+          if (rateLimited) {
+            setMessages((current) => [...current, { role: "assistant", text: copy.rateLimited }]);
+            track("assistant_asked", {
+              locale,
+              query_length: trimmed.length,
+              outcome: "failure",
+              reason: "rate_limited",
+            });
+            return;
+          }
+          const local = localAssistantReply(trimmed, locale);
+          setMessages((current) => [
+            ...current,
+            { role: "assistant", text: local.answer, sources: local.sources },
+          ]);
           track("assistant_asked", {
             locale,
             query_length: trimmed.length,
-            outcome: "failure",
-            reason: rateLimited ? "rate_limited" : "server",
+            outcome: "success",
+            context: "client_fallback",
           });
         },
       },

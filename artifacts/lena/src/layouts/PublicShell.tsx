@@ -2,7 +2,6 @@ import type { ReactNode } from "react";
 import { usePreferences } from "@/providers/preferences";
 import FloatingHeader from "./FloatingHeader";
 import PublicFooter from "./PublicFooter";
-import WhatsAppFAB from "./WhatsAppFAB";
 import LenaAssistant from "@/features/assistant/LenaAssistant";
 import CosmicBackdrop from "@/components/CosmicBackdrop";
 
@@ -25,7 +24,6 @@ export default function PublicShell({ children }: { children: ReactNode }) {
       </main>
 
       <PublicFooter />
-      <WhatsAppFAB />
       <LenaAssistant />
     </div>
   );

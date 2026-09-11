@@ -68,39 +68,49 @@ export const assistantRouter = createRouter({
       }
 
       const startedAt = Date.now();
-      const matches = retrieveArticles(input.message, input.locale);
 
-      let mode: "gemini" | "fallback" = "fallback";
-      let answer: string;
-      let failureKind: string | null = null;
+      try {
+        const matches = retrieveArticles(input.message, input.locale);
 
-      const result = await generateText({
-        systemInstruction: ASSISTANT_SYSTEM_PROMPT,
-        contents: buildContents(input.message, input.locale, input.history as AssistantTurn[]),
-      });
+        let mode: "gemini" | "fallback" = "fallback";
+        let answer: string;
+        let failureKind: string | null = null;
 
-      if (result.ok) {
-        const sanitised = sanitiseModelAnswer(result.text);
-        if (sanitised.length > 0) {
-          mode = "gemini";
-          answer = sanitised;
+        const result = await generateText({
+          systemInstruction: ASSISTANT_SYSTEM_PROMPT,
+          contents: buildContents(input.message, input.locale, input.history as AssistantTurn[]),
+        });
+
+        if (result.ok) {
+          const sanitised = sanitiseModelAnswer(result.text);
+          if (sanitised.length > 0) {
+            mode = "gemini";
+            answer = sanitised;
+          } else {
+            failureKind = "empty_answer";
+            answer = composeFallbackAnswer(input.locale, matches).answer;
+          }
         } else {
-          failureKind = "empty_answer";
+          failureKind = result.kind;
           answer = composeFallbackAnswer(input.locale, matches).answer;
         }
-      } else {
-        failureKind = result.kind;
-        answer = composeFallbackAnswer(input.locale, matches).answer;
+
+        const sources = mode === "gemini" ? sourcesFromMatches(input.locale, matches) : composeFallbackAnswer(input.locale, matches).sources;
+
+        // Operational log only: shape of the call, never its content.
+        logger.info(
+          { route: "assistant.ask", mode, failureKind, locale: input.locale, latencyMs: Date.now() - startedAt },
+          "assistant turn answered",
+        );
+
+        return { mode, answer, sources };
+      } catch {
+        const fallback = composeFallbackAnswer(input.locale, retrieveArticles(input.message, input.locale));
+        logger.info(
+          { route: "assistant.ask", mode: "fallback", failureKind: "unhandled", locale: input.locale, latencyMs: Date.now() - startedAt },
+          "assistant turn answered",
+        );
+        return { mode: "fallback" as const, answer: fallback.answer, sources: fallback.sources };
       }
-
-      const sources = mode === "gemini" ? sourcesFromMatches(input.locale, matches) : composeFallbackAnswer(input.locale, matches).sources;
-
-      // Operational log only: shape of the call, never its content.
-      logger.info(
-        { route: "assistant.ask", mode, failureKind, locale: input.locale, latencyMs: Date.now() - startedAt },
-        "assistant turn answered",
-      );
-
-      return { mode, answer, sources };
     }),
 });
