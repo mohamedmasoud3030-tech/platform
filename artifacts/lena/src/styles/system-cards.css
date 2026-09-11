@@ -66,18 +66,6 @@
   color: var(--card-accent);
 }
 
-.lena-flagship {
-  display: inline-flex;
-  margin-inline-start: auto;
-  border: 1px solid color-mix(in srgb, var(--card-accent) 45%, transparent);
-  border-radius: 999px;
-  padding: 3px 8px;
-  color: var(--card-accent);
-  font-size: 9px;
-  font-weight: 800;
-  letter-spacing: 0.14em;
-}
-
 .lena-service-card h3 {
   color: #f4f7ff;
 }

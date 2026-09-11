@@ -5,7 +5,6 @@ import {
   HelpCircle,
   Inbox,
   Languages,
-  LayoutDashboard,
   Menu,
   X,
 } from "lucide-react";
@@ -73,14 +72,6 @@ export default function AdminShell({ children }: { children: ReactNode }) {
         </div>
 
         <nav className="owner-desk-nav">
-          <NavLink
-            to="/dashboard"
-            className={() => `owner-desk-link${onDashboard && !onProjects ? " is-active" : ""}`}
-            onClick={close}
-          >
-            <LayoutDashboard size={17} />
-            {ar ? "نظرة عامة" : "Overview"}
-          </NavLink>
           <NavLink
             to="/dashboard"
             className={() => `owner-desk-link${onDashboard && !onProjects ? " is-active" : ""}`}

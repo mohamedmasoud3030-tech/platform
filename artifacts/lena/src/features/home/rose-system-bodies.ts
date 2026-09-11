@@ -30,7 +30,7 @@ export const SYSTEM_COMPLETION: Record<SystemId, number> = {
   investment: 0.7,
   wellness: 1,
   rental: 1,
-  hospitality: 0.92,
+  hospitality: 1,
   recycling: 0.85,
   materials: 0,
 };

@@ -37,11 +37,11 @@ describe("rose fan geometry", () => {
       }
     });
 
-    it(`[${dir}] draws a closed leaf-slice through the tip on its centre`, () => {
+    it(`[${dir}] draws a two-stroke petal through the tip on its centre`, () => {
       for (let i = 0; i < 6; i++) {
         const path = petalPath(petalCenterDeg(i, mirror), mirror);
         expect(path.startsWith(`M ${ROSE_CX.toFixed(2)} ${ROSE_CY.toFixed(2)}`)).toBe(true);
-        expect(path.trim().endsWith("Z"), "closed slice").toBe(true);
+        expect(path.split(" M ").length, "two strokes").toBe(2);
         const tip = petalTip(i, mirror);
         const radius = Math.hypot(tip.x - ROSE_CX, tip.y - ROSE_CY);
         expect(radius, `petal ${i} tip radius`).toBeCloseTo(186, 9);
