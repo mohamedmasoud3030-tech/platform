@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router";
 import type { SystemId } from "@/content/systems";
-import { ledgerPad, RECORD_STATUS_LABEL } from "@/features/world/ledger/format";
-import { ROSE_READY_LABEL, completionFor, roseBodies } from "@/features/home/rose-system-bodies";
+import { ledgerPad } from "@/features/world/ledger/format";
+import { completionFor, roseBodies } from "@/features/home/rose-system-bodies";
 import { usePreferences } from "@/providers/preferences";
-import { PRIMITIVE_LABELS, ROOT_ORDER, knotKindsFor, loomStatus, rootLoadFor } from "./loom-model";
+import { PRIMITIVE_LABELS, ROOT_ORDER, knotKindsFor, rootLoadFor } from "./loom-model";
 
 /**
  * THE LOOM (النول) — the documentation sky, woven.
@@ -93,7 +93,7 @@ export default function Loom() {
     // thread instead of outside it, so the side pad can collapse.
     const padX = edgeToEdge ? 8 : w < 560 ? 132 : Math.max(96, w * 0.13);
     const padTop = 68;
-    const padBottom = 92;
+    const padBottom = 28;
     return {
       x0: padX,
       x1: w - padX,
@@ -200,55 +200,28 @@ export default function Loom() {
         if (!body.system.operatingPrimitives.includes(root)) return;
         const knotPos = orderedRoots.indexOf(root);
         const kind = kinds[knotPos] ?? "dim";
+        if (kind === "dim") return;
+        const blinkOn =
+          kind !== "blink" || state.current.reduced || Math.sin(t * 6.4 + row) >= 0;
+        if (!blinkOn) return;
         const x = L.x0 + col * L.colGap;
         const py = y + wave(x, row, t);
-        const blink =
-          kind === "blink" && !state.current.reduced
-            ? 0.22 + 0.78 * (0.5 + 0.5 * Math.sin(t * 5.2 + row))
-            : 1;
         const pulse = state.current.reduced
           ? 1
           : 1 + 0.28 * Math.sin(t * 1.5 + col * 0.7 + row);
-        const knotOn = kind !== "dim";
-        const r = (knotOn ? 2.9 : 2.1) * (isFocused ? 1.45 : 1) * pulse;
-        if (knotOn) {
-          const g = ctx.createRadialGradient(x, py, 0, x, py, r * 4.5);
-          g.addColorStop(0, `rgba(${C.knotHalo}, ${0.55 * dim * blink})`);
-          g.addColorStop(1, "rgba(0,0,0,0)");
-          ctx.fillStyle = g;
-          ctx.beginPath();
-          ctx.arc(x, py, r * 4.5, 0, Math.PI * 2);
-          ctx.fill();
-        }
-        ctx.fillStyle = knotOn
-          ? `rgba(${C.knotCore}, ${0.95 * dim * blink})`
-          : `rgba(${C.knotDim}, ${0.5 * dim})`;
+        const r = 2.9 * (isFocused ? 1.45 : 1) * pulse;
+        const g = ctx.createRadialGradient(x, py, 0, x, py, r * 4.5);
+        g.addColorStop(0, `rgba(${C.knotHalo}, ${0.55 * dim})`);
+        g.addColorStop(1, "rgba(0,0,0,0)");
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.arc(x, py, r * 4.5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = `rgba(${C.knotCore}, ${0.95 * dim})`;
         ctx.beginPath();
         ctx.arc(x, py, r, 0, Math.PI * 2);
         ctx.fill();
-        if (kind === "blink") {
-          ctx.setLineDash([2, 3]);
-          ctx.strokeStyle = `rgba(${C.knotHalo}, ${0.85 * dim * blink})`;
-          ctx.lineWidth = 1.1;
-          ctx.beginPath();
-          ctx.arc(x, py, r + 3.2, 0, Math.PI * 2);
-          ctx.stroke();
-          ctx.setLineDash([]);
-        }
       });
-
-      if (completion > 0 && completion < 1 && !state.current.reduced) {
-        const tipX = rtl ? xLitFrom : xLitTo;
-        const tipY = y + wave(tipX, row, t);
-        const blink = 0.2 + 0.8 * (0.5 + 0.5 * Math.sin(t * 5.2 + row));
-        const tg = ctx.createRadialGradient(tipX, tipY, 0, tipX, tipY, 16);
-        tg.addColorStop(0, `rgba(${C.knotHalo}, ${0.55 * dim * blink})`);
-        tg.addColorStop(1, "rgba(0,0,0,0)");
-        ctx.fillStyle = tg;
-        ctx.beginPath();
-        ctx.arc(tipX, tipY, 16, 0, Math.PI * 2);
-        ctx.fill();
-      }
 
       // shuttle of light — only documented systems carry one
       if (body.documented && !state.current.reduced) {
@@ -359,9 +332,6 @@ export default function Loom() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [direction, locale, theme]);
 
-  const focused = focusId ? (bodies.find((b) => b.system.id === focusId) ?? null) : null;
-  const focusedStatus = focused ? loomStatus(focused, locale).text : null;
-
   return (
     <section className="lena-section loom-section" aria-labelledby="loom-title">
       <div className="lena-container">
@@ -421,43 +391,6 @@ export default function Loom() {
             {body.system.name[locale]}
           </Link>
         ))}
-
-        <p className="night-card loom-card" aria-live="polite">
-          {focused ? (
-            <>
-              <span className="night-card-num" aria-hidden="true">
-                {ledgerPad(focused.ownerIndex + 1, 2, locale)}
-              </span>
-              <span className="night-card-main">
-                <strong>{focused.system.name[locale]}</strong>
-                <small>
-                  {focused.system.operatingPrimitives
-                    .map((root) => PRIMITIVE_LABELS[root][locale])
-                    .join(" · ")}
-                </small>
-              </span>
-              <span className={`night-card-status ${focused.lit ? "is-lit" : "is-dim"}`}>
-                {focusedStatus}
-              </span>
-            </>
-          ) : (
-            <span className="night-card-idle">
-              {locale === "ar" ? "مرّر على خيط لتقرأ نظامه" : "Hover a thread to read its system"}
-            </span>
-          )}
-        </p>
-      </div>
-      <div className="lena-container">
-        <p className="night-key">
-          <span className="night-key-item">
-            <i className="night-swatch is-lit" aria-hidden="true" />
-            {ROSE_READY_LABEL[locale]}
-          </span>
-          <span className="night-key-item">
-            <i className="night-swatch is-dim" aria-hidden="true" />
-            {RECORD_STATUS_LABEL.pending[locale]}
-          </span>
-        </p>
       </div>
     </section>
   );

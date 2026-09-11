@@ -17,7 +17,7 @@ export const ROSE_R = 150;
 /** How far (in degrees) each chip trails behind its petal. */
 export const ROSE_TRAIL_DEG = 15;
 export const ROSE_PETAL_HALF_DEG = 30;
-export const ROSE_TIP_RADIUS = ROSE_R * 1.02;
+export const ROSE_TIP_RADIUS = ROSE_R * 1.24;
 /** Half-gap (in degrees) where a light-bridge plugs into a chip. */
 export const ROSE_BRIDGE_GAP_DEG = 9;
 
@@ -47,27 +47,25 @@ export function polar(radius: number, deg: number): { x: number; y: number } {
 const f2 = (n: number) => n.toFixed(2);
 
 /**
- * A thin open-curve petal centred on *centerDeg*: the original mason
- * linework — out from the hub to the tip and back, drawn in two strokes.
+ * A closed leaf-slice centred on *centerDeg*. Larger than the old thin
+ * two-stroke so the six hero slices fill the window.
  */
 export function petalPath(centerDeg: number, mirror: RoseMirror): string {
   const half = (ROSE_PETAL_HALF_DEG * Math.PI) / 180;
   const center = (centerDeg * Math.PI) / 180;
   const a1 = center - half * mirror;
   const a2 = center + half * mirror;
-  const tip = ROSE_CX + Math.cos((a1 + a2) / 2) * (ROSE_R * 1.02);
-  const tipY = ROSE_CY + Math.sin((a1 + a2) / 2) * (ROSE_R * 1.02);
-  const p1x = ROSE_CX + Math.cos(a1) * (ROSE_R * 0.62);
-  const p1y = ROSE_CY + Math.sin(a1) * (ROSE_R * 0.62);
-  const p2x = ROSE_CX + Math.cos(a2) * (ROSE_R * 0.62);
-  const p2y = ROSE_CY + Math.sin(a2) * (ROSE_R * 0.62);
-  const ctr = ROSE_CX + Math.cos((a1 + a2) / 2) * (ROSE_R * 1.28);
-  const ctrY = ROSE_CY + Math.sin((a1 + a2) / 2) * (ROSE_R * 1.28);
+  const mid = (a1 + a2) / 2;
+  const tip = ROSE_CX + Math.cos(mid) * ROSE_TIP_RADIUS;
+  const tipY = ROSE_CY + Math.sin(mid) * ROSE_TIP_RADIUS;
+  const p1x = ROSE_CX + Math.cos(a1) * (ROSE_R * 0.82);
+  const p1y = ROSE_CY + Math.sin(a1) * (ROSE_R * 0.82);
+  const p2x = ROSE_CX + Math.cos(a2) * (ROSE_R * 0.82);
+  const p2y = ROSE_CY + Math.sin(a2) * (ROSE_R * 0.82);
   return (
     `M ${f2(ROSE_CX)} ${f2(ROSE_CY)} ` +
-    `Q ${f2(p1x * 1.2 - ROSE_CX * 0.2)} ${f2(p1y * 1.2 - ROSE_CY * 0.2)} ` +
-    `${f2(tip)} ${f2(tipY)} ` +
-    `M ${f2(tip)} ${f2(tipY)} Q ${f2(ctr)} ${f2(ctrY)} ${f2(ROSE_CX)} ${f2(ROSE_CY)}`
+    `Q ${f2(p1x)} ${f2(p1y)} ${f2(tip)} ${f2(tipY)} ` +
+    `Q ${f2(p2x)} ${f2(p2y)} ${f2(ROSE_CX)} ${f2(ROSE_CY)} Z`
   );
 }
 

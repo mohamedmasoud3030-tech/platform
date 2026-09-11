@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import sacredCoreUrl from "@/assets/lena-sacred-core.webp?url";
-import { ledgerPad, RECORD_STATUS_LABEL } from "@/features/world/ledger/format";
+import { ledgerPad } from "@/features/world/ledger/format";
 import { usePreferences } from "@/providers/preferences";
 import {
   bridgeAngles,
@@ -16,7 +16,7 @@ import {
   towEndpoints,
   type RoseMirror,
 } from "./rose-geometry";
-import { ROSE_READY_LABEL, roseBodies } from "./rose-system-bodies";
+import { roseBodies } from "./rose-system-bodies";
 
 /**
  * R5 — THE ROSE ENGINE (وردة الباني).
@@ -76,14 +76,6 @@ function useOrbitRadius(): number {
   return radius;
 }
 
-function isCoarsePointer(): boolean {
-  return (
-    typeof window !== "undefined" &&
-    typeof window.matchMedia === "function" &&
-    window.matchMedia("(pointer:coarse)").matches
-  );
-}
-
 export default function RoseEngine() {
   const { locale, direction } = usePreferences();
   const bodies = roseBodies();
@@ -92,17 +84,6 @@ export default function RoseEngine() {
   const [focusId, setFocusId] = useState<string | null>(null);
 
   const orbitUnits = (orbitRadius / 100) * 600;
-  const focusedIndex = focusId ? bodies.findIndex((b) => b.system.id === focusId) : -1;
-  const focused = focusedIndex >= 0 ? bodies[focusedIndex] : null;
-  const linkedPrev = focused ? bodies[(focusedIndex + bodies.length - 1) % bodies.length] : null;
-  const linkedNext = focused ? bodies[(focusedIndex + 1) % bodies.length] : null;
-  const focusedStatus = !focused
-    ? null
-    : focused.documented
-      ? RECORD_STATUS_LABEL.documented[locale]
-      : focused.ownerReady
-        ? ROSE_READY_LABEL[locale]
-        : RECORD_STATUS_LABEL.pending[locale];
 
   return (
     <div className="night-wrap">
@@ -324,45 +305,7 @@ export default function RoseEngine() {
             <img src={sacredCoreUrl} alt="" width={108} height={108} loading="eager" decoding="async" fetchPriority="high" />
           </span>
         </div>
-
-        <p className="night-card rose-card" aria-live="polite">
-          {focused && linkedPrev && linkedNext ? (
-            <>
-              <span className="night-card-num" aria-hidden="true">
-                {ledgerPad(focused.ownerIndex + 1, 2, locale)}
-              </span>
-              <span className="night-card-main">
-                <strong>{focused.system.name[locale]}</strong>
-                <small>{focused.system.industry[locale]}</small>
-                <small className="night-card-links">
-                  {locale === "ar"
-                    ? `متصل: ${linkedPrev.system.name[locale]} · ${linkedNext.system.name[locale]}`
-                    : `Linked: ${linkedPrev.system.name[locale]} · ${linkedNext.system.name[locale]}`}
-                </small>
-              </span>
-              <span className={`night-card-status ${focused.lit ? "is-lit" : "is-dim"}`}>
-                {focusedStatus}
-              </span>
-            </>
-          ) : (
-            <span className="night-card-idle">
-              {locale === "ar"
-  ? (isCoarsePointer() ? "المس شريحة لتقرأ نظامها" : "مرّر على شريحة لتقرأ نظامها")
-  : (isCoarsePointer() ? "Tap a chip to read its system" : "Hover a chip to read its system")}
-            </span>
-          )}
-        </p>
       </div>
-      <p className="night-key">
-        <span className="night-key-item">
-          <i className="night-swatch is-lit" aria-hidden="true" />
-          {ROSE_READY_LABEL[locale]}
-        </span>
-        <span className="night-key-item">
-          <i className="night-swatch is-dim" aria-hidden="true" />
-          {RECORD_STATUS_LABEL.pending[locale]}
-        </span>
-      </p>
     </div>
   );
 }

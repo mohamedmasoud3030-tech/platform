@@ -37,14 +37,14 @@ describe("rose fan geometry", () => {
       }
     });
 
-    it(`[${dir}] draws a thin two-stroke petal through the tip on its centre`, () => {
+    it(`[${dir}] draws a closed leaf-slice through the tip on its centre`, () => {
       for (let i = 0; i < 6; i++) {
         const path = petalPath(petalCenterDeg(i, mirror), mirror);
         expect(path.startsWith(`M ${ROSE_CX.toFixed(2)} ${ROSE_CY.toFixed(2)}`)).toBe(true);
-        expect(path.split(" M ").length, "two strokes").toBe(2);
+        expect(path.trim().endsWith("Z"), "closed slice").toBe(true);
         const tip = petalTip(i, mirror);
         const radius = Math.hypot(tip.x - ROSE_CX, tip.y - ROSE_CY);
-        expect(radius, `petal ${i} tip radius`).toBeCloseTo(153, 9);
+        expect(radius, `petal ${i} tip radius`).toBeCloseTo(186, 9);
         expect(path).toContain(`${tip.x.toFixed(2)} ${tip.y.toFixed(2)}`);
       }
     });
@@ -58,8 +58,8 @@ describe("rose fan geometry", () => {
         const chipRadius = Math.hypot(ends.x2 - ROSE_CX, ends.y2 - ROSE_CY);
         expect(chipRadius, `rope ${i} chip end`).toBeCloseTo(226, 9);
         const length = Math.hypot(ends.x2 - ends.x1, ends.y2 - ends.y1);
-        expect(length, `rope ${i} length`).toBeGreaterThan(70);
-        expect(length, `rope ${i} length`).toBeLessThan(105);
+        expect(length, `rope ${i} length`).toBeGreaterThan(25);
+        expect(length, `rope ${i} length`).toBeLessThan(70);
       }
     });
 

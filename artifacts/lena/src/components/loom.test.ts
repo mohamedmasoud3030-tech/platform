@@ -95,7 +95,6 @@ describe("the loom", () => {
       ".loom-thread-chip",
       ".loom-thread-chip[data-lit=\"true\"]",
       ".loom-thread-chip[data-documented=\"false\"][data-lit=\"true\"]",
-      "p.night-card.loom-card",
       ".light .loom-thread-chip",
       "@media (max-width: 720px)",
     ]) {

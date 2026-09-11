@@ -4,14 +4,13 @@
    Layout contract with Loom.tsx (do not drift apart):
    - `.loom` is the measured root: the canvas fills it, the JS layout pads
      it (padX max(96px, 13%) — 132px under 560px wide; padTop 68, padBottom
-     92 for the reading card). No overflow clipping: the chips ride
-     OUTSIDE the weave area and must stay visible.
+     28). No overflow clipping: the chips ride OUTSIDE the weave area and
+     must stay visible.
    - `.loom-roots` spans exactly the weave area (same inset formula) so
      each label centres over its warp. Hidden under 720px where nine
      labels cannot breathe; the warps themselves remain.
    - `.loom-thread-chip` positioning is fully JS-driven every frame
      (top / inset-inline-start / transform): never transition transform.
-   - The reading card is pinned to the panel floor, centred, above canvas.
    - Canvas palette is theme-aware in JS; these rules carry the DOM layer.
    ========================================================================== */
 
@@ -88,15 +87,6 @@
   border-color: #ffe2a6;
 }
 
-p.night-card.loom-card {
-  position: absolute;
-  z-index: 2;
-  inset-inline: 0;
-  bottom: 0;
-  width: min(560px, calc(100% - 16px));
-  margin: 0 auto;
-}
-
 /* --- light theme ---------------------------------------------------------- */
 
 .light .loom-root {
@@ -151,9 +141,5 @@ p.night-card.loom-card {
   .loom-thread-chip {
     padding: 6px 10px;
     font-size: 11px;
-  }
-
-  p.night-card.loom-card {
-    width: min(560px, calc(100% - 24px));
   }
 }
