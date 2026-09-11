@@ -2,9 +2,9 @@ import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router";
 import type { SystemId } from "@/content/systems";
 import { ledgerPad, RECORD_STATUS_LABEL } from "@/features/world/ledger/format";
-import { ROSE_READY_LABEL, roseBodies } from "@/features/home/rose-system-bodies";
+import { ROSE_READY_LABEL, completionFor, roseBodies } from "@/features/home/rose-system-bodies";
 import { usePreferences } from "@/providers/preferences";
-import { PRIMITIVE_LABELS, ROOT_ORDER, loomStatus, rootLoadFor } from "./loom-model";
+import { PRIMITIVE_LABELS, ROOT_ORDER, knotKindsFor, loomStatus, rootLoadFor } from "./loom-model";
 
 /**
  * THE LOOM (النول) — the documentation sky, woven.
@@ -19,11 +19,9 @@ import { PRIMITIVE_LABELS, ROOT_ORDER, loomStatus, rootLoadFor } from "./loom-mo
  *   WEFT (horizontal) — the six systems in owner order. Every knot is a
  *                       REAL datum: it exists only where the system's
  *                       operatingPrimitives contain that root.
- *   LIGHT             — readiness-aware: documented and owner-ready systems
- *                       weave as solid brass filaments, but only documented
- *                       systems carry the travelling shuttle of light.
- *                       Pending systems weave as faint dotted threads —
- *                       present, named, honest, not lit.
+ *   LIGHT             — knots follow completion: solid from the start of
+ *                       the thread, last point blinking when unfinished.
+ *                       Documented systems still carry the travelling shuttle.
  *
  * The cloth undulates under a slow standing wave; focusing a system pulls
  * its thread taut and bright while the rest falls back. One canvas,
@@ -160,54 +158,102 @@ export default function Loom() {
       const isFocused = focused === body.system.id;
       const dim = focused !== null && !isFocused ? 0.3 : 1;
       const lit = body.lit;
+      const completion = lit ? completionFor(body.system.id) : 0;
       const alpha = (lit ? 0.72 : 0.34) * dim * (isFocused ? 1.25 : 1);
-
-      ctx.strokeStyle = lit
-        ? `rgba(${C.threadLit}, ${Math.min(alpha, 1)})`
-        : `rgba(${C.threadDim}, ${Math.min(alpha, 1)})`;
-      ctx.lineWidth = lit ? (isFocused ? 2.1 : 1.5) : isFocused ? 1.3 : 0.9;
-      ctx.setLineDash(lit ? [] : [3, 7]);
-      ctx.beginPath();
       const xStart = L.edgeToEdge ? 0 : L.x0 - 40;
       const xEnd = L.edgeToEdge ? w : L.x1 + 40;
-      for (let x = xStart; x <= xEnd; x += 5) {
-        const py = y + wave(x, row, t);
-        if (x === xStart) ctx.moveTo(x, py);
-        else ctx.lineTo(x, py);
-      }
-      ctx.stroke();
-      ctx.setLineDash([]);
+      const span = xEnd - xStart;
+      const litLength = span * completion;
+      const xLitFrom = rtl ? xEnd - litLength : xStart;
+      const xLitTo = rtl ? xEnd : xStart + litLength;
 
-      // knots — one per real operatingPrimitive of this system
+      const strokeWeft = (from: number, to: number, solid: boolean) => {
+        const lo = Math.min(from, to);
+        const hi = Math.max(from, to);
+        if (hi - lo < 1) return;
+        ctx.strokeStyle = solid
+          ? `rgba(${C.threadLit}, ${Math.min(alpha, 1)})`
+          : `rgba(${C.threadDim}, ${Math.min((lit ? 0.28 : 0.34) * dim, 1)})`;
+        ctx.lineWidth = solid ? (isFocused ? 2.1 : 1.5) : isFocused ? 1.3 : 0.9;
+        ctx.setLineDash(solid ? [] : [3, 7]);
+        ctx.beginPath();
+        let started = false;
+        for (let x = lo; x <= hi; x += 5) {
+          const py = y + wave(x, row, t);
+          if (!started) {
+            ctx.moveTo(x, py);
+            started = true;
+          } else ctx.lineTo(x, py);
+        }
+        ctx.stroke();
+        ctx.setLineDash([]);
+      };
+
+      if (completion > 0) strokeWeft(xLitFrom, xLitTo, true);
+      if (completion < 1) strokeWeft(rtl ? xStart : xLitTo, rtl ? xLitFrom : xEnd, false);
+
+      // knots — light follows completion from the start of the thread
+      const systemRoots = ROOT_ORDER.filter((root) => body.system.operatingPrimitives.includes(root));
+      const orderedRoots = rtl ? [...systemRoots].reverse() : systemRoots;
+      const kinds = knotKindsFor(body.system.id, orderedRoots.length);
       ROOT_ORDER.forEach((root, col) => {
         if (!body.system.operatingPrimitives.includes(root)) return;
+        const knotPos = orderedRoots.indexOf(root);
+        const kind = kinds[knotPos] ?? "dim";
         const x = L.x0 + col * L.colGap;
         const py = y + wave(x, row, t);
+        const blink =
+          kind === "blink" && !state.current.reduced
+            ? 0.22 + 0.78 * (0.5 + 0.5 * Math.sin(t * 5.2 + row))
+            : 1;
         const pulse = state.current.reduced
           ? 1
           : 1 + 0.28 * Math.sin(t * 1.5 + col * 0.7 + row);
-        const r = (lit ? 2.9 : 2.1) * (isFocused ? 1.45 : 1) * pulse;
-        if (lit) {
+        const knotOn = kind !== "dim";
+        const r = (knotOn ? 2.9 : 2.1) * (isFocused ? 1.45 : 1) * pulse;
+        if (knotOn) {
           const g = ctx.createRadialGradient(x, py, 0, x, py, r * 4.5);
-          g.addColorStop(0, `rgba(${C.knotHalo}, ${0.55 * dim})`);
+          g.addColorStop(0, `rgba(${C.knotHalo}, ${0.55 * dim * blink})`);
           g.addColorStop(1, "rgba(0,0,0,0)");
           ctx.fillStyle = g;
           ctx.beginPath();
           ctx.arc(x, py, r * 4.5, 0, Math.PI * 2);
           ctx.fill();
         }
-        ctx.fillStyle = lit
-          ? `rgba(${C.knotCore}, ${0.95 * dim})`
+        ctx.fillStyle = knotOn
+          ? `rgba(${C.knotCore}, ${0.95 * dim * blink})`
           : `rgba(${C.knotDim}, ${0.5 * dim})`;
         ctx.beginPath();
         ctx.arc(x, py, r, 0, Math.PI * 2);
         ctx.fill();
+        if (kind === "blink") {
+          ctx.setLineDash([2, 3]);
+          ctx.strokeStyle = `rgba(${C.knotHalo}, ${0.85 * dim * blink})`;
+          ctx.lineWidth = 1.1;
+          ctx.beginPath();
+          ctx.arc(x, py, r + 3.2, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.setLineDash([]);
+        }
       });
+
+      if (completion > 0 && completion < 1 && !state.current.reduced) {
+        const tipX = rtl ? xLitFrom : xLitTo;
+        const tipY = y + wave(tipX, row, t);
+        const blink = 0.2 + 0.8 * (0.5 + 0.5 * Math.sin(t * 5.2 + row));
+        const tg = ctx.createRadialGradient(tipX, tipY, 0, tipX, tipY, 16);
+        tg.addColorStop(0, `rgba(${C.knotHalo}, ${0.55 * dim * blink})`);
+        tg.addColorStop(1, "rgba(0,0,0,0)");
+        ctx.fillStyle = tg;
+        ctx.beginPath();
+        ctx.arc(tipX, tipY, 16, 0, Math.PI * 2);
+        ctx.fill();
+      }
 
       // shuttle of light — only documented systems carry one
       if (body.documented && !state.current.reduced) {
-        const span = L.x1 - L.x0;
-        const travel = ((t * 0.13 + row * 0.5) % 1) * (span + 160) - 80;
+        const travelSpan = L.x1 - L.x0;
+        const travel = ((t * 0.13 + row * 0.5) % 1) * (travelSpan + 160) - 80;
         const sx = rtl ? L.x1 - travel : L.x0 + travel;
         const sy = y + wave(sx, row, t);
         const sg = ctx.createRadialGradient(sx, sy, 0, sx, sy, 26);
@@ -328,78 +374,79 @@ export default function Loom() {
             : "The core is calm — and the light around it is documentation"}
         </h2>
       </div>
-        <div
-          ref={rootRef}
-          className={`loom${focusId ? " is-focus" : ""}`}
-          role="group"
-          aria-label={
-            locale === "ar"
-              ? "نول التوثيق: الأنظمة الستة منسوجة على الجذور التشغيلية"
-              : "The documentation loom: six systems woven across the operating roots"
-          }
-        >
-          <canvas ref={canvasRef} className="loom-canvas" aria-hidden="true" />
+      <div
+        ref={rootRef}
+        className={`loom${focusId ? " is-focus" : ""}`}
+        role="group"
+        aria-label={
+          locale === "ar"
+            ? "نول التوثيق: الأنظمة الستة منسوجة على الجذور التشغيلية"
+            : "The documentation loom: six systems woven across the operating roots"
+        }
+      >
+        <canvas ref={canvasRef} className="loom-canvas" aria-hidden="true" />
 
-          <div className="loom-roots" aria-hidden="true">
-            {ROOT_ORDER.map((root, col) => (
-              <span
-                key={root}
-                className={`loom-root${rootLoad[col] >= 2 ? " is-proven" : ""}`}
-                style={{ insetInlineStart: `${(col / (ROOT_ORDER.length - 1)) * 100}%` }}
-              >
-                {PRIMITIVE_LABELS[root][locale]}
-              </span>
-            ))}
-          </div>
-
-          {bodies.map((body, index) => (
-            <Link
-              key={body.system.id}
-              to={`/world/${body.system.id}`}
-              className="loom-thread-chip"
-              data-system={body.system.id}
-              data-documented={body.documented}
-              data-lit={body.lit}
-              ref={(node) => {
-                chipRefs.current[index] = node;
-              }}
-              onFocus={() => setFocusId(body.system.id)}
-              onBlur={() => setFocusId(null)}
-              onMouseEnter={() => setFocusId(body.system.id)}
-              onMouseLeave={() => setFocusId(null)}
+        <div className="loom-roots" aria-hidden="true">
+          {ROOT_ORDER.map((root, col) => (
+            <span
+              key={root}
+              className={`loom-root${rootLoad[col] >= 2 ? " is-proven" : ""}`}
+              style={{ insetInlineStart: `${(col / (ROOT_ORDER.length - 1)) * 100}%` }}
             >
-              <span className="night-sat-num" aria-hidden="true">
-                {ledgerPad(body.ownerIndex + 1, 2, locale)}
-              </span>
-              {body.system.name[locale]}
-            </Link>
+              {PRIMITIVE_LABELS[root][locale]}
+            </span>
           ))}
-
-          <p className="night-card loom-card" aria-live="polite">
-            {focused ? (
-              <>
-                <span className="night-card-num" aria-hidden="true">
-                  {ledgerPad(focused.ownerIndex + 1, 2, locale)}
-                </span>
-                <span className="night-card-main">
-                  <strong>{focused.system.name[locale]}</strong>
-                  <small>
-                    {focused.system.operatingPrimitives
-                      .map((root) => PRIMITIVE_LABELS[root][locale])
-                      .join(" · ")}
-                  </small>
-                </span>
-                <span className={`night-card-status ${focused.lit ? "is-lit" : "is-dim"}`}>
-                  {focusedStatus}
-                </span>
-              </>
-            ) : (
-              <span className="night-card-idle">
-                {locale === "ar" ? "مرّر على خيط لتقرأ نظامه" : "Hover a thread to read its system"}
-              </span>
-            )}
-          </p>
         </div>
+
+        {bodies.map((body, index) => (
+          <Link
+            key={body.system.id}
+            to={`/world/${body.system.id}`}
+            className="loom-thread-chip"
+            data-system={body.system.id}
+            data-documented={body.documented}
+            data-lit={body.lit}
+            data-completion={String(completionFor(body.system.id))}
+            ref={(node) => {
+              chipRefs.current[index] = node;
+            }}
+            onFocus={() => setFocusId(body.system.id)}
+            onBlur={() => setFocusId(null)}
+            onMouseEnter={() => setFocusId(body.system.id)}
+            onMouseLeave={() => setFocusId(null)}
+          >
+            <span className="night-sat-num" aria-hidden="true">
+              {ledgerPad(body.ownerIndex + 1, 2, locale)}
+            </span>
+            {body.system.name[locale]}
+          </Link>
+        ))}
+
+        <p className="night-card loom-card" aria-live="polite">
+          {focused ? (
+            <>
+              <span className="night-card-num" aria-hidden="true">
+                {ledgerPad(focused.ownerIndex + 1, 2, locale)}
+              </span>
+              <span className="night-card-main">
+                <strong>{focused.system.name[locale]}</strong>
+                <small>
+                  {focused.system.operatingPrimitives
+                    .map((root) => PRIMITIVE_LABELS[root][locale])
+                    .join(" · ")}
+                </small>
+              </span>
+              <span className={`night-card-status ${focused.lit ? "is-lit" : "is-dim"}`}>
+                {focusedStatus}
+              </span>
+            </>
+          ) : (
+            <span className="night-card-idle">
+              {locale === "ar" ? "مرّر على خيط لتقرأ نظامه" : "Hover a thread to read its system"}
+            </span>
+          )}
+        </p>
+      </div>
       <div className="lena-container">
         <p className="night-key">
           <span className="night-key-item">

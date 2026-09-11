@@ -5,11 +5,11 @@ describe("home frontage rooms (House Ledger hero mapping)", () => {
   it("maps exactly the six public systems in owner order", () => {
     const rooms = frontageRooms();
     expect(rooms.map((room) => room.system.id)).toEqual([
-      "wellness", // Lara Beauty — leads the row
-      "rental", // Carmen Gallery
-      "property", // MALEK
-      "hospitality",
+      "property", // MALEK — first
       "investment", // Terranex
+      "wellness", // Lara Beauty
+      "rental", // Carmen Gallery
+      "hospitality",
       "recycling", // Kayyal — last
     ]);
     expect(rooms).toHaveLength(6);
@@ -42,6 +42,9 @@ describe("home frontage rooms (House Ledger hero mapping)", () => {
     for (const room of frontageRooms()) {
       expect(room.system.name.ar.trim().length, `${room.system.id} AR name`).toBeGreaterThan(0);
       expect(room.system.name.en.trim().length, `${room.system.id} EN name`).toBeGreaterThan(0);
+      expect(room.system.name.ar, `${room.system.id} names switch with language`).not.toBe(
+        room.system.name.en,
+      );
     }
   });
 });

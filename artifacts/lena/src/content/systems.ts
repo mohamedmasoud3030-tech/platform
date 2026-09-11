@@ -89,8 +89,8 @@ export const BUSINESS_SYSTEMS: BusinessSystem[] = [
   {
     id: "property",
     visibility: "public",
-    order: 3,
-    name: { ar: "MALEK", en: "MALEK" },
+    order: 1,
+    name: { ar: "مالك", en: "MALEK" },
     tagline: {
       ar: "منصة عربية لتشغيل العقارات ومحاسبة الإيجار.",
       en: "Arabic-first property operations and rent accounting platform.",
@@ -144,7 +144,7 @@ export const BUSINESS_SYSTEMS: BusinessSystem[] = [
   {
     id: "wellness",
     visibility: "public",
-    order: 1,
+    order: 3,
     name: { ar: "لارا بيوتي", en: "Lara Beauty" },
     stage: "trial",
     beneficiaries: {
@@ -195,7 +195,7 @@ export const BUSINESS_SYSTEMS: BusinessSystem[] = [
   {
     id: "rental",
     visibility: "public",
-    order: 2,
+    order: 4,
     name: { ar: "كارمن جالري", en: "Carmen Gallery" },
     stage: "trial",
     beneficiaries: {
@@ -246,7 +246,7 @@ export const BUSINESS_SYSTEMS: BusinessSystem[] = [
   {
     id: "investment",
     visibility: "public",
-    order: 5,
+    order: 2,
     name: { ar: "تيرانكس", en: "Terranex" },
     stage: "trial",
     beneficiaries: {
@@ -297,8 +297,8 @@ export const BUSINESS_SYSTEMS: BusinessSystem[] = [
   {
     id: "hospitality",
     visibility: "public",
-    order: 4,
-    name: { ar: "نظام الضيافة", en: "Hospitality system" },
+    order: 5,
+    name: { ar: "الضيافة والمناسبات", en: "Hospitality & Events" },
     stage: "trial",
     beneficiaries: {
       ar: ["مكتب خدمات الضيافة", "منسّق المناسبة", "طاقم التنفيذ في الموقع"],

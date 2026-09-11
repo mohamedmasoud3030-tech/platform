@@ -1,0 +1,50 @@
+/* Two columns on every viewport: Quick Links | Contact.
+   Brand sits above as a full-width row so the two parts stay side by side. */
+
+.lena-footer-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px 32px;
+  width: min(1180px, calc(100% - 28px));
+  margin-inline: auto;
+  align-items: start;
+}
+
+.lena-footer-brand {
+  grid-column: 1 / -1;
+}
+
+.lena-footer-col {
+  min-width: 0;
+}
+
+.lena-footer-links {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.lena-footer-links a {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 7px;
+  min-height: 32px;
+  max-width: 100%;
+}
+
+@media (max-width: 720px) {
+  .lena-footer-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 18px 16px;
+  }
+
+  .lena-footer-links {
+    gap: 6px;
+  }
+
+  .lena-footer-links a {
+    font-size: 12px;
+  }
+}

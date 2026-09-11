@@ -21,6 +21,26 @@ export const ROSE_OWNER_READY: readonly SystemId[] = [
 export const ROSE_READY_LABEL: Record<AppLocale, string> = { ar: "جاهز", en: "READY" };
 
 /**
+ * How far each system is complete, 0–1. The loom paints solid light from
+ * the start of the thread up to this ratio; the last lit point blinks.
+ * Documented systems are 1. Terranex ~70%, Kayyal ~85%.
+ */
+export const SYSTEM_COMPLETION: Record<SystemId, number> = {
+  property: 1,
+  investment: 0.7,
+  wellness: 1,
+  rental: 1,
+  hospitality: 1,
+  recycling: 0.85,
+  materials: 0,
+};
+
+export function completionFor(id: SystemId): number {
+  const value = SYSTEM_COMPLETION[id];
+  return Number.isFinite(value) ? Math.min(1, Math.max(0, value)) : 0;
+}
+
+/**
  * The six public systems in owner order, mapped onto the Rose Engine's six
  * petals (the R5 hero: "a window the master masons drew with compasses").
  *

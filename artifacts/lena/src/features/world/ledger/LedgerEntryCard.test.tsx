@@ -45,8 +45,8 @@ describe("LedgerEntryCard", () => {
     const entry = heading.closest(".ledger-entry") as HTMLElement;
     expect(entry).not.toBeNull();
 
-    // Entry number derives from the canonical owner order (MALEK is 03).
-    expect(within(entry).getByText("03")).toBeTruthy();
+    // Entry number derives from the canonical owner order (MALEK is 01).
+    expect(within(entry).getByText("01")).toBeTruthy();
     // The record seal states documentation, never lifecycle.
     expect(within(entry).getByText("DOCUMENTED")).toBeTruthy();
 

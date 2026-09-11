@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 import { publicSystems } from "@/content/systems";
 import { OPERATING_PRIMITIVES } from "@/features/world/content/operating-primitives";
 import { roseBodies } from "@/features/home/rose-system-bodies";
-import { PRIMITIVE_LABELS, ROOT_ORDER, loomStatus, rootLoadFor } from "./loom-model";
+import { PRIMITIVE_LABELS, ROOT_ORDER, knotKindsFor, loomStatus, rootLoadFor } from "./loom-model";
 
 const css = readFileSync(resolve(process.cwd(), "src/styles/loom.css"), "utf8");
 
@@ -68,6 +68,23 @@ describe("the loom", () => {
         .sort(),
     ).toEqual(["hospitality", "investment", "recycling", "rental"]);
     expect(bodies.every((b) => b.lit)).toBe(true);
+  });
+
+  it("lights knots from the start of the thread by completion, last knot blinking when unfinished", () => {
+    const malek = publicSystems().find((s) => s.id === "property")!;
+    expect(knotKindsFor("property", malek.operatingPrimitives.length).every((k) => k === "solid")).toBe(
+      true,
+    );
+    const terranex = publicSystems().find((s) => s.id === "investment")!;
+    const terranexKnots = knotKindsFor("investment", terranex.operatingPrimitives.length);
+    expect(terranexKnots.at(-1)).toBe("dim");
+    expect(terranexKnots.filter((k) => k === "blink")).toHaveLength(1);
+    expect(terranexKnots[0]).toBe("solid");
+    const kayyal = publicSystems().find((s) => s.id === "recycling")!;
+    const kayyalKnots = knotKindsFor("recycling", kayyal.operatingPrimitives.length);
+    expect(kayyalKnots.at(-1)).toBe("dim");
+    expect(kayyalKnots.filter((k) => k === "blink")).toHaveLength(1);
+    expect(kayyalKnots[0]).toBe("solid");
   });
 
   it("pins the loom selectors, the three chip states and the light theme", () => {

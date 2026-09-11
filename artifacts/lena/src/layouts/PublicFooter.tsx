@@ -25,16 +25,14 @@ export default function PublicFooter() {
   return (
     <footer className="lena-footer">
       <div className="lena-footer-grid">
-        {/* Brand & Description */}
-        <div>
+        <div className="lena-footer-brand">
           <Link to="/" className="lena-brand-link">
             <LenaLogo />
           </Link>
           <p>{copy.footer.description}</p>
         </div>
 
-        {/* Quick Links */}
-        <div>
+        <div className="lena-footer-col">
           <h2>{copy.footer.links}</h2>
           <div className="lena-footer-links">
             {PUBLIC_NAVIGATION.map((item) => (
@@ -51,8 +49,7 @@ export default function PublicFooter() {
           </div>
         </div>
 
-        {/* Contact */}
-        <div>
+        <div className="lena-footer-col">
           <h2>{copy.footer.contact}</h2>
           <div className="lena-footer-links">
             {SITE_CONFIG.channels.map((channel) => (
@@ -67,10 +64,12 @@ export default function PublicFooter() {
                 <small>{channel.region[locale]}</small>
               </a>
             ))}
-            <a href={SITE_CONFIG.emailUrl}>
-              <Mail size={15} />
-              <span dir="ltr">{SITE_CONFIG.email}</span>
-            </a>
+            {SITE_CONFIG.emails.map((address) => (
+              <a key={address} href={`mailto:${address}`}>
+                <Mail size={15} />
+                <span dir="ltr">{address}</span>
+              </a>
+            ))}
           </div>
         </div>
       </div>

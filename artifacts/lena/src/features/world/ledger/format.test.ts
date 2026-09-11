@@ -35,8 +35,8 @@ describe("ledger formatting", () => {
   it("derives entry numbers from the canonical owner order", () => {
     const malek = publicSystems().find((system) => system.id === "property");
     expect(malek).toBeDefined();
-    expect(entryNumberFor(malek!.order, "en")).toBe("03");
-    expect(entryNumberFor(malek!.order, "ar")).toBe("٠٣");
+    expect(entryNumberFor(malek!.order, "en")).toBe("01");
+    expect(entryNumberFor(malek!.order, "ar")).toBe("٠١");
   });
 });
 

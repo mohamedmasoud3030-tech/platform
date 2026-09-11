@@ -48,8 +48,9 @@
 }
 
 .lena-header .lena-logo-copy strong {
-  font-size: 14px;
-  letter-spacing: 0.32em;
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  white-space: nowrap;
 }
 
 .lena-header .lena-logo-copy small {
@@ -113,8 +114,9 @@
     padding: 6px max(14px, env(safe-area-inset-right)) 6px max(14px, env(safe-area-inset-left));
   }
 
-  .lena-header .lena-logo-copy small {
-    display: none;
+  .lena-header .lena-logo-copy strong {
+    font-size: clamp(9px, 2.7vw, 12px);
+    letter-spacing: 0.06em;
   }
 
   .lena-main {

@@ -22,7 +22,7 @@ import { SUPPORTED_LOCALES, type SupportedLocale } from "@workspace/content";
 
 export { SUPPORTED_LOCALES, type SupportedLocale } from "@workspace/content";
 
-export const DEFAULT_LOCALE: SupportedLocale = "ar";
+export const DEFAULT_LOCALE: SupportedLocale = "en";
 /** Shown to visitors whose device language is neither Arabic nor English. */
 export const FALLBACK_LOCALE: SupportedLocale = "en";
 export const LOCALE_STORAGE_KEY = "lena-digital-house.locale";
@@ -112,11 +112,11 @@ export function localeFromDevice(languages?: readonly string[]): SupportedLocale
  * Priority is deliberate:
  *  1. the URL — a shared link must always open in the language it was shared in;
  *  2. the visitor's own previous choice;
- *  3. the device language;
- *  4. English, so a visitor we do not publish for still understands the page.
+ *  3. English, the primary language. Arabic is the second option, chosen
+ *     from the language control or a /ar/ address.
  */
-export function resolveLocale(pathname: string, languages?: readonly string[]): SupportedLocale {
-  return localeFromPath(pathname) ?? readStoredLocale() ?? localeFromDevice(languages);
+export function resolveLocale(pathname: string, _languages?: readonly string[]): SupportedLocale {
+  return localeFromPath(pathname) ?? readStoredLocale() ?? DEFAULT_LOCALE;
 }
 
 export type LocaleBootstrap = { locale: SupportedLocale; redirectTo: string | null };

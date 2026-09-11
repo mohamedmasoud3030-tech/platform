@@ -54,6 +54,7 @@ const primaryId = env.VITE_PRIMARY_CHANNEL ?? "om";
 const primary = CHANNELS.find((channel) => channel.id === primaryId) ?? CHANNELS[0];
 
 const email = env.VITE_CONTACT_EMAIL ?? "MohamedMs.oud@outlook.com";
+const emails = [email, "ahmedmasoud2@outlook.com"] as const;
 
 if (import.meta.env.PROD) {
   for (const [name, value] of Object.entries({
@@ -87,6 +88,7 @@ export const SITE_CONFIG = {
   primaryWhatsAppUrl: whatsappUrl,
   contactEmail: email,
   email,
+  emails,
   whatsappUrl,
   emailUrl,
 

@@ -1,10 +1,20 @@
+import { usePreferences } from "@/providers/preferences";
+
 type LenaLogoProps = { compact?: boolean; className?: string };
 
+const BRAND = {
+  ar: "لينا البيت الرقمي",
+  en: "LENA Digital House",
+} as const;
+
 export default function LenaLogo({ compact = false, className = "" }: LenaLogoProps) {
+  const { locale } = usePreferences();
+  const fullName = BRAND[locale];
+
   return (
     <span
       className={`lena-logo ${compact ? "lena-logo-compact" : ""} ${className}`.trim()}
-      aria-label="LENA Digital House"
+      aria-label={fullName}
     >
       <svg className="lena-logo-mark" viewBox="0 0 48 48" role="img" aria-hidden="true">
         <path d="M14 10.5v20.2c0 3.75 3.04 6.8 6.8 6.8H36" />
@@ -13,8 +23,7 @@ export default function LenaLogo({ compact = false, className = "" }: LenaLogoPr
       </svg>
       {!compact && (
         <span className="lena-logo-copy">
-          <strong>LENA</strong>
-          <small>DIGITAL HOUSE</small>
+          <strong>{fullName}</strong>
         </span>
       )}
     </span>

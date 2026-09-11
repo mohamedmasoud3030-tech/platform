@@ -41,11 +41,11 @@ describe("RoseEngine", () => {
     });
     const chips = within(group).getAllByRole("link");
     expect(chips.map((chip) => chip.getAttribute("href"))).toEqual([
+      "/world/property",
+      "/world/investment",
       "/world/wellness",
       "/world/rental",
-      "/world/property",
       "/world/hospitality",
-      "/world/investment",
       "/world/recycling",
     ]);
   });
@@ -63,14 +63,16 @@ describe("RoseEngine", () => {
     expect(lit).toEqual(["hospitality", "investment", "property", "recycling", "rental", "wellness"]);
   });
 
-  it("renders the renamed Carmen Gallery chip in both locales", () => {
+  it("renders bilingual names that switch with the locale", () => {
     renderEngine("en");
-    const enChip = screen.getByRole("link", { name: /Carmen Gallery/ });
-    expect(enChip.getAttribute("href")).toBe("/world/rental");
+    expect(screen.getByRole("link", { name: /MALEK/ }).getAttribute("href")).toBe("/world/property");
+    expect(screen.getByRole("link", { name: /Terranex/ }).getAttribute("href")).toBe("/world/investment");
+    expect(screen.getByRole("link", { name: /Carmen Gallery/ }).getAttribute("href")).toBe("/world/rental");
     cleanup();
     renderEngine("ar");
-    const arChip = screen.getByRole("link", { name: /كارمن جالري/ });
-    expect(arChip.getAttribute("href")).toBe("/world/rental");
+    expect(screen.getByRole("link", { name: /مالك/ }).getAttribute("href")).toBe("/world/property");
+    expect(screen.getByRole("link", { name: /تيرانكس/ }).getAttribute("href")).toBe("/world/investment");
+    expect(screen.getByRole("link", { name: /كارمن جالري/ }).getAttribute("href")).toBe("/world/rental");
   });
 
   it("numbers the chips with ledger numerals in the active locale", () => {

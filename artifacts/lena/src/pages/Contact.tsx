@@ -223,7 +223,11 @@ export default function Contact() {
           <article className="lena-glass lena-contact-card">
             <Mail />
             <h2>{copy.contact.email}</h2>
-            <p dir="ltr">{SITE_CONFIG.email}</p>
+            {SITE_CONFIG.emails.map((address) => (
+              <p dir="ltr" key={address}>
+                {address}
+              </p>
+            ))}
             <a
               className="lena-secondary"
               href={SITE_CONFIG.emailUrl}

@@ -1,7 +1,7 @@
-import type { OperatingPrimitiveId } from "@/content/systems";
+import type { OperatingPrimitiveId, SystemId } from "@/content/systems";
 import type { AppLocale } from "@/providers/preferences";
 import { RECORD_STATUS_LABEL } from "@/features/world/ledger/format";
-import { ROSE_READY_LABEL } from "@/features/home/rose-system-bodies";
+import { ROSE_READY_LABEL, completionFor } from "@/features/home/rose-system-bodies";
 import { OPERATING_PRIMITIVES } from "@/features/world/content/operating-primitives";
 
 /**
@@ -32,6 +32,24 @@ export type LoomBodyLike = { documented: boolean; ownerReady: boolean };
  * documented (evidence-backed) → lit; owner-ready (declared, evidence
  * pending) → lit with the READY word; otherwise dim and pending.
  */
+export type KnotKind = "solid" | "blink" | "dim";
+
+/**
+ * Knots along a weft, start → end. Solid from the beginning up to the
+ * completion ratio; the last lit knot blinks when the thread is not full.
+ */
+export function knotKindsFor(id: SystemId, primitiveCount: number): KnotKind[] {
+  const n = Math.max(0, primitiveCount);
+  if (n === 0) return [];
+  const completion = completionFor(id);
+  const litThrough = completion >= 1 ? n : Math.max(1, Math.round(n * completion));
+  return Array.from({ length: n }, (_, index) => {
+    if (completion >= 1 || index < litThrough - 1) return "solid";
+    if (index === litThrough - 1) return "blink";
+    return "dim";
+  });
+}
+
 export function loomStatus(
   body: LoomBodyLike,
   locale: AppLocale,
