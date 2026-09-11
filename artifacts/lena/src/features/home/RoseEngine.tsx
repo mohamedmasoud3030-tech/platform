@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router";
 import sacredCoreUrl from "@/assets/lena-sacred-core.webp?url";
 import { ledgerPad, RECORD_STATUS_LABEL } from "@/features/world/ledger/format";
@@ -27,12 +27,12 @@ import { ROSE_READY_LABEL, roseBodies } from "./rose-system-bodies";
  * intersections, then gilding settles into the work that earned it.
  *
  * Six petals = the six systems in owner order: lit systems gild in brass,
- * pending ones rest in quiet stone-blue. THE CHIPS LEAD: every chip rides
- * just ahead of its petal in the rotation — the chip is the leader, the
- * system follows closely — tethered by a visible rope of light with energy
- * flowing chip → system and a glowing tow-node riding the petal's tip. The chips are also wired to
- * each other: six light-bridges join every chip to its two neighbours in one
- * continuous circuit, and three comets circle the ring.
+ * pending ones rest in quiet stone-blue. THE CORE PULLS: the hub sits in
+ * front and drives the wheel; every chip trails its petal, tethered by a
+ * rope of light with energy flowing core → system and a glowing tow-node
+ * riding the petal's tip. The chips are also wired to each other: six
+ * light-bridges join every chip to its two neighbours in one continuous
+ * circuit, and three comets circle the ring.
  *
  * Hovering a chip lights its whole neighbourhood — its petal, its proof
  * circle, its tow-rope and tow-node, and the two bridges that tie it to its
@@ -90,6 +90,20 @@ export default function RoseEngine() {
   const mirror: RoseMirror = direction === "rtl" ? -1 : 1;
   const orbitRadius = useOrbitRadius();
   const [focusId, setFocusId] = useState<string | null>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = stageRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        el.classList.toggle("is-offscreen", !entry.isIntersecting);
+      },
+      { threshold: 0.08 },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
 
   const orbitUnits = (orbitRadius / 100) * 600;
   const focusedIndex = focusId ? bodies.findIndex((b) => b.system.id === focusId) : -1;
@@ -115,7 +129,7 @@ export default function RoseEngine() {
             : "The Rose Engine: six systems around the LENA core"
         }
       >
-        <div className="rose-stage">
+        <div className="rose-stage" ref={stageRef}>
           {/* ambient sparkles */}
           <div className="rose-stars" aria-hidden="true">
             {STARS.map((star, i) => (
@@ -171,7 +185,7 @@ export default function RoseEngine() {
                     cy={gy}
                     r={ROSE_R * 0.62}
                     pathLength={1}
-                    style={{ animationDelay: `${0.25 + i * 0.28}s` }}
+                    style={{ animationDelay: `${0.04 + i * 0.07}s` }}
                   />
                 );
               })}
@@ -202,7 +216,7 @@ export default function RoseEngine() {
           <span className="rose-halo one" aria-hidden="true" />
           <span className="rose-halo two" aria-hidden="true" />
 
-          {/* the wheel — every chip leading its petal on a rope of light */}
+          {/* the wheel — the core pulling each system on a rope of light */}
           <div className="rose-orbit">
             <svg className="rose-threads" viewBox="0 0 600 600" aria-hidden="true">
               {/* petals — the systems, trailing their chips */}
@@ -214,7 +228,7 @@ export default function RoseEngine() {
                   data-lit={body.lit}
                   d={petalPath(petalCenterDeg(i, mirror), mirror)}
                   pathLength={1}
-                  style={{ animationDelay: `${2.1 + i * 0.22}s` }}
+                  style={{ animationDelay: `${0.28 + i * 0.06}s` }}
                   fill={body.lit ? "url(#rose-gild)" : "url(#rose-stone)"}
                 />
               ))}
@@ -321,7 +335,7 @@ export default function RoseEngine() {
           </div>
 
           <span className="rose-sigil" aria-hidden="true">
-            <img src={sacredCoreUrl} alt="" width={56} height={56} loading="eager" decoding="async" />
+            <img src={sacredCoreUrl} alt="" width={108} height={108} loading="eager" decoding="async" fetchPriority="high" />
           </span>
         </div>
 

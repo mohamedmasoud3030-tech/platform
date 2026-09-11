@@ -6,21 +6,21 @@
    order; documented systems gild in brass, the rest stay stonework linework
    (documentation status — never a lifecycle word).
 
-   THE TOW: every chip rides the wheel AHEAD of its petal — the chip is
-   the leader, the system follows — tethered by a visible rope of light
-   (with its own aura) with energy flowing chip → system and a glowing
-   tow-node riding the petal's tip. Pending petals breathe with a quiet
-   charging pulse while lit ones gild solid. The chips are also wired to
-   each other: six light-bridges join every chip to its two neighbours in
-   one continuous circuit, and three comets circle the ring.
+   THE TOW: the core sits in front and drives the wheel. Every chip
+   trails its petal — tethered by a visible rope of light (with its own
+   aura) with energy flowing core → system and a glowing tow-node riding
+   the petal's tip. Pending petals breathe with a quiet charging pulse
+   while lit ones gild solid. The chips are also wired to each other: six
+   light-bridges join every chip to its two neighbours in one continuous
+   circuit, and three comets circle the ring.
 
    Motion grammar:
    - `.rose-orbit` (petals + tow-ropes + bridges + rope + six chips)
-     turns once every 30s. Each chip counter-rotates at the same rate so
-     its label stays upright while its position travels ahead of its
-     petal.
-   - `.rose-geometry` (construction proof + rings) counter-rotates at 60s
-     beneath the petals.
+     turns once every 30s, locked to the core's geometry. Each chip
+     counter-rotates at the same rate so its label stays upright while
+     its position trails its petal.
+   - `.rose-geometry` (construction proof + rings) turns with the orbit
+     at 30s — the hub is the engine, the systems follow.
    - `.rose-comets` is a third, swifter wheel (26s) carrying three light
      pulses around the circuit.
    - Chips/threads use the independent `rotate` / `translate` / `scale`
@@ -50,7 +50,21 @@
   position: relative;
   width: 100%;
   aspect-ratio: 1 / 1;
-  animation: rose-enter 0.7s cubic-bezier(0.2, 0.7, 0.3, 1) 0.1s backwards;
+  contain: layout;
+  animation: rose-enter 0.35s cubic-bezier(0.2, 0.7, 0.3, 1) backwards;
+}
+
+.rose-stage.is-offscreen .rose-geometry,
+.rose-stage.is-offscreen .rose-orbit,
+.rose-stage.is-offscreen .rose-chip,
+.rose-stage.is-offscreen .rose-sigil,
+.rose-stage.is-offscreen .rose-halo,
+.rose-stage.is-offscreen .rose-comets,
+.rose-stage.is-offscreen .rose-star,
+.rose-stage.is-offscreen .rose-tow,
+.rose-stage.is-offscreen .rose-tow-node,
+.rose-stage.is-offscreen .rose-rope-flow {
+  animation-play-state: paused;
 }
 
 @keyframes rose-enter {
@@ -91,12 +105,9 @@
 .rose-geometry {
   position: absolute;
   inset: 0;
-  z-index: 1;
-  animation: rose-spin-rev 60s linear infinite;
-}
-
-@keyframes rose-spin-rev {
-  to { rotate: -360deg; }
+  z-index: 3;
+  pointer-events: none;
+  animation: rose-orbit 30s linear infinite;
 }
 
 .rose-svg {
@@ -114,7 +125,7 @@
   stroke-dasharray: 1;
   stroke-dashoffset: 1;
   opacity: 0;
-  animation: rose-scribe 1s ease-out forwards;
+  animation: rose-scribe 0.45s ease-out forwards;
   transition: stroke 0.3s ease, opacity 0.3s ease;
 }
 
@@ -136,7 +147,7 @@
   stroke-dasharray: 1;
   stroke-dashoffset: 1;
   opacity: 0;
-  animation: rose-scribe 1.2s ease-out 0.1s forwards;
+  animation: rose-scribe 0.5s ease-out 0.04s forwards;
 }
 
 .rose-outer.faint {
@@ -150,18 +161,18 @@
   stroke-dasharray: 1;
   stroke-dashoffset: 1;
   opacity: 0;
-  animation: rose-petal-in 1s ease-out forwards;
+  animation: rose-petal-in 0.55s ease-out forwards;
   transition: stroke 0.3s ease;
 }
 
 .rose-petal[data-lit="true"] {
   stroke: rgba(226, 196, 120, 0.85);
-  animation: rose-petal-in 1s ease-out forwards;
+  animation: rose-petal-in 0.55s ease-out forwards;
 }
 
 .rose-petal[data-lit="false"] {
   stroke: rgba(167, 188, 255, 0.55);
-  animation: rose-petal-in 1s ease-out forwards;
+  animation: rose-petal-in 0.55s ease-out forwards;
 }
 
 .rose-petal.is-active {
@@ -204,7 +215,7 @@
   box-shadow: 0 0 10px 3px rgba(232, 200, 118, 0.55);
   translate: -50% -50%;
   opacity: 0;
-  animation: rose-thread-in 0.8s ease-out 3.6s forwards;
+  animation: rose-thread-in 0.45s ease-out 0.65s forwards;
 }
 
 /* --- halo rings around the hub ---------------------------------------------- */
@@ -213,17 +224,17 @@
   position: absolute;
   left: 50%;
   top: 50%;
-  z-index: 2;
+  z-index: 4;
   translate: -50% -50%;
   border-radius: 50%;
   pointer-events: none;
 }
 
 .rose-halo.one {
-  width: 22%;
+  width: 28%;
   aspect-ratio: 1;
   border: 1px dashed rgba(232, 200, 118, 0.5);
-  animation: rose-halo-spin 24s linear infinite;
+  animation: rose-orbit 30s linear infinite;
 }
 
 .rose-halo.two {
@@ -294,13 +305,13 @@
   pointer-events: none;
 }
 
-/* Tow-ropes — each chip pulling its blade; energy flows with the pull. */
+/* Tow-ropes — the core pulling each system; energy flows with the pull. */
 .rose-tow-aura {
   stroke: rgba(232, 200, 118, 0.2);
   stroke-width: 7;
   stroke-linecap: round;
   opacity: 0;
-  animation: rose-thread-in 0.8s ease-out 3.2s forwards;
+  animation: rose-thread-in 0.45s ease-out 0.45s forwards;
 }
 
 .rose-tow {
@@ -309,7 +320,7 @@
   stroke-linecap: round;
   stroke-dasharray: 6 4;
   opacity: 0;
-  animation: rose-thread-in 0.8s ease-out 3.2s forwards, rose-tow-flow 0.9s linear infinite;
+  animation: rose-thread-in 0.45s ease-out 0.45s forwards, rose-tow-flow 0.9s linear infinite;
   transition: stroke 0.3s ease;
 }
 
@@ -327,7 +338,7 @@
 .rose-tow-node {
   fill: #8fa3d9;
   opacity: 0;
-  animation: rose-thread-in 0.8s ease-out 3.4s forwards, rose-tow-pulse 2.4s ease-in-out 4.2s infinite;
+  animation: rose-thread-in 0.45s ease-out 0.5s forwards, rose-tow-pulse 2.4s ease-in-out 1s infinite;
   transition: fill 0.3s ease;
 }
 
@@ -350,7 +361,7 @@
    per-frame cost (no filters anywhere in the rotating SVG layers). */
 .rose-tow-halo {
   opacity: 0;
-  animation: rose-thread-in 0.8s ease-out 3.4s forwards;
+  animation: rose-thread-in 0.45s ease-out 0.5s forwards;
   pointer-events: none;
 }
 
@@ -359,7 +370,7 @@
   stroke: rgba(200, 160, 78, 0.22);
   stroke-width: 1.5;
   opacity: 0;
-  animation: rose-thread-in 0.8s ease-out 3s forwards;
+  animation: rose-thread-in 0.45s ease-out 0.4s forwards;
 }
 
 .rose-rope-echo {
@@ -368,7 +379,7 @@
   stroke-width: 1;
   stroke-dasharray: 1 9;
   opacity: 0;
-  animation: rose-thread-in 0.8s ease-out 3s forwards;
+  animation: rose-thread-in 0.45s ease-out 0.4s forwards;
 }
 
 .rose-rope-flow {
@@ -378,7 +389,7 @@
   stroke-linecap: round;
   stroke-dasharray: 2 26;
   opacity: 0;
-  animation: rose-thread-in 0.8s ease-out 3s forwards, rose-rope-flow 2.6s linear infinite;
+  animation: rose-thread-in 0.45s ease-out 0.4s forwards, rose-rope-flow 2.6s linear infinite;
 }
 
 /* One dash period (2 + 26) so the light pulses loop seamlessly. */
@@ -657,6 +668,31 @@
 
 /* --- small screens ----------------------------------------------------------- */
 
+@media (max-width: 720px) {
+  .rose-star {
+    animation: none;
+    opacity: 0.35;
+    box-shadow: none;
+  }
+
+  .rose-comets {
+    display: none;
+  }
+
+  .rose-tow {
+    animation: rose-thread-in 0.4s ease-out 0.4s forwards;
+  }
+
+  .rose-rope-flow {
+    animation: rose-thread-in 0.4s ease-out 0.35s forwards;
+  }
+
+  .rose-sigil img {
+    width: 88px;
+    height: 88px;
+  }
+}
+
 @media (max-width: 480px) {
   .rose-chip {
     padding: 6px 10px;
@@ -669,8 +705,8 @@
   }
 
   .rose-sigil img {
-    width: 44px;
-    height: 44px;
+    width: 84px;
+    height: 84px;
   }
 
   .night-card {
@@ -733,6 +769,10 @@
   }
 
   .night-swatch.is-dim {
+    animation: none;
+  }
+}
+ht-swatch.is-dim {
     animation: none;
   }
 }

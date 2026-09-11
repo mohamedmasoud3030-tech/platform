@@ -3,9 +3,10 @@
  *
  * One module owns every angle so the petals, tow-ropes, bridges and chips
  * can never drift apart: six thin open-curve petals (the mason's original
- * linework, full 60° sectors), each trailing its chip by a fixed lag — the
- * CHIP is the leader — each rope running chip → petal tip, each bridge
- * spanning the ring between neighbouring chips.
+ * linework, full 60° sectors). THE CORE PULLS: each chip trails its petal
+ * by a fixed lag, each rope running petal tip → chip so energy flows
+ * outward from the hub, each bridge spanning the ring between neighbouring
+ * chips.
  *
  * Mirror: +1 for LTR, −1 for RTL. Every wheel reverses in RTL, so the tow
  * lag always falls on the trailing side of motion.
@@ -13,7 +14,7 @@
 export const ROSE_CX = 300;
 export const ROSE_CY = 300;
 export const ROSE_R = 150;
-/** How far (in degrees) each system trails behind its chip. */
+/** How far (in degrees) each chip trails behind its petal. */
 export const ROSE_TRAIL_DEG = 15;
 export const ROSE_PETAL_HALF_DEG = 30;
 export const ROSE_TIP_RADIUS = ROSE_R * 1.02;
@@ -27,9 +28,9 @@ export function chipAngleDeg(index: number, mirror: RoseMirror): number {
   return (index * 60 - 60) * mirror;
 }
 
-/** Petal-centre angle — the chip's angle minus the tow lag. */
+/** Petal-centre angle — the chip's angle plus the tow lag, so the petal leads. */
 export function petalCenterDeg(index: number, mirror: RoseMirror): number {
-  return chipAngleDeg(index, mirror) - ROSE_TRAIL_DEG * mirror;
+  return chipAngleDeg(index, mirror) + ROSE_TRAIL_DEG * mirror;
 }
 
 /** Petal angular span [start, end] in degrees of travel. */
@@ -74,7 +75,7 @@ export function petalTip(index: number, mirror: RoseMirror): { x: number; y: num
   return polar(ROSE_TIP_RADIUS, petalCenterDeg(index, mirror));
 }
 
-/** Tow-rope endpoints, drawn chip → tip so energy flows with the pull. */
+/** Tow-rope endpoints, drawn tip → chip so energy flows from the core outward. */
 export function towEndpoints(
   index: number,
   mirror: RoseMirror,
@@ -83,7 +84,7 @@ export function towEndpoints(
 ): { x1: number; y1: number; x2: number; y2: number } {
   const chip = polar(orbitUnits - chipInset, chipAngleDeg(index, mirror));
   const tip = petalTip(index, mirror);
-  return { x1: chip.x, y1: chip.y, x2: tip.x, y2: tip.y };
+  return { x1: tip.x, y1: tip.y, x2: chip.x, y2: chip.y };
 }
 
 /** Circular arc through explicit sweep. */

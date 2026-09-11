@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Languages, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { Link, useLocation } from "react-router";
 import LenaLogo from "@/design-system/brand/LenaLogo";
 import { PUBLIC_NAVIGATION } from "@/content/navigation";
@@ -72,7 +72,7 @@ export default function FloatingHeader() {
               locale === "ar" ? "Switch to English" : "التبديل إلى العربية"
             }
           >
-            <Languages size={17} />
+            <span className="lena-lang-code">{locale === "ar" ? "EN" : "ع"}</span>
           </button>
 
           <Link

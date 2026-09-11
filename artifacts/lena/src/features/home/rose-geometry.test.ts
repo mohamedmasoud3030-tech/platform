@@ -30,10 +30,10 @@ describe("rose fan geometry", () => {
       }
     });
 
-    it(`[${dir}] trails every petal behind its chip by the tow lag`, () => {
+    it(`[${dir}] trails every chip behind its petal by the tow lag`, () => {
       for (let i = 0; i < 6; i++) {
-        const lag = mod((chipAngleDeg(i, mirror) - petalCenterDeg(i, mirror)) * mirror);
-        expect(lag, `petal ${i} lag`).toBeCloseTo(15, 9);
+        const lag = mod((petalCenterDeg(i, mirror) - chipAngleDeg(i, mirror)) * mirror);
+        expect(lag, `chip ${i} lag`).toBeCloseTo(15, 9);
       }
     });
 
@@ -49,13 +49,13 @@ describe("rose fan geometry", () => {
       }
     });
 
-    it(`[${dir}] runs every tow-rope from the chip ring to its own petal tip`, () => {
+    it(`[${dir}] runs every tow-rope from the petal tip out to its chip`, () => {
       for (let i = 0; i < 6; i++) {
         const ends = towEndpoints(i, mirror, 234);
         const tip = petalTip(i, mirror);
-        expect(ends.x2).toBeCloseTo(tip.x, 9);
-        expect(ends.y2).toBeCloseTo(tip.y, 9);
-        const chipRadius = Math.hypot(ends.x1 - ROSE_CX, ends.y1 - ROSE_CY);
+        expect(ends.x1).toBeCloseTo(tip.x, 9);
+        expect(ends.y1).toBeCloseTo(tip.y, 9);
+        const chipRadius = Math.hypot(ends.x2 - ROSE_CX, ends.y2 - ROSE_CY);
         expect(chipRadius, `rope ${i} chip end`).toBeCloseTo(226, 9);
         const length = Math.hypot(ends.x2 - ends.x1, ends.y2 - ends.y1);
         expect(length, `rope ${i} length`).toBeGreaterThan(70);

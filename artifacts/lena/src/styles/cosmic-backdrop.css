@@ -158,7 +158,7 @@
 }
 
 /* Chips turn sheer (no blur: they ride the wheel, and frosted motion is
-   expensive) — starlight breathes through while the pills keep leading. */
+   expensive) — starlight breathes through while the core keeps the lead. */
 .lena-public:has(.cosmic) .rose-chip[data-lit="true"] {
   background: rgba(24, 18, 6, 0.55);
 }
@@ -288,6 +288,37 @@
 }
 
 /* --- reduced motion: a complete, still sky -------------------------------- */
+
+@media (max-width: 720px) {
+  .cosmic-meteor {
+    display: none;
+  }
+
+  .cosmic-star {
+    animation: none;
+    opacity: 0.4;
+    box-shadow: none;
+  }
+
+  /* Keep ~40 stars; the rest are compositor cost on a phone. */
+  .cosmic > .cosmic-star:nth-child(n + 43) {
+    display: none;
+  }
+
+  .lena-public:has(.cosmic) .lena-glass,
+  .lena-public:has(.cosmic) .lena-cta,
+  .lena-public:has(.cosmic) .lena-footer,
+  .lena-public:has(.cosmic) .night-card,
+  .lena-public:has(.cosmic) .lena-continue {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  .lena-section {
+    content-visibility: auto;
+    contain-intrinsic-size: 1px 720px;
+  }
+}
 
 @media (prefers-reduced-motion: reduce) {
   .cosmic-star {

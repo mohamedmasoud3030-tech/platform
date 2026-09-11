@@ -1,0 +1,123 @@
+/* ==========================================================================
+   House lintel — a full-bleed brass-edged bar, not a floating pill.
+   Same language on phone and desktop: the house name is visible, chrome
+   is quiet, and the bar does not steal compositor time (no blur).
+   ========================================================================== */
+
+.lena-header {
+  padding: env(safe-area-inset-top) 0 0;
+  background: linear-gradient(180deg, rgba(7, 9, 14, 0.97), rgba(7, 9, 14, 0.88));
+  border-bottom: 1px solid rgba(200, 160, 78, 0.32);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.28);
+}
+
+.lena-header-scrolled {
+  padding: env(safe-area-inset-top) 0 0;
+  background: rgba(6, 8, 13, 0.98);
+}
+
+.lena-header .lena-nav,
+.lena-header-scrolled .lena-nav {
+  width: 100%;
+  min-height: 64px;
+  margin: 0;
+  padding: 8px max(20px, env(safe-area-inset-right)) 8px max(20px, env(safe-area-inset-left));
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.lena-public:has(.cosmic) .lena-header .lena-nav,
+.lena-public:has(.cosmic) .lena-header .lena-glass {
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.lena-header .lena-logo-mark {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+}
+
+.lena-header .lena-logo-copy {
+  display: grid;
+}
+
+.lena-header .lena-logo-copy strong {
+  font-size: 14px;
+  letter-spacing: 0.32em;
+}
+
+.lena-header .lena-logo-copy small {
+  margin-top: 2px;
+  font-size: 8px;
+  letter-spacing: 0.22em;
+}
+
+.lena-header .lena-icon-button {
+  width: auto;
+  min-width: 44px;
+  height: 44px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--lena-accent);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+}
+
+.lena-header .lena-icon-button:hover {
+  transform: none;
+  color: var(--lena-text);
+}
+
+.lena-lang-code {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+}
+
+.lena-header .lena-nav-cta {
+  min-height: 40px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-size: 12px;
+}
+
+.lena-main {
+  padding-top: calc(72px + env(safe-area-inset-top));
+}
+
+.lena-header .lena-mobile-menu {
+  top: 100%;
+  right: 0;
+  left: 0;
+  border-radius: 0;
+  border: 0;
+  border-bottom: 1px solid rgba(200, 160, 78, 0.28);
+  background: rgba(7, 9, 14, 0.98);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+@media (max-width: 720px) {
+  .lena-header .lena-nav,
+  .lena-header-scrolled .lena-nav {
+    min-height: 58px;
+    padding: 6px max(14px, env(safe-area-inset-right)) 6px max(14px, env(safe-area-inset-left));
+  }
+
+  .lena-header .lena-logo-copy small {
+    display: none;
+  }
+
+  .lena-main {
+    padding-top: calc(66px + env(safe-area-inset-top));
+  }
+}
