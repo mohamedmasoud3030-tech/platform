@@ -58,7 +58,7 @@ export default function SystemGrid({
               </span>
             ) : null}
 
-            <div className="lena-opus-main">
+            <div className={`lena-opus-main${dashboard ? " has-dash" : ""}`}>
               <div className="lena-opus-copy">
                 <p className="lena-opus-blurb">{blurb}</p>
                 {shown.length > 0 ? (
@@ -66,12 +66,15 @@ export default function SystemGrid({
                     className="lena-system-highlights"
                     aria-label={locale === "ar" ? "ضمانات التشغيل" : "Operational highlights"}
                   >
-                    {shown.map((item) => (
+                    {shown.slice(0, -1).map((item) => (
                       <span key={item} className="lena-trust-chip">
                         {item}
                       </span>
                     ))}
-                    {extra > 0 ? <span className="lena-trust-chip is-more">+{extra}</span> : null}
+                    <div className="lena-chip-row">
+                      <span className="lena-trust-chip">{shown[shown.length - 1]}</span>
+                      {extra > 0 ? <span className="lena-trust-chip is-more">+{extra}</span> : null}
+                    </div>
                   </div>
                 ) : null}
               </div>

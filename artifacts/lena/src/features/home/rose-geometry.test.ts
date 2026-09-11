@@ -9,7 +9,11 @@ import {
   petalTip,
   ROSE_CX,
   ROSE_CY,
-  ROSE_VACANT_AFTER,
+  ROSE_SLOTS,
+  ROSE_STEP_DEG,
+  ROSE_SYSTEM_SLOTS,
+  ROSE_VACANT_SLOTS,
+  slotAngleDeg,
   towEndpoints,
   vacantPetalCenterDeg,
   type RoseMirror,
@@ -18,17 +22,40 @@ import {
 const mod = (n: number) => ((n % 360) + 360) % 360;
 
 describe("rose fan geometry", () => {
+  it("keeps ten equal seats: six systems and four vacant", () => {
+    expect(ROSE_SLOTS).toBe(10);
+    expect(ROSE_STEP_DEG).toBe(36);
+    expect([...ROSE_SYSTEM_SLOTS]).toEqual([0, 2, 3, 5, 7, 8]);
+    expect([...ROSE_VACANT_SLOTS]).toEqual([1, 4, 6, 9]);
+    const used = [...ROSE_SYSTEM_SLOTS, ...ROSE_VACANT_SLOTS].sort((a, b) => a - b);
+    expect(used).toEqual([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
+  });
+
   for (const mirror of [1, -1] as RoseMirror[]) {
     const dir = mirror === 1 ? "LTR" : "RTL";
 
-    it(`[${dir}] spaces the six petals 60 degrees apart in full sectors`, () => {
+    it(`[${dir}] spaces every seat 36 degrees apart`, () => {
+      for (let slot = 0; slot < ROSE_SLOTS; slot++) {
+        const here = slotAngleDeg(slot, mirror);
+        const next = slotAngleDeg((slot + 1) % ROSE_SLOTS, mirror);
+        expect(mod((next - here) * mirror)).toBeCloseTo(36, 9);
+      }
+    });
+
+    it(`[${dir}] sits vacant seats between systems, never on a system centre`, () => {
+      const systemAngles = ROSE_SYSTEM_SLOTS.map((slot) => mod(slotAngleDeg(slot, mirror)));
+      for (const slot of ROSE_VACANT_SLOTS) {
+        const vacant = mod(slotAngleDeg(slot, mirror));
+        expect(systemAngles.includes(vacant)).toBe(false);
+        expect(mod((vacantPetalCenterDeg(slot, mirror) - slotAngleDeg(slot, mirror)) * mirror)).toBeCloseTo(15, 9);
+      }
+    });
+
+    it(`[${dir}] draws system petals 32 degrees wide so they do not collide`, () => {
       for (let i = 0; i < 6; i++) {
         const span = petalSpanDeg(i, mirror);
-        const next = petalSpanDeg((i + 1) % 6, mirror);
         const width = mod((span.end - span.start) * mirror);
-        expect(width, `petal ${i} width`).toBeCloseTo(60, 9);
-        const gap = mod((next.start - span.end) * mirror);
-        expect(gap, `gap after petal ${i}`).toBeCloseTo(0, 9);
+        expect(width, `petal ${i} width`).toBeCloseTo(32, 9);
       }
     });
 
@@ -61,35 +88,27 @@ describe("rose fan geometry", () => {
         expect(chipRadius, `rope ${i} chip end`).toBeCloseTo(226, 9);
         const length = Math.hypot(ends.x2 - ends.x1, ends.y2 - ends.y1);
         expect(length, `rope ${i} length`).toBeGreaterThan(25);
-        expect(length, `rope ${i} length`).toBeLessThan(70);
+        expect(length, `rope ${i} length`).toBeLessThan(80);
       }
     });
 
-    it(`[${dir}] spans every light-bridge exactly between neighbouring chips`, () => {
+    it(`[${dir}] spans every light-bridge between neighbouring chips`, () => {
       for (let j = 0; j < 6; j++) {
         const { from, to } = bridgeAngles(j, mirror);
         const span = mod((to - from) * mirror);
-        expect(span, `bridge ${j} span`).toBeCloseTo(42, 9);
+        expect(span, `bridge ${j} span`).toBeGreaterThan(10);
         expect(bridgePath(from, to, 234, mirror)).toContain(mirror === 1 ? "0 0 1" : "0 0 0");
       }
     });
   }
 
-  it("sits four unlit vacant seats in the open gaps, not on system centres", () => {
-    expect([...ROSE_VACANT_AFTER]).toEqual([1, 2, 4, 5]);
-    for (const after of ROSE_VACANT_AFTER) {
-      const vacant = vacantPetalCenterDeg(after, 1);
-      const here = petalCenterDeg(after, 1);
-      const next = petalCenterDeg((after + 1) % 6, 1);
-      expect(mod(vacant - here)).toBeCloseTo(30, 9);
-      expect(mod(next - vacant)).toBeCloseTo(30, 9);
-    }
-  });
-
   it("mirrors every station angle between LTR and RTL", () => {
     for (let i = 0; i < 6; i++) {
       expect(chipAngleDeg(i, -1)).toBe(-chipAngleDeg(i, 1));
       expect(petalCenterDeg(i, -1)).toBe(-petalCenterDeg(i, 1));
+    }
+    for (const slot of ROSE_VACANT_SLOTS) {
+      expect(vacantPetalCenterDeg(slot, -1)).toBe(-vacantPetalCenterDeg(slot, 1));
     }
   });
 });

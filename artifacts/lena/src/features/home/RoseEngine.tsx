@@ -13,7 +13,7 @@ import {
   ROSE_CX,
   ROSE_CY,
   ROSE_R,
-  ROSE_VACANT_AFTER,
+  ROSE_VACANT_SLOTS,
   towEndpoints,
   vacantPetalCenterDeg,
   type RoseMirror,
@@ -147,7 +147,7 @@ export default function RoseEngine() {
               </defs>
               {/* construction circles — the mason's proof, scribed in sequence */}
               {bodies.map((body, i) => {
-                const a = (((i * 60 - 90) * mirror * Math.PI) / 180);
+                const a = (chipAngleDeg(i, mirror) * Math.PI) / 180;
                 const gx = ROSE_CX + Math.cos(a) * ROSE_R * 0.62;
                 const gy = ROSE_CY + Math.sin(a) * ROSE_R * 0.62;
                 const active = focusId === body.system.id;
@@ -194,13 +194,13 @@ export default function RoseEngine() {
           <div className="rose-orbit">
             <svg className="rose-threads" viewBox="0 0 600 600" aria-hidden="true">
               {/* vacant seats — unlit slices in the open gaps, no chip, no tow */}
-              {ROSE_VACANT_AFTER.map((after, v) => (
+              {ROSE_VACANT_SLOTS.map((slot, v) => (
                 <path
-                  key={`v-${after}`}
+                  key={`v-${slot}`}
                   className="rose-petal"
                   data-lit="false"
                   data-vacant="true"
-                  d={petalPath(vacantPetalCenterDeg(after, mirror), mirror)}
+                  d={petalPath(vacantPetalCenterDeg(slot, mirror), mirror)}
                   pathLength={1}
                   style={{ animationDelay: `${0.34 + v * 0.06}s` }}
                   fill="url(#rose-vacant)"

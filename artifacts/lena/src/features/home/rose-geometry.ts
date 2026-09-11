@@ -1,12 +1,11 @@
 /**
  * Rose Engine geometry — pure math for the tow.
  *
- * One module owns every angle so the petals, tow-ropes, bridges and chips
- * can never drift apart: six thin open-curve petals (the mason's original
- * linework, full 60° sectors). THE CORE PULLS: each chip trails its petal
- * by a fixed lag, each rope running petal tip → chip so energy flows
- * outward from the hub, each bridge spanning the ring between neighbouring
- * chips.
+ * Ten seats around the hub: six systems and four vacant slices, equally
+ * spaced, so empty places ready for systems sit in the flower — not bunched
+ * in leftover gaps. THE CORE PULLS: each chip trails its petal by a fixed
+ * lag, each rope running petal tip → chip so energy flows outward from the
+ * hub, each bridge spanning the ring between neighbouring chips.
  *
  * Mirror: +1 for LTR, −1 for RTL. Every wheel reverses in RTL, so the tow
  * lag always falls on the trailing side of motion.
@@ -16,21 +15,28 @@ export const ROSE_CY = 300;
 export const ROSE_R = 150;
 /** How far (in degrees) each chip trails behind its petal. */
 export const ROSE_TRAIL_DEG = 15;
-export const ROSE_PETAL_HALF_DEG = 30;
+export const ROSE_PETAL_HALF_DEG = 16;
 export const ROSE_TIP_RADIUS = ROSE_R * 1.24;
 /** Half-gap (in degrees) where a light-bridge plugs into a chip. */
 export const ROSE_BRIDGE_GAP_DEG = 9;
-/**
- * Four vacant seats — unlit petals in the gaps after these system indices
- * (Terranex, Lara, Hospitality, Kayyal). Empty places ready for systems.
- */
-export const ROSE_VACANT_AFTER = [1, 2, 4, 5] as const;
+
+export const ROSE_SLOTS = 10;
+export const ROSE_STEP_DEG = 360 / ROSE_SLOTS;
+/** Occupied seats in owner order: Malek, Terranex, Lara, Carmen, Hospitality, Kayyal. */
+export const ROSE_SYSTEM_SLOTS = [0, 2, 3, 5, 7, 8] as const;
+/** Four vacant seats, every ~90° around the ten-fold window. */
+export const ROSE_VACANT_SLOTS = [1, 4, 6, 9] as const;
 
 export type RoseMirror = 1 | -1;
 
+/** Compass angle of a seat (slot 0 at the top). */
+export function slotAngleDeg(slot: number, mirror: RoseMirror): number {
+  return (slot * ROSE_STEP_DEG - 90) * mirror;
+}
+
 /** Chip station angle for system *i*, in degrees. */
 export function chipAngleDeg(index: number, mirror: RoseMirror): number {
-  return (index * 60 - 60) * mirror;
+  return slotAngleDeg(ROSE_SYSTEM_SLOTS[index], mirror);
 }
 
 /** Petal-centre angle — the chip's angle plus the tow lag, so the petal leads. */
@@ -38,9 +44,9 @@ export function petalCenterDeg(index: number, mirror: RoseMirror): number {
   return chipAngleDeg(index, mirror) + ROSE_TRAIL_DEG * mirror;
 }
 
-/** Vacant-seat centre — sits in the gap after system `afterIndex`. */
-export function vacantPetalCenterDeg(afterIndex: number, mirror: RoseMirror): number {
-  return petalCenterDeg(afterIndex, mirror) + ROSE_PETAL_HALF_DEG * mirror;
+/** Vacant-seat centre. */
+export function vacantPetalCenterDeg(slot: number, mirror: RoseMirror): number {
+  return slotAngleDeg(slot, mirror) + ROSE_TRAIL_DEG * mirror;
 }
 
 /** Petal angular span [start, end] in degrees of travel. */
@@ -57,7 +63,7 @@ export function polar(radius: number, deg: number): { x: number; y: number } {
 const f2 = (n: number) => n.toFixed(2);
 
 /**
- * Two-stroke mason petal, enlarged so the six slices fill more of the window.
+ * Two-stroke mason petal, enlarged so the slices fill the window.
  */
 export function petalPath(centerDeg: number, mirror: RoseMirror): string {
   const half = (ROSE_PETAL_HALF_DEG * Math.PI) / 180;
