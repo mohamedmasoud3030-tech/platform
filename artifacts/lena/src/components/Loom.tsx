@@ -21,7 +21,8 @@ import { PRIMITIVE_LABELS, ROOT_ORDER, knotKindsFor, rootLoadFor } from "./loom-
  *                       operatingPrimitives contain that root.
  *   LIGHT             — knots follow completion: solid from the start of
  *                       the thread, last point blinking when unfinished.
- *                       Documented systems still carry the travelling shuttle.
+ *                       Every thread carries a travelling shuttle from the
+ *                       name to the end of the rope.
  *
  * The cloth undulates under a slow standing wave; focusing a system pulls
  * its thread taut and bright while the rest falls back. One canvas,
@@ -218,22 +219,24 @@ export default function Loom() {
         ctx.fill();
       });
 
-      if (body.documented && completion >= 1 && !state.current.reduced) {
-        const travelSpan = Math.max(1, (rtl ? xEnd - xLitFrom : xLitTo - xStart));
-        const travel = ((t * 0.13 + row * 0.5) % 1) * travelSpan;
-        const sx = rtl ? xEnd - travel : xStart + travel;
+      // Travelling light: name → end of the rope, then it vanishes and restarts.
+      // Runs on every thread, not only the documented ones.
+      if (!state.current.reduced) {
+        const u = (t * 0.16 + row * 0.14) % 1;
+        const sx = rtl ? xEnd - u * span : xStart + u * span;
         const sy = y + wave(sx, row, t);
+        const fade = u > 0.9 ? (1 - u) / 0.1 : 1;
         const sg = ctx.createRadialGradient(sx, sy, 0, sx, sy, 26);
-        sg.addColorStop(0, `rgba(${C.shuttleCore}, ${0.5 * dim})`);
-        sg.addColorStop(0.4, `rgba(${C.shuttleGlow}, ${0.22 * dim})`);
+        sg.addColorStop(0, `rgba(${C.shuttleCore}, ${0.55 * dim * fade})`);
+        sg.addColorStop(0.4, `rgba(${C.shuttleGlow}, ${0.26 * dim * fade})`);
         sg.addColorStop(1, "rgba(0,0,0,0)");
         ctx.fillStyle = sg;
         ctx.beginPath();
         ctx.arc(sx, sy, 26, 0, Math.PI * 2);
         ctx.fill();
-        ctx.fillStyle = `rgba(${C.shuttleCore}, ${0.9 * dim})`;
+        ctx.fillStyle = `rgba(${C.shuttleCore}, ${0.95 * dim * fade})`;
         ctx.beginPath();
-        ctx.arc(sx, sy, 2.2, 0, Math.PI * 2);
+        ctx.arc(sx, sy, 2.4, 0, Math.PI * 2);
         ctx.fill();
       }
     });

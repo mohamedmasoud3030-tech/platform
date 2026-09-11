@@ -22,6 +22,7 @@ describe("rose styling contract (data-lit wiring)", () => {
       '.rose-tow-node[data-lit="true"]',
       '.light .rose-petal[data-lit="true"]',
       '.light .rose-petal[data-lit="false"]',
+      '.light .rose-petal[data-vacant="true"]',
       '.light .rose-chip[data-lit="true"]',
       '.light .rose-chip[data-lit="false"]',
     ]) {

@@ -162,14 +162,9 @@
 }
 
 .rose-petal[data-vacant="true"] {
-  stroke: rgba(167, 188, 255, 0.28);
-  animation: rose-vacant-in 0.55s ease-out forwards;
-}
-
-@keyframes rose-vacant-in {
-  0% { stroke-dashoffset: 1; opacity: 0; }
-  40% { opacity: 0.42; }
-  100% { stroke-dashoffset: 0; opacity: 0.42; }
+  stroke: rgba(152, 174, 226, 0.95);
+  stroke-width: 2;
+  animation: rose-petal-in 0.55s ease-out forwards;
 }
 
 .rose-petal.is-active {
@@ -589,6 +584,11 @@
   stroke: rgba(38, 72, 152, 0.6);
 }
 
+.light .rose-petal[data-vacant="true"] {
+  stroke: rgba(58, 86, 158, 0.9);
+  stroke-width: 2;
+}
+
 .light .rose-rope-flow {
   stroke: #b98a1e;
 }
@@ -727,7 +727,7 @@
   }
 
   .rose-petal[data-vacant="true"] {
-    opacity: 0.42;
+    opacity: 1;
   }
 
   .rose-tow,

@@ -129,6 +129,11 @@ export default function RoseEngine() {
                   <stop offset="0%" stopColor="rgba(124,155,255,0.1)" />
                   <stop offset="100%" stopColor="rgba(124,155,255,0.02)" />
                 </radialGradient>
+                <radialGradient id="rose-vacant" cx="50%" cy="40%" r="75%">
+                  <stop offset="0%" stopColor="rgba(168,186,230,0.62)" />
+                  <stop offset="50%" stopColor="rgba(108,130,188,0.4)" />
+                  <stop offset="100%" stopColor="rgba(78,98,158,0.18)" />
+                </radialGradient>
                 <radialGradient id="rose-halo-gold">
                   <stop offset="0%" stopColor="rgba(232,200,118,0.55)" />
                   <stop offset="55%" stopColor="rgba(232,200,118,0.22)" />
@@ -198,7 +203,7 @@ export default function RoseEngine() {
                   d={petalPath(vacantPetalCenterDeg(after, mirror), mirror)}
                   pathLength={1}
                   style={{ animationDelay: `${0.34 + v * 0.06}s` }}
-                  fill="url(#rose-stone)"
+                  fill="url(#rose-vacant)"
                 />
               ))}
               {/* petals — the systems, trailing their chips */}
