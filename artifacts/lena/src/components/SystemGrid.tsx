@@ -24,7 +24,7 @@ export default function SystemGrid({
       {systems.map((system, index) => {
         const dashboard = dashboardEvidenceFor(system.id);
         const highlights = system.trustHighlights?.[locale] ?? [];
-        const shown = highlights.slice(0, 3);
+        const shown = highlights.slice(0, 2);
         const extra = highlights.length - shown.length;
         const flagship = system.id === "property";
         const blurb = system.tagline?.[locale] ?? system.problem[locale];
@@ -37,6 +37,7 @@ export default function SystemGrid({
             key={system.id}
             data-system={system.id}
             data-flagship={flagship ? "true" : "false"}
+            data-evidence={dashboard ? "documented" : "pending"}
             style={{ animationDelay: `${index * 0.06}s` }}
           >
             <header className="lena-opus-head">
@@ -47,6 +48,11 @@ export default function SystemGrid({
               <div className="lena-opus-meta">
                 {flagship ? (
                   <span className="lena-flagship">{locale === "ar" ? "الرائد" : "FLAGSHIP"}</span>
+                ) : null}
+                {dashboard ? (
+                  <span className="lena-evidence-badge" role="status">
+                    {locale === "ar" ? "موثق" : "DOCUMENTED"}
+                  </span>
                 ) : null}
                 <p className="lena-system-industry">{system.industry[locale]}</p>
               </div>
@@ -89,7 +95,19 @@ export default function SystemGrid({
                     decoding="async"
                   />
                 </figure>
-              ) : null}
+              ) : (
+                <div
+                  className="lena-opus-evidence-pending"
+                  aria-label={locale === "ar" ? "حالة توثيق النظام" : "System evidence status"}
+                >
+                  <strong>{locale === "ar" ? "قيد التوثيق" : "Evidence pending"}</strong>
+                  <span>
+                    {locale === "ar"
+                      ? "ستظهر اللقطات الفعلية هنا فور اكتمال توثيق النظام."
+                      : "Real interface captures will appear here once the system is documented."}
+                  </span>
+                </div>
+              )}
             </div>
 
             <footer className="lena-opus-foot">

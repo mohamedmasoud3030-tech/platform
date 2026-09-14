@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
 import { Globe, Send, Sparkles, X } from "lucide-react";
 import { trpc } from "@/providers/trpc";
 import { usePreferences } from "@/providers/preferences";
@@ -31,7 +31,7 @@ const COPY = {
     greetingTime: { morning: "صباح الخير ☀️", afternoon: "مساء الخير 👋", evening: "مساء الخير 🌙" },
     greeting:
       "أنا مساعد لينا الآلي، ويسعدني وجودك هنا. اسألني عن طريقة البدء، التكلفة، موعد الرد، أو بياناتك — وسأجيبك من المحتوى الموثق. جرّب أحد الأسئلة التالية أو اكتب سؤالك:",
-    teaser: "أهلاً بك في LENA 👋\nأنا المساعد الآلي — تفضل اسألني عن أي شيء عن أنظمتنا وطريقة العمل.",
+    teaser: "أهلًا بك في LENA 👋\nاسأل عن أنظمتنا.",
     teaserClose: "إخفاء الترحيب",
     inputLabel: "اكتب سؤالك",
     inputPlaceholder: "اكتب سؤالك هنا…",
@@ -50,7 +50,7 @@ const COPY = {
     greetingTime: { morning: "Good morning ☀️", afternoon: "Good afternoon 👋", evening: "Good evening 🌙" },
     greeting:
       "I am LENA's automated assistant, and I am glad you are here. Ask me about getting started, cost, reply times, or your data — I answer from the verified content. Try one of these or write your own question:",
-    teaser: "Welcome to LENA 👋\nI'm the automated assistant — ask me anything about our systems and how we work.",
+    teaser: "Welcome to LENA 👋\nAsk about our systems.",
     teaserClose: "Dismiss the welcome",
     inputLabel: "Write your question",
     inputPlaceholder: "Type your question…",
@@ -72,7 +72,7 @@ function greetingTime(copy: (typeof COPY)["ar" | "en"]): string {
 }
 
 /** Welcome teaser: once per browser session, a few seconds after arrival. */
-const TEASER_DELAY_MS = 2_600;
+const TEASER_DELAY_MS = 4_200;
 const TEASER_SESSION_KEY = "lena-digital-house.assistant-teaser";
 
 /** Spoken welcome: also once per session, at the same moment as the teaser. */
@@ -107,6 +107,7 @@ type ChatMessage = {
 
 export default function LenaAssistant() {
   const { locale } = usePreferences();
+  const { pathname } = useLocation();
   const copy = COPY[locale];
   const [open, setOpen] = useState(false);
   const [teaserVisible, setTeaserVisible] = useState(false);
@@ -180,13 +181,29 @@ export default function LenaAssistant() {
   // moment as the spoken one — once per browser session, never while the
   // panel is open.
   useEffect(() => {
+    setTeaserVisible(false);
     if (sessionFlagged(TEASER_SESSION_KEY)) return;
+
+    // On a narrow viewport the teaser competes with the actual product proof.
+    // Keep the assistant discoverable through its FAB, but reserve the first
+    // screen for the Hero, systems, and contact actions. The same applies to
+    // tablet widths where the Rose Engine takes the full row.
+    if (window.matchMedia("(max-width: 1050px)").matches) {
+      setSessionFlag(TEASER_SESSION_KEY);
+      return;
+    }
+
+    // World is already a dense evidence register; its fixed teaser would sit
+    // over the ledger plates. The FAB remains available, and the welcome can
+    // still appear later if the visitor returns to a calmer public surface.
+    if (/\/world(?:\/|$)/.test(pathname)) return;
+
     const timer = setTimeout(() => {
       setTeaserVisible(true);
       trackOnce("assistant_teaser_shown", "assistant_teaser_shown", { locale });
     }, TEASER_DELAY_MS);
     return () => clearTimeout(timer);
-  }, [locale]);
+  }, [locale, pathname]);
 
   function dismissTeaser() {
     setTeaserVisible(false);

@@ -1,0 +1,329 @@
+/*
+ * Public visual polish — first implementation slice from
+ * LENA-visual-improvement-PRD.md.
+ *
+ * This layer keeps the House/Ledger identity intact while making the public
+ * surfaces calmer, safer on mobile, and more evidence-led.
+ */
+
+/* The starfield is atmosphere, not a competing layer behind copy. */
+.lena-public .cosmic {
+  opacity: 0.76;
+}
+
+/* Arabic labels read as words, not spaced Latin caps. */
+html[dir="rtl"] .lena-public .lena-kicker,
+html[dir="rtl"] .lena-public .lena-flagship,
+html[dir="rtl"] .lena-public .lena-evidence-badge,
+html[dir="rtl"] .lena-public .lena-system-industry,
+html[dir="rtl"] .lena-public .lena-page-title,
+html[dir="rtl"] .lena-public .lena-section-title,
+html[dir="rtl"] .lena-public .lena-hero h1 {
+  letter-spacing: normal;
+}
+
+html[dir="rtl"] .lena-public .lena-hero h1,
+html[dir="rtl"] .lena-public .lena-page-title,
+html[dir="rtl"] .lena-public .lena-section-title {
+  line-height: 1.32;
+}
+
+.lena-public .lena-lead,
+.lena-public .lena-section-lead,
+.lena-public .lena-opus-blurb,
+.lena-public .lena-contact-card p {
+  color: #c2bbcc;
+}
+
+.lena-hero-proof {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 13px 0 0;
+  color: var(--lena-accent-strong);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.7;
+}
+
+.lena-hero-proof span {
+  color: var(--lena-accent);
+  font-size: 14px;
+}
+
+.lena-evidence-badge {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid color-mix(in srgb, var(--card-accent) 48%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--card-accent) 10%, transparent);
+  padding: 4px 9px;
+  color: var(--card-accent);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* Missing evidence is an intentional state, not an empty card. */
+.lena-opus-evidence-pending {
+  display: grid;
+  min-height: 112px;
+  align-content: center;
+  gap: 5px;
+  margin: 0;
+  border: 1px dashed color-mix(in srgb, var(--card-accent) 42%, rgba(226, 214, 178, 0.18));
+  border-radius: 18px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.035), rgba(5, 9, 22, 0.24));
+  padding: 14px 16px;
+}
+
+.lena-opus-evidence-pending strong {
+  color: var(--card-accent);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.lena-opus-evidence-pending span {
+  color: rgba(220, 226, 242, 0.76);
+  font-size: 12px;
+  line-height: 1.65;
+}
+
+.lena-opus-main:not(.has-dash) {
+  align-content: start;
+}
+
+/* Keep the ledger index from stretching short pending entries to the height
+   of the one card that contains a large real capture. */
+.ledger-index-grid {
+  align-items: start;
+}
+
+.ledger-entry {
+  align-self: start;
+}
+
+.ledger-nofigure {
+  display: grid;
+  min-height: 82px;
+  align-content: center;
+}
+
+/* The mobile menu is a real layer above the page, with a readable surface and
+   a dismissible scrim. */
+.lena-mobile-backdrop {
+  display: none;
+}
+
+@media (max-width: 1050px) {
+  .lena-mobile-backdrop {
+    position: fixed;
+    inset: calc(64px + env(safe-area-inset-top)) 0 0;
+    z-index: 71;
+    display: block;
+    width: 100%;
+    border: 0;
+    background: rgba(3, 6, 18, 0.78);
+    padding: 0;
+    cursor: pointer;
+    animation: lena-menu-scrim-in 160ms ease both;
+  }
+
+  .lena-header .lena-mobile-menu {
+    position: fixed;
+    top: calc(64px + env(safe-area-inset-top));
+    right: 14px;
+    left: 14px;
+    z-index: 72;
+    display: grid;
+    gap: 3px;
+    max-height: calc(100dvh - 86px);
+    overflow-y: auto;
+    border: 1px solid rgba(226, 214, 178, 0.28);
+    border-radius: 18px;
+    background: #10131d !important;
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.48);
+    padding: 10px;
+    animation: lena-menu-panel-in 160ms ease both;
+  }
+
+  .lena-header .lena-mobile-link {
+    display: flex;
+    min-height: 48px;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 12px;
+    border-bottom: 1px solid rgba(226, 214, 178, 0.1);
+    padding: 11px 13px;
+    color: #c2bbcc;
+    font-size: 14px;
+  }
+
+  .lena-header .lena-mobile-link:hover,
+  .lena-header .lena-mobile-link.active {
+    background: rgba(226, 214, 178, 0.12);
+    color: var(--lena-accent-strong);
+  }
+
+  .lena-header .lena-mobile-cta {
+    width: 100%;
+    margin-top: 7px;
+  }
+}
+
+@keyframes lena-menu-scrim-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes lena-menu-panel-in {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* The first screen on a phone belongs to the product, not a proactive chat
+   paragraph. The assistant remains available through its FAB. */
+@media (max-width: 640px) {
+  .lena-assistant-teaser {
+    display: none !important;
+  }
+
+  .lena-mobile-backdrop {
+    inset: calc(58px + env(safe-area-inset-top)) 0 0;
+  }
+
+  .lena-header .lena-mobile-menu {
+    top: calc(58px + env(safe-area-inset-top));
+    right: 10px;
+    left: 10px;
+    max-height: calc(100dvh - 72px);
+  }
+
+  .lena-showcase-grid .lena-opus-blurb {
+    font-size: 13px;
+    line-height: 1.75;
+  }
+
+  .lena-showcase-grid .lena-trust-chip {
+    font-size: 11.5px;
+  }
+
+  .lena-form,
+  .lena-contact-card {
+    padding: 18px 16px;
+  }
+}
+
+/* Keep the first contact step light; secondary context stays available without
+   forcing every visitor through a tall form on mobile. */
+.lena-form-more {
+  margin-top: 18px;
+  border-top: 1px solid var(--lena-line);
+  padding-top: 13px;
+}
+
+.lena-form-more summary {
+  display: flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--lena-text);
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  list-style: none;
+}
+
+.lena-form-more summary::-webkit-details-marker {
+  display: none;
+}
+
+.lena-form-more summary::after {
+  content: "+";
+  color: var(--lena-accent);
+  font-size: 20px;
+  font-weight: 400;
+}
+
+.lena-form-more[open] summary::after {
+  content: "−";
+}
+
+.lena-form-more summary:focus-visible {
+  outline: 3px solid var(--lena-focus);
+  outline-offset: 3px;
+}
+
+.lena-form-more .lena-form-grid {
+  margin-top: 8px;
+}
+
+/* Four reach cards fit naturally on wide screens; collapse deliberately at
+   tablet and phone widths. */
+@media (min-width: 901px) {
+  .lena-contact-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 721px) and (max-width: 900px) {
+  .lena-contact-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Turn the process cards into a connected operating path. */
+@media (min-width: 1051px) {
+  .lena-process {
+    position: relative;
+  }
+
+  .lena-process::before {
+    content: "";
+    position: absolute;
+    top: 35px;
+    right: 10%;
+    left: 10%;
+    height: 1px;
+    background: var(--lena-line-strong);
+  }
+
+  .lena-process article {
+    position: relative;
+    z-index: 1;
+    background: rgba(16, 19, 29, 0.72);
+  }
+}
+
+@media (max-width: 720px) {
+  .lena-process {
+    position: relative;
+    gap: 10px;
+  }
+
+  .lena-process::before {
+    content: "";
+    position: absolute;
+    top: 24px;
+    bottom: 24px;
+    right: 31px;
+    width: 1px;
+    background: var(--lena-line-strong);
+  }
+
+  .lena-process article {
+    position: relative;
+    z-index: 1;
+    background: rgba(16, 19, 29, 0.86);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lena-mobile-backdrop,
+  .lena-header .lena-mobile-menu {
+    animation: none;
+  }
+}
