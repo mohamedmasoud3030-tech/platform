@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { Link, useLocation } from "react-router";
-import { Globe, Send, Sparkles, X } from "lucide-react";
+import { Globe, Mic, MicOff, Send, Sparkles, X } from "lucide-react";
 import { trpc } from "@/providers/trpc";
 import { usePreferences } from "@/providers/preferences";
 import { track, trackOnce } from "@/lib/analytics";
@@ -8,6 +8,15 @@ import { SITE_CONFIG } from "@/config/site";
 import { HELP_ARTICLES } from "@/content/help";
 import { greetingAudioUrl } from "./greeting-audio";
 import { localAssistantReply } from "./local-answer";
+import {
+  browserVoiceSupported,
+  recognitionConstructor,
+  speakBrowser,
+  voiceLanguage,
+  type VoiceRecognition,
+  type VoiceRecognitionErrorEvent,
+  type VoiceRecognitionEvent,
+} from "./voice";
 
 /**
  * LENA Assistant — the visitor help bot.
@@ -36,10 +45,18 @@ const COPY = {
     inputLabel: "اكتب سؤالك",
     inputPlaceholder: "اكتب سؤالك هنا…",
     send: "إرسال",
-    disclosure: "مساعد آلي — للرد المؤكد من إنسان، تواصل عبر واتساب.",
+    disclosure: "مساعد آلي — الصوت يستخدم ميكروفون المتصفح، وللرد المؤكد من إنسان تواصل عبر واتساب.",
     whatsapp: "واتساب",
     rateLimited: "وصلت إلى الحد المؤقت للمحادثة. تواصل معنا على واتساب مباشرة وسنرد فورًا.",
     error: "تعذّر إرسال الرسالة الآن. أعد المحاولة أو تواصل معنا على واتساب.",
+    voiceStart: "ابدأ المحادثة الصوتية",
+    voiceStop: "أوقف المحادثة الصوتية",
+    voiceListening: "أستمع إليك…",
+    voiceThinking: "أجهز الإجابة…",
+    voiceSpeaking: "أتحدث الآن…",
+    voiceUnsupported: "المتصفح لا يدعم المحادثة الصوتية. يمكنك استخدام الكتابة أو تجربة Chrome أو Safari.",
+    voicePermission: "اسمح باستخدام الميكروفون من إعدادات المتصفح ثم حاول مرة أخرى.",
+    voiceError: "تعذّر تشغيل الميكروفون الآن. جرّب مرة أخرى أو استخدم الكتابة.",
     sourceLabel: "من المساعدة:",
   },
   en: {
@@ -55,10 +72,18 @@ const COPY = {
     inputLabel: "Write your question",
     inputPlaceholder: "Type your question…",
     send: "Send",
-    disclosure: "Automated assistant — for a confirmed human reply, reach us on WhatsApp.",
+    disclosure: "Automated assistant — voice uses your browser microphone; for a confirmed human reply, reach us on WhatsApp.",
     whatsapp: "WhatsApp",
     rateLimited: "You have reached the temporary conversation limit. Message us on WhatsApp and we will reply right away.",
     error: "The message could not be sent right now. Try again or reach us on WhatsApp.",
+    voiceStart: "Start voice chat",
+    voiceStop: "Stop voice chat",
+    voiceListening: "Listening…",
+    voiceThinking: "Preparing an answer…",
+    voiceSpeaking: "Speaking now…",
+    voiceUnsupported: "This browser does not support voice chat. You can type instead, or try Chrome or Safari.",
+    voicePermission: "Allow microphone access in your browser settings, then try again.",
+    voiceError: "The microphone could not start. Try again or use text chat.",
     sourceLabel: "From the help pages:",
   },
 } as const;
@@ -95,7 +120,7 @@ function setSessionFlag(key: string) {
 }
 
 /** Curated starter questions — the ones the help page organises its answers around. */
-const SUGGESTED_IDS = ["systems-overview", "malek-system", "evidence-status", "how-to-start"] as const;
+const SUGGESTED_IDS = ["systems-overview", "malek-system", "assistant-voice-chat", "evidence-status", "how-to-start"] as const;
 
 type AssistantSource = { id: string; question: string; to?: string; label?: string };
 
@@ -104,6 +129,8 @@ type ChatMessage = {
   text: string;
   sources?: AssistantSource[];
 };
+
+type VoiceStatus = "idle" | "listening" | "thinking" | "speaking" | "error";
 
 export default function LenaAssistant() {
   const { locale } = usePreferences();
@@ -247,7 +274,17 @@ function AssistantPanel({ locale, onClose }: { locale: "ar" | "en"; onClose: () 
     { role: "assistant", text: `${greetingTime(copy)} ${copy.greeting}` },
   ]);
   const [draft, setDraft] = useState("");
+  const [voiceMode, setVoiceMode] = useState(false);
+  const [voiceStatus, setVoiceStatus] = useState<VoiceStatus>("idle");
+  const [voiceError, setVoiceError] = useState("");
   const logRef = useRef<HTMLDivElement>(null);
+  const recognitionRef = useRef<VoiceRecognition | null>(null);
+  const restartTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const cancelSpeechRef = useRef<(() => void) | null>(null);
+  const voiceModeRef = useRef(false);
+  const waitingForAnswerRef = useRef(false);
+  const sendRef = useRef<(text: string, source: "text" | "voice") => void>(() => undefined);
+  const [voiceSupported] = useState(() => browserVoiceSupported());
 
   const suggestions = useMemo(
     () =>
@@ -271,10 +308,186 @@ function AssistantPanel({ locale, onClose }: { locale: "ar" | "en"; onClose: () 
     logRef.current?.scrollTo({ top: logRef.current.scrollHeight, behavior: "smooth" });
   }, [messages, ask.isPending]);
 
-  function send(text: string) {
+  function clearRestartTimer() {
+    if (restartTimerRef.current) {
+      clearTimeout(restartTimerRef.current);
+      restartTimerRef.current = null;
+    }
+  }
+
+  function scheduleListening(delayMs = 180) {
+    clearRestartTimer();
+    if (!voiceModeRef.current || waitingForAnswerRef.current) return;
+
+    restartTimerRef.current = setTimeout(() => {
+      restartTimerRef.current = null;
+      if (!voiceModeRef.current || waitingForAnswerRef.current) return;
+      const recognition = recognitionRef.current;
+      if (!recognition) return;
+      try {
+        recognition.start();
+      } catch {
+        // Browsers can briefly report "already started" between onend and the
+        // next turn. The active recogniser will emit onstart in that case.
+      }
+    }, delayMs);
+  }
+
+  function ensureRecognition(): VoiceRecognition | null {
+    if (recognitionRef.current) return recognitionRef.current;
+    const Constructor = recognitionConstructor();
+    if (!Constructor) return null;
+
+    let recognition: VoiceRecognition;
+    try {
+      recognition = new Constructor();
+    } catch {
+      return null;
+    }
+    recognition.lang = voiceLanguage(locale);
+    recognition.continuous = false;
+    recognition.interimResults = true;
+    recognition.maxAlternatives = 1;
+    recognition.onstart = () => {
+      if (voiceModeRef.current && !waitingForAnswerRef.current) {
+        setVoiceStatus("listening");
+        setVoiceError("");
+      }
+    };
+    recognition.onresult = (event: VoiceRecognitionEvent) => {
+      let interim = "";
+      let finalText = "";
+      for (let index = event.resultIndex; index < event.results.length; index += 1) {
+        const result = event.results[index]?.[0];
+        if (!result) continue;
+        if (event.results[index]?.isFinal) finalText += result.transcript;
+        else interim += result.transcript;
+      }
+
+      if (interim.trim()) setDraft(interim.trim());
+      if (!finalText.trim() || waitingForAnswerRef.current) return;
+
+      const question = finalText.trim();
+      waitingForAnswerRef.current = true;
+      setDraft(question);
+      setVoiceStatus("thinking");
+      try {
+        recognition.stop();
+      } catch {
+        /* the recogniser may already be ending */
+      }
+      sendRef.current(question, "voice");
+    };
+    recognition.onerror = (event: VoiceRecognitionErrorEvent) => {
+      if (!voiceModeRef.current || event.error === "aborted") return;
+      if (event.error === "no-speech") {
+        scheduleListening();
+        return;
+      }
+
+      waitingForAnswerRef.current = false;
+      voiceModeRef.current = false;
+      setVoiceMode(false);
+      setVoiceStatus("error");
+      setVoiceError(event.error === "not-allowed" || event.error === "service-not-allowed" ? copy.voicePermission : copy.voiceError);
+    };
+    recognition.onend = () => {
+      if (voiceModeRef.current && !waitingForAnswerRef.current) scheduleListening();
+    };
+    recognitionRef.current = recognition;
+    return recognition;
+  }
+
+  function listenAgain() {
+    waitingForAnswerRef.current = false;
+    if (!voiceModeRef.current) return;
+    setVoiceStatus("listening");
+    scheduleListening();
+  }
+
+  function speakAnswer(answer: string) {
+    if (!voiceModeRef.current) return;
+    cancelSpeechRef.current?.();
+    cancelSpeechRef.current = null;
+    setVoiceStatus("speaking");
+    const cancellation = speakBrowser(answer, locale, {
+      onEnd: () => {
+        cancelSpeechRef.current = null;
+        listenAgain();
+      },
+      onError: () => {
+        cancelSpeechRef.current = null;
+        listenAgain();
+      },
+    });
+    cancelSpeechRef.current = cancellation;
+    if (!cancellation) listenAgain();
+  }
+
+  function stopVoice() {
+    voiceModeRef.current = false;
+    waitingForAnswerRef.current = false;
+    clearRestartTimer();
+    try {
+      recognitionRef.current?.abort();
+    } catch {
+      /* microphone already released */
+    }
+    recognitionRef.current = null;
+    cancelSpeechRef.current?.();
+    cancelSpeechRef.current = null;
+    setVoiceMode(false);
+    setVoiceStatus("idle");
+    setVoiceError("");
+  }
+
+  function startVoice() {
+    if (!voiceSupported) {
+      setVoiceStatus("error");
+      setVoiceError(copy.voiceUnsupported);
+      return;
+    }
+
+    const recognition = ensureRecognition();
+    if (!recognition) {
+      setVoiceStatus("error");
+      setVoiceError(copy.voiceUnsupported);
+      return;
+    }
+
+    setVoiceError("");
+    setDraft("");
+    voiceModeRef.current = true;
+    waitingForAnswerRef.current = false;
+    setVoiceMode(true);
+    setVoiceStatus("listening");
+    try {
+      recognition.start();
+    } catch {
+      // A double click can hit the short transition between recogniser turns.
+      scheduleListening(300);
+    }
+  }
+
+  function toggleVoice() {
+    if (voiceMode) stopVoice();
+    else startVoice();
+  }
+
+  function send(text: string, source: "text" | "voice" = "text") {
     const trimmed = text.trim();
     if (!trimmed || ask.isPending) return;
     const history = messages.slice(-6).map((message) => ({ role: message.role, content: message.text }));
+    const shouldSpeak = source === "voice";
+    if (shouldSpeak) {
+      waitingForAnswerRef.current = true;
+      setVoiceStatus("thinking");
+      try {
+        recognitionRef.current?.stop();
+      } catch {
+        /* the recogniser may already be ending */
+      }
+    }
     setMessages((current) => [...current, { role: "visitor", text: trimmed }]);
     setDraft("");
     ask.mutate(
@@ -283,6 +496,7 @@ function AssistantPanel({ locale, onClose }: { locale: "ar" | "en"; onClose: () 
         onSuccess: (data) => {
           setMessages((current) => [...current, { role: "assistant", text: data.answer, sources: data.sources }]);
           track("assistant_asked", { locale, query_length: trimmed.length, outcome: "success", context: data.mode });
+          if (shouldSpeak) speakAnswer(data.answer);
         },
         onError: (error) => {
           const rateLimited = error.data?.code === "TOO_MANY_REQUESTS";
@@ -294,6 +508,7 @@ function AssistantPanel({ locale, onClose }: { locale: "ar" | "en"; onClose: () 
               outcome: "failure",
               reason: "rate_limited",
             });
+            if (shouldSpeak) stopVoice();
             return;
           }
           const local = localAssistantReply(trimmed, locale);
@@ -307,14 +522,37 @@ function AssistantPanel({ locale, onClose }: { locale: "ar" | "en"; onClose: () 
             outcome: "success",
             context: "client_fallback",
           });
+          if (shouldSpeak) speakAnswer(local.answer);
         },
       },
     );
   }
 
+  sendRef.current = send;
+
+  useEffect(() => {
+    return () => {
+      voiceModeRef.current = false;
+      waitingForAnswerRef.current = false;
+      clearRestartTimer();
+      try {
+        recognitionRef.current?.abort();
+      } catch {
+        /* component is unmounting */
+      }
+      cancelSpeechRef.current?.();
+      recognitionRef.current = null;
+      cancelSpeechRef.current = null;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (voiceModeRef.current) stopVoice();
+  }, [locale]);
+
   function onSubmit(event: FormEvent) {
     event.preventDefault();
-    send(draft);
+    send(draft, voiceModeRef.current ? "voice" : "text");
   }
 
   return (
@@ -376,6 +614,18 @@ function AssistantPanel({ locale, onClose }: { locale: "ar" | "en"; onClose: () 
         )}
       </div>
 
+      {(voiceMode || voiceError) && (
+        <div className={`lena-assistant-voice-status ${voiceError ? "is-error" : ""}`} role="status" aria-live="polite">
+          <span className="lena-assistant-voice-dot" aria-hidden="true" />
+          {voiceError ||
+            (voiceStatus === "listening"
+              ? copy.voiceListening
+              : voiceStatus === "thinking"
+                ? copy.voiceThinking
+                : copy.voiceSpeaking)}
+        </div>
+      )}
+
       <form className="lena-assistant-input" onSubmit={onSubmit}>
         <label className="lena-assistant-sr" htmlFor="lena-assistant-field">
           {copy.inputLabel}
@@ -384,10 +634,20 @@ function AssistantPanel({ locale, onClose }: { locale: "ar" | "en"; onClose: () 
           id="lena-assistant-field"
           value={draft}
           onChange={(event) => setDraft(event.target.value)}
-          placeholder={copy.inputPlaceholder}
+          placeholder={voiceMode ? copy.voiceListening : copy.inputPlaceholder}
           maxLength={800}
           autoComplete="off"
         />
+        <button
+          type="button"
+          className={`lena-assistant-mic ${voiceMode ? "is-active" : ""}`}
+          onClick={toggleVoice}
+          aria-label={voiceMode ? copy.voiceStop : copy.voiceStart}
+          aria-pressed={voiceMode}
+          title={voiceMode ? copy.voiceStop : copy.voiceStart}
+        >
+          {voiceMode ? <MicOff size={17} /> : <Mic size={17} />}
+        </button>
         <button type="submit" disabled={ask.isPending || draft.trim().length === 0} aria-label={copy.send}>
           <Send size={16} />
         </button>

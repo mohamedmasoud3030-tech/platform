@@ -319,8 +319,47 @@
   color: var(--lena-accent);
 }
 
+.lena-assistant-voice-status {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  border-top: 1px solid var(--lena-line);
+  padding: 8px 14px 0;
+  color: var(--lena-accent);
+  font-size: 10.5px;
+  font-weight: 750;
+}
+
+.lena-assistant-voice-status.is-error {
+  color: #e9a3a3;
+}
+
+.lena-assistant-voice-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 0 4px color-mix(in srgb, currentColor 14%, transparent);
+  animation: lena-assistant-voice-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes lena-assistant-voice-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(0.86);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 .lena-assistant-input {
   display: flex;
+  align-items: center;
   gap: 8px;
   border-top: 1px solid var(--lena-line);
   padding: 12px;
@@ -372,6 +411,33 @@
 .lena-assistant-input button:disabled {
   opacity: 0.45;
   cursor: not-allowed;
+}
+
+.lena-assistant-input .lena-assistant-mic {
+  border-color: var(--lena-line);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--lena-muted);
+}
+
+.lena-assistant-input .lena-assistant-mic:hover,
+.lena-assistant-input .lena-assistant-mic.is-active {
+  border-color: var(--lena-accent);
+  background: rgba(97, 130, 255, 0.22);
+  color: var(--lena-accent);
+}
+
+.lena-assistant-input .lena-assistant-mic.is-active {
+  animation: lena-assistant-mic-glow 1.6s ease-in-out infinite;
+}
+
+@keyframes lena-assistant-mic-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(97, 130, 255, 0.08);
+  }
+  50% {
+    box-shadow: 0 0 0 5px rgba(97, 130, 255, 0.14);
+  }
 }
 
 .lena-assistant-note {
