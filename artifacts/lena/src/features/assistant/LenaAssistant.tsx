@@ -95,7 +95,7 @@ function setSessionFlag(key: string) {
 }
 
 /** Curated starter questions — the ones the help page organises its answers around. */
-const SUGGESTED_IDS = ["how-to-start", "pricing", "response-time", "languages"] as const;
+const SUGGESTED_IDS = ["systems-overview", "malek-system", "evidence-status", "how-to-start"] as const;
 
 type AssistantSource = { id: string; question: string; to?: string; label?: string };
 

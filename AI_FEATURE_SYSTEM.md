@@ -259,7 +259,7 @@ customer personal data to a provider, lead scoring, content generation, pricing 
   visitors with general questions into conversations.
 - **Gemini SDK (`@google/genai`).** Rejected: the repository policy allows only a narrow adapter,
   and plain `fetch` keeps the dependency surface zero and the egress guard simple.
-- **RAG with embeddings.** Rejected: 17 short articles fit in one prompt; a vector store would add
+- **RAG with embeddings.** Rejected: 26 short verified articles fit in one prompt; a vector store would add
   infrastructure with no measurable quality gain at this size.
 - **Client-side key / direct browser calls.** Rejected outright: key exposure and undeclared
   browser egress.

@@ -32,9 +32,16 @@ const check = (name, fn) => {
 console.log("\n== FT1: help deep links resolve to real routes ==");
 const routes = [...app.matchAll(/path="([^"]+)"/g)].map((m) => m[1]);
 const links = [...help.matchAll(/to:\s*"([^"]+)"/g)].map((m) => m[1]);
+const routeMatches = (route, link) => {
+  const routeParts = route.split("/");
+  const linkParts = link.split("/");
+  return routeParts.length === linkParts.length && routeParts.every((part, index) => part.startsWith(":") || part === linkParts[index]);
+};
 check(`all ${links.length} help links registered in the router`, () => {
   assert.ok(links.length > 0, "no links found — extraction broken");
-  for (const link of links) assert.ok(routes.includes(link), `${link} is not a route (routes: ${routes.join(", ")})`);
+  for (const link of links) {
+    assert.ok(routes.some((route) => routeMatches(route, link)), `${link} is not a route (routes: ${routes.join(", ")})`);
+  }
 });
 
 console.log("\n== FT2: upload limits quoted to the owner match the server ==");

@@ -15,7 +15,7 @@
 export const SUPPORTED_LOCALES = ["ar", "en"] as const;
 export type SupportedLocale = (typeof SUPPORTED_LOCALES)[number];
 
-export type HelpTopicId = "start" | "work" | "answers" | "form" | "privacy" | "channels";
+export type HelpTopicId = "start" | "work" | "products" | "answers" | "form" | "privacy" | "channels";
 
 export type HelpArticle = {
   id: string;
@@ -29,6 +29,7 @@ export type HelpArticle = {
 export const HELP_TOPICS: Array<{ id: HelpTopicId; label: Record<SupportedLocale, string> }> = [
   { id: "start", label: { ar: "كيف نبدأ", en: "Getting started" } },
   { id: "work", label: { ar: "طريقة العمل", en: "How we work" } },
+  { id: "products", label: { ar: "الأنظمة والمنتجات", en: "Systems and products" } },
   { id: "answers", label: { ar: "الرد والمتابعة", en: "Replies and follow-up" } },
   { id: "form", label: { ar: "مشاكل في النموذج", en: "Form problems" } },
   { id: "privacy", label: { ar: "بياناتك", en: "Your data" } },
@@ -73,6 +74,123 @@ export const HELP_ARTICLES: HelpArticle[] = [
       en: "Each system is built for a different industry and workflow: property is not beauty, and hospitality is not recycling. LENA connects shared operating roots while each product keeps its own domain logic. If your industry is not shown, describe how your work runs today.",
     },
     link: { to: "/services", label: { ar: "استعراض الأنظمة", en: "Browse the systems" } },
+  },
+  {
+    id: "what-is-lena",
+    topic: "products",
+    question: {
+      ar: "ما الذي تبنيه LENA؟",
+      en: "What does LENA build?",
+    },
+    answer: {
+      ar: "LENA Digital House تبني أنظمة تشغيل للأعمال، لا صفحات تعريفية فقط: كل نظام يبدأ من سير العمل اليومي في قطاع محدد، مثل العقارات أو مراكز التجميل أو التأجير أو إعادة التدوير. نعرض تفاصيل النظام من السجل العام، ونُظهر لقطات الواجهة فقط عندما تكون موثقة فعلًا.",
+      en: "LENA Digital House builds operating systems for businesses, not just brochure sites: each system starts from the daily workflow of a specific industry, such as property, beauty centres, rental, or recycling. We describe systems from the public register and show interface captures only when they are genuinely documented.",
+    },
+    link: { to: "/world", label: { ar: "استكشاف عالم LENA", en: "Explore LENA World" } },
+  },
+  {
+    id: "systems-overview",
+    topic: "products",
+    question: {
+      ar: "ما الأنظمة والمنتجات التي تبنيها LENA؟",
+      en: "Which systems and products does LENA build?",
+    },
+    answer: {
+      ar: "السجل العام يضم ستة أنظمة: MALEK لإدارة العقارات، Terranex للاستثمار الحيواني والتنمية الزراعية، Lara Beauty للمراكز الصحية والسبا، Carmen Gallery لمعارض وتأجير الفساتين، Hospitality & Events لخدمات الضيافة والفعاليات، وKayyal لمخازن إعادة التدوير. لكل نظام قطاعه وسير عمله؛ لا نعرضها كتطبيق واحد عام.",
+      en: "The public register has six systems: MALEK for property operations, Terranex for livestock investment and agricultural development, Lara Beauty for health centres and spa, Carmen Gallery for showrooms and dress rental, Hospitality & Events for events operations, and Kayyal for recycling warehouses. Each keeps its own industry logic; they are not presented as one generic app.",
+    },
+    link: { to: "/world", label: { ar: "فتح عالم الأنظمة", en: "Open the systems world" } },
+  },
+  {
+    id: "malek-system",
+    topic: "products",
+    question: {
+      ar: "ماذا يدير نظام MALEK؟",
+      en: "What does the MALEK system manage?",
+    },
+    answer: {
+      ar: "MALEK منصة لتشغيل العقارات ومحاسبة الإيجار: تجمع العقارات والوحدات والعقود والتجديدات والتحصيل والمتأخرات وطلبات الصيانة وتقارير الملاك. تُتابَع مواعيد التجديد والتحصيل من النظام، وتُسجَّل الصيانة حتى الإغلاق بدل الاعتماد على الذاكرة أو رسائل متفرقة.",
+      en: "MALEK is a property operations and rent accounting platform: it brings together properties, units, contracts, renewals, collections, arrears, maintenance requests and owner reports. Renewal and collection dates are tracked in the system, and maintenance is followed through to closure instead of living in memory or scattered messages.",
+    },
+    link: { to: "/world/property", label: { ar: "فتح غرفة MALEK", en: "Open the MALEK chamber" } },
+  },
+  {
+    id: "lara-beauty-system",
+    topic: "products",
+    question: {
+      ar: "ماذا يدير نظام Lara Beauty للمراكز والسبا؟",
+      en: "What does the Lara Beauty system manage for centres and spas?",
+    },
+    answer: {
+      ar: "Lara Beauty نظام التشغيل اليومي لفريق مركز واحد: المواعيد والحجوزات ونقطة البيع وملفات العميلات والمخزون والموظفات والملخص اليومي للمالك في مكان واحد. هو نظام داخلي لفريق المركز وليس موقع حجز للعميلات؛ الحسابات ينشئها مسؤول المركز ولا يوجد تسجيل ذاتي.",
+      en: "Lara Beauty is the daily operating system for one centre's team: appointments, bookings, point of sale, client records, inventory, staff scheduling and the owner's daily summary in one place. It is an internal team system, not a customer booking site; the centre administrator creates accounts and there is no self-registration.",
+    },
+    link: { to: "/world/wellness", label: { ar: "فتح غرفة Lara Beauty", en: "Open the Lara Beauty chamber" } },
+  },
+  {
+    id: "carmen-gallery-system",
+    topic: "products",
+    question: {
+      ar: "كيف يعمل نظام Carmen Gallery لتأجير الفساتين؟",
+      en: "How does Carmen Gallery handle dress rental?",
+    },
+    answer: {
+      ar: "Carmen Gallery يعطي كل قطعة سجلًا لحالتها: متاحة أو محجوزة لتاريخ أو خارج المعرض أو في التنظيف. يرتبط الحجز بتاريخ المناسبة، ويغطي المخزون والخروج والإرجاع والتأمين والمدفوعات والتوفر الفوري حتى لا تُحجز القطعة لموعدين متعارضين.",
+      en: "Carmen Gallery gives every piece a state: available, reserved for a date, out, or being cleaned. Reservations are tied to the occasion date, while the system covers inventory, check-out, return, deposits, payments and live availability so one piece is not booked for conflicting dates.",
+    },
+    link: { to: "/world/rental", label: { ar: "فتح غرفة Carmen Gallery", en: "Open the Carmen Gallery chamber" } },
+  },
+  {
+    id: "terranex-system",
+    topic: "products",
+    question: {
+      ar: "ما هو نظام Terranex؟",
+      en: "What is the Terranex system?",
+    },
+    answer: {
+      ar: "Terranex يجمع أقسام الاستثمار الحيواني والزراعي والعقاري داخل نظام واحد، مع أصول وعمليات ومصروفات وإيرادات وتقارير لكل قسم. الهدف صورة موحدة للشركة بدل ملفات منفصلة لكل نشاط، مع الحفاظ على تفاصيل كل قطاع.",
+      en: "Terranex brings livestock, agricultural and real-estate investment divisions into one system, with assets, operations, costs, revenue and reporting per division. The goal is one view of the company instead of separate files for each activity, while keeping each division's detail.",
+    },
+    link: { to: "/world/investment", label: { ar: "فتح غرفة Terranex", en: "Open the Terranex chamber" } },
+  },
+  {
+    id: "hospitality-events-system",
+    topic: "products",
+    question: {
+      ar: "ماذا يدير نظام Hospitality & Events؟",
+      en: "What does the Hospitality & Events system manage?",
+    },
+    answer: {
+      ar: "النظام ينظم طلبات المناسبات والموعد والطاقم والتجهيزات والتكلفة لكل مناسبة. يساعد مكتب الضيافة على معرفة المحجوز ومن المسؤول قبل التنفيذ، ثم مطابقة التكلفة الفعلية مع المقبوضات عند الإغلاق بدل تجميع التنسيق من رسائل متفرقة.",
+      en: "The system organizes event requests, dates, crew, equipment and cost per occasion. It helps a hospitality office know what is committed and who is responsible before execution, then compare actual cost with payments at close instead of coordinating from scattered messages.",
+    },
+    link: { to: "/world/hospitality", label: { ar: "فتح غرفة الضيافة والمناسبات", en: "Open the Hospitality & Events chamber" } },
+  },
+  {
+    id: "kayyal-system",
+    topic: "products",
+    question: {
+      ar: "ماذا يفعل نظام Kayyal لمخازن إعادة التدوير؟",
+      en: "What does the Kayyal system do for recycling warehouses?",
+    },
+    answer: {
+      ar: "Kayyal يعمل من الموبايل بجوار الميزان لتسجيل الشراء والبيع والحركة النقدية، وإصدار إيصالات مرقمة يمكن طباعتها أو إرسالها عبر واتساب. يعمل بدون إنترنت، والتصحيح يكون بعملية عكسية لا بالحذف، وتُقفَل الخزنة في نهاية اليوم بالعدّ.",
+      en: "Kayyal runs on a phone beside the weighbridge to record purchases, sales and cash movement, with numbered receipts that can be printed or sent over WhatsApp. It works offline, corrections happen by reversal rather than deletion, and the cash box is closed by counting at the end of the day.",
+    },
+    link: { to: "/world/recycling", label: { ar: "فتح غرفة Kayyal", en: "Open the Kayyal chamber" } },
+  },
+  {
+    id: "evidence-status",
+    topic: "products",
+    question: {
+      ar: "هل Terranex موثق بلقطات واجهة فعلية أم ما زال قيد التوثيق؟",
+      en: "Is Terranex documented with real interface captures or is it still pending?",
+    },
+    answer: {
+      ar: "السجل الحالي يعرض لقطات فعلية لـ MALEK وLara Beauty وCarmen Gallery. أما Terranex وHospitality & Events وKayyal فتظهر كـ «قيد التوثيق» حتى تصل الأدلة الفعلية وتُراجع؛ لا نضع صورًا تجريبية مكانها ولا نخلط بين وصف القدرة وإثبات الواجهة.",
+      en: "The current register has real interface captures for MALEK, Lara Beauty and Carmen Gallery. Terranex, Hospitality & Events and Kayyal remain “Evidence pending” until real captures arrive and are reviewed; we do not replace them with mock images or confuse a capability description with interface proof.",
+    },
+    link: { to: "/world", label: { ar: "رؤية حالات التوثيق", en: "See evidence states" } },
   },
   {
     id: "case-studies",
