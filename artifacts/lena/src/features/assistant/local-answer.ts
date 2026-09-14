@@ -44,7 +44,8 @@ function tokenize(text: string): string[] {
   return normaliseText(text)
     .split(/[^\p{L}\p{N}#]+/u)
     .filter((token) => token.length > 1 && !STOPWORDS.has(token))
-    .map(stemToken);
+    .map(stemToken)
+    .filter((token) => token.length > 1 && !STOPWORDS.has(token));
 }
 
 function scoreArticle(article: HelpArticle, messageTokens: string[]): number {
@@ -84,9 +85,13 @@ export function localAssistantReply(
   locale: SupportedLocale,
 ): { answer: string; sources: AssistantSource[] } {
   const tokens = tokenize(message);
-  const matches = HELP_ARTICLES.map((article) => ({ article, score: scoreArticle(article, tokens) }))
+  const ranked = HELP_ARTICLES.map((article) => ({ article, score: scoreArticle(article, tokens) }))
     .filter((match) => match.score > 0)
-    .sort((a, b) => b.score - a.score)
+    .sort((a, b) => b.score - a.score);
+  const bestScore = ranked[0]?.score ?? 0;
+  const relevanceFloor = bestScore * 0.7;
+  const matches = ranked
+    .filter((match, index) => index === 0 || match.score >= relevanceFloor)
     .slice(0, 2);
 
   if (matches.length === 0) {

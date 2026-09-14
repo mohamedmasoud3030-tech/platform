@@ -52,7 +52,8 @@ export function tokenize(text: string): string[] {
   return normaliseText(text)
     .split(/[^\p{L}\p{N}#]+/u)
     .filter((token) => token.length > 1 && !STOPWORDS.has(token))
-    .map(stemToken);
+    .map(stemToken)
+    .filter((token) => token.length > 1 && !STOPWORDS.has(token));
 }
 
 export type ArticleMatch = {
@@ -89,5 +90,9 @@ export function retrieveArticles(message: string, _locale: SupportedLocale, limi
   const matches = HELP_ARTICLES.map((article) => ({ article, score: scoreArticle(article, tokens) }))
     .filter((match) => match.score > 0)
     .sort((a, b) => b.score - a.score);
-  return matches.slice(0, limit);
+  const bestScore = matches[0]?.score ?? 0;
+  const relevanceFloor = bestScore * 0.7;
+  return matches
+    .filter((match, index) => index === 0 || match.score >= relevanceFloor)
+    .slice(0, limit);
 }

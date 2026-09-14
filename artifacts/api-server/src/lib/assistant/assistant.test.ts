@@ -42,6 +42,26 @@ describe("retrieval", () => {
     expect(best?.article.id).toBe("pricing");
   });
 
+  it("retrieves the product directory for a broad systems question", () => {
+    const [best] = retrieveArticles("ما الأنظمة التي تبنيها لينا؟", "ar");
+    expect(best?.article.id).toBe("systems-overview");
+  });
+
+  it("retrieves a named product brief with its operational vocabulary", () => {
+    const [best] = retrieveArticles("what does Kayyal do offline at the weighbridge?", "en");
+    expect(best?.article.id).toBe("kayyal-system");
+  });
+
+  it("does not attach unrelated product briefs to a named product answer", () => {
+    const matches = retrieveArticles("What does the MALEK system manage?", "en");
+    expect(matches.map((match) => match.article.id)).toEqual(["malek-system"]);
+  });
+
+  it("retrieves the evidence policy without inventing missing captures", () => {
+    const [best] = retrieveArticles("هل Terranex موثق بلقطات واجهة فعلية أم ما زال قيد التوثيق؟", "ar");
+    expect(best?.article.id).toBe("evidence-status");
+  });
+
   it("returns nothing for a question the corpus does not cover", () => {
     expect(retrieveArticles("ما رأيكم في الطقس اليوم", "ar")).toHaveLength(0);
   });
@@ -86,6 +106,7 @@ describe("prompt", () => {
     expect(ASSISTANT_SYSTEM_PROMPT).toMatch(/سعر/);
     expect(ASSISTANT_SYSTEM_PROMPT).toMatch(/بيانات شخصية/);
     expect(ASSISTANT_SYSTEM_PROMPT).toMatch(/واتساب/);
+    expect(ASSISTANT_SYSTEM_PROMPT).toMatch(/لقطات واجهة موثقة/);
   });
 
   it("system contract asks for a warm, welcoming tone", () => {
