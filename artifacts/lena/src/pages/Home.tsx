@@ -72,6 +72,12 @@ export default function Home() {
               ? "كل غرفة في هذا البيت نظام مبني على عمل يومي حقيقي؛ وحيث وُثّق النظام، تُعرض واجهته الفعلية — لا شرائح ولا مفاهيم."
               : "Every room in this house is a system built on real daily work. Where a system is documented, you see its actual interface — no slides, no concepts."}
           </p>
+          <p className="lena-hero-proof">
+            <span aria-hidden="true">✦</span>
+            {locale === "ar"
+              ? "واجهات فعلية من الأنظمة الموثقة · العمل اليومي أولًا"
+              : "Real interfaces from documented systems · Daily work first"}
+          </p>
           <div className="lena-actions">
             <Link
               className="lena-primary"
@@ -84,8 +90,8 @@ export default function Home() {
               {locale === "ar" ? "ادخل العالم" : "Enter the world"}
               <ArrowUpRight size={16} />
             </Link>
-            <Link className="lena-secondary" to="/world">
-              {locale === "ar" ? "شاهد الأنظمة" : "See the systems"}
+            <Link className="lena-secondary" to="/contact">
+              {locale === "ar" ? "ابدأ من سير العمل" : "Start from the workflow"}
             </Link>
             {continuation ? (
               <WorldContinuation continuation={continuation} />

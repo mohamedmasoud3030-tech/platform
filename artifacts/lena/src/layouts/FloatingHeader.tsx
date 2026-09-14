@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Menu, X } from "lucide-react";
 import { Link, useLocation } from "react-router";
 import LenaLogo from "@/design-system/brand/LenaLogo";
@@ -13,9 +13,33 @@ export default function FloatingHeader() {
   const { pathname } = useLocation();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const firstMobileLinkRef = useRef<HTMLAnchorElement | null>(null);
+  const menuToggleRef = useRef<HTMLButtonElement | null>(null);
 
   // Close mobile menu on route change
   useEffect(() => setOpen(false), [pathname]);
+
+  // The mobile navigation is a real overlay: lock the page behind it, move
+  // focus into the menu, and let Escape close it without trapping the visitor.
+  useEffect(() => {
+    if (!open) return;
+
+    const previousOverflow = document.body.style.overflow;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setOpen(false);
+    };
+
+    document.body.style.overflow = "hidden";
+    document.addEventListener("keydown", onKeyDown);
+    const focusTimer = window.setTimeout(() => firstMobileLinkRef.current?.focus(), 0);
+
+    return () => {
+      window.clearTimeout(focusTimer);
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener("keydown", onKeyDown);
+      menuToggleRef.current?.focus();
+    };
+  }, [open]);
 
   // Track scroll for header style
   useEffect(() => {
@@ -86,10 +110,20 @@ export default function FloatingHeader() {
           </Link>
 
           <button
+            ref={menuToggleRef}
             type="button"
             className="lena-icon-button lena-menu-toggle"
             aria-expanded={open}
-            aria-label={locale === "ar" ? "فتح القائمة" : "Open menu"}
+            aria-controls="lena-mobile-menu"
+            aria-label={
+              open
+                ? locale === "ar"
+                  ? "إغلاق القائمة"
+                  : "Close menu"
+                : locale === "ar"
+                  ? "فتح القائمة"
+                  : "Open menu"
+            }
             onClick={() => setOpen((value) => !value)}
           >
             {open ? <X size={18} /> : <Menu size={18} />}
@@ -98,30 +132,45 @@ export default function FloatingHeader() {
       </nav>
 
       {open && (
-        <div className="lena-glass lena-mobile-menu">
-          {PUBLIC_NAVIGATION.map((item) => (
-            <Link
-              key={item.to}
-              className={`lena-mobile-link${active(item.to) ? " active" : ""}`}
-              to={item.to}
-            >
-              {copy.nav[item.copyKey]}
-            </Link>
-          ))}
-
-          <Link
-            className="lena-primary lena-mobile-cta"
-            onClick={() =>
-              track("primary_action_clicked", {
-                surface: "mobile_menu",
-                locale,
-              })
-            }
-            to="/contact"
+        <>
+          <button
+            type="button"
+            className="lena-mobile-backdrop"
+            aria-label={locale === "ar" ? "إغلاق القائمة" : "Close menu"}
+            onClick={() => setOpen(false)}
+          />
+          <div
+            id="lena-mobile-menu"
+            className="lena-glass lena-mobile-menu"
+            role="dialog"
+            aria-modal="true"
+            aria-label={locale === "ar" ? "قائمة التنقل" : "Navigation menu"}
           >
-            {startLabel}
-          </Link>
-        </div>
+            {PUBLIC_NAVIGATION.map((item, index) => (
+              <Link
+                key={item.to}
+                ref={index === 0 ? firstMobileLinkRef : undefined}
+                className={`lena-mobile-link${active(item.to) ? " active" : ""}`}
+                to={item.to}
+              >
+                {copy.nav[item.copyKey]}
+              </Link>
+            ))}
+
+            <Link
+              className="lena-primary lena-mobile-cta"
+              onClick={() =>
+                track("primary_action_clicked", {
+                  surface: "mobile_menu",
+                  locale,
+                })
+              }
+              to="/contact"
+            >
+              {startLabel}
+            </Link>
+          </div>
+        </>
       )}
     </header>
   );

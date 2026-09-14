@@ -31,6 +31,7 @@ const FORM = {
     email: "البريد الإلكتروني",
     phone: "رقم الهاتف",
     service: "القطاع الأقرب",
+    more: "رقم الهاتف والقطاع (اختياريان)",
     message: "تفاصيل الفكرة",
     optional: "اختياري",
     choose: "اختر عند الحاجة",
@@ -60,6 +61,7 @@ const FORM = {
     email: "Email",
     phone: "Phone number",
     service: "Closest industry",
+    more: "Phone and industry (optional)",
     message: "Project details",
     optional: "Optional",
     choose: "Choose when relevant",
@@ -114,6 +116,7 @@ export default function Contact() {
         : "contact";
 
   const [form, setForm] = useState<Inquiry>(createEmptyInquiry);
+  const [moreOpen, setMoreOpen] = useState(() => Boolean(requestedService || requestedSystem));
   const [draftRestored, setDraftRestored] = useState(false);
   const [reference, setReference] = useState<number | null>(null);
   const successRef = useRef<HTMLDivElement | null>(null);
@@ -331,33 +334,6 @@ export default function Contact() {
                     onChange={(event) => update({ email: event.target.value })}
                   />
                 </label>
-                <label>
-                  <span>
-                    {text.phone} <small>{text.optional}</small>
-                  </span>
-                  <input
-                    name="phone"
-                    dir="ltr"
-                    type="tel"
-                    autoComplete="tel"
-                    inputMode="tel"
-                    value={form.phone}
-                    onChange={(event) => update({ phone: event.target.value })}
-                  />
-                </label>
-                <label>
-                  <span>
-                    {text.service} <small>{text.optional}</small>
-                  </span>
-                  <select name="service" value={form.service} onChange={(event) => update({ service: event.target.value })}>
-                    <option value="">{text.choose}</option>
-                    {publicSystems().map((system) => (
-                      <option value={system.id} key={system.id}>
-                        {system.name[locale]} — {system.industry[locale]}
-                      </option>
-                    ))}
-                  </select>
-                </label>
                 <label className="wide">
                   <span>{text.message}</span>
                   <textarea
@@ -369,6 +345,43 @@ export default function Contact() {
                   />
                 </label>
               </div>
+
+              <details
+                className="lena-form-more"
+                open={moreOpen}
+                onToggle={(event) => setMoreOpen(event.currentTarget.open)}
+              >
+                <summary>{text.more}</summary>
+                <div className="lena-form-grid">
+                  <label>
+                    <span>
+                      {text.phone} <small>{text.optional}</small>
+                    </span>
+                    <input
+                      name="phone"
+                      dir="ltr"
+                      type="tel"
+                      autoComplete="tel"
+                      inputMode="tel"
+                      value={form.phone}
+                      onChange={(event) => update({ phone: event.target.value })}
+                    />
+                  </label>
+                  <label>
+                    <span>
+                      {text.service} <small>{text.optional}</small>
+                    </span>
+                    <select name="service" value={form.service} onChange={(event) => update({ service: event.target.value })}>
+                      <option value="">{text.choose}</option>
+                      {publicSystems().map((system) => (
+                        <option value={system.id} key={system.id}>
+                          {system.name[locale]} — {system.industry[locale]}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                </div>
+              </details>
 
               {errorKind && (
                 <div className="lena-error lena-form-error" role="alert">

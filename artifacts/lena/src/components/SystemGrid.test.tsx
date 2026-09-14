@@ -73,6 +73,13 @@ describe("SystemGrid opus plates", () => {
     expect(within(terranex).queryByRole("img")).toBeNull();
   });
 
+  it("makes undocumented systems an explicit evidence state instead of an empty card", () => {
+    renderGrid();
+    expect(screen.getAllByText("Evidence pending")).toHaveLength(3);
+    expect(document.querySelectorAll('[data-evidence="pending"]')).toHaveLength(3);
+    expect(document.querySelectorAll('[data-evidence="documented"]')).toHaveLength(3);
+  });
+
   it("opens each chamber and switches names with the locale", () => {
     renderGrid();
     const opens = screen.getAllByRole("link", { name: /Open system/ });
