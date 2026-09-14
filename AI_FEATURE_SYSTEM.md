@@ -206,7 +206,7 @@ No analytics, no embeds, no AI.
 
 ---
 
-## 11. Amendment (2026-09-07): LENA Assistant — approved and shipped
+## 11. Amendment (2026-09-07; voice extension 2026-09-14): LENA Assistant — approved and shipped
 
 **Owner decision.** The owner directed building a help bot for the platform using Gemini. That
 direction is the owner approval §9 required. This section is the decision record; §1–§10 above are
@@ -219,7 +219,8 @@ That objection shapes the design rather than blocking it: the assistant answers 
 help corpus only, and degrades to quoting it verbatim.
 
 **In scope:** a visitor-facing help assistant ("مساعد لينا") on public pages, bilingual AR/EN,
-answering general questions (how to start, reply times, data handling, contact channels).
+answering general and product questions (how to start, reply times, data handling, contact channels),
+with an optional browser-first voice conversation mode.
 
 **Out of scope (unchanged):** auto-replying to inquiries, anything that sends inquiry records or
 customer personal data to a provider, lead scoring, content generation, pricing negotiation.
@@ -249,7 +250,12 @@ customer personal data to a provider, lead scoring, content generation, pricing 
    (mode, failure kind, locale, latency). Rate limiting uses a hashed IP held in memory for minutes
    (20 turns / 10 min / IP) — the paid key is the real budget bound. The assistant cannot accept
    inquiries: it explicitly redirects them to the form and WhatsApp.
-6. **Declared in the guard.** `tools/check-egress.mjs` now carries
+6. **Voice mode stays browser-first.** The public panel can use the browser Web Speech APIs for
+   turn-based voice conversation: speech becomes a transcript, the same grounded assistant answers,
+   and the browser reads the answer aloud before listening for the next turn. Raw audio is not sent
+   to an LENA server; browser speech recognition may use a browser-controlled service depending on
+   the visitor's browser and settings. If unsupported, typed chat remains fully available.
+7. **Declared in the guard.** `tools/check-egress.mjs` now carries
    `generativelanguage.googleapis.com` in its host allowlist and in `DECLARED_AI_ENDPOINTS`,
    pointing at this section. The SDK ban stays.
 
@@ -259,7 +265,7 @@ customer personal data to a provider, lead scoring, content generation, pricing 
   visitors with general questions into conversations.
 - **Gemini SDK (`@google/genai`).** Rejected: the repository policy allows only a narrow adapter,
   and plain `fetch` keeps the dependency surface zero and the egress guard simple.
-- **RAG with embeddings.** Rejected: 26 short verified articles fit in one prompt; a vector store would add
+- **RAG with embeddings.** Rejected: 27 short verified articles fit in one prompt; a vector store would add
   infrastructure with no measurable quality gain at this size.
 - **Client-side key / direct browser calls.** Rejected outright: key exposure and undeclared
   browser egress.

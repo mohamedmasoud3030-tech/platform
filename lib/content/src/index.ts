@@ -193,6 +193,18 @@ export const HELP_ARTICLES: HelpArticle[] = [
     link: { to: "/world", label: { ar: "رؤية حالات التوثيق", en: "See evidence states" } },
   },
   {
+    id: "assistant-voice-chat",
+    topic: "products",
+    question: {
+      ar: "هل أستطيع التحدث مع مساعد LENA بالصوت؟",
+      en: "Can I talk to the LENA assistant by voice?",
+    },
+    answer: {
+      ar: "نعم. افتح المساعد واضغط زر الميكروفون، ثم اسمح للمتصفح باستخدام الميكروفون وتحدث بالعربية أو الإنجليزية. المساعد يحوّل كلامك إلى نص ويرد من نفس قاعدة المعرفة، ثم يقرأ الرد بصوت مسموع ويستمع للدور التالي. الدعم يعتمد على المتصفح؛ إذا لم تتوفر الميزة يمكنك الكتابة كالمعتاد. لا يرسل الموقع ملفًا صوتيًا إلى خادم LENA، لكن التعرف على الكلام قد يعتمد على خدمة المتصفح حسب إعداداته، والنص الناتج يعامل مثل أي سؤال للمساعد.",
+      en: "Yes. Open the assistant and press the microphone button, allow browser microphone access, then speak in Arabic or English. The assistant turns your speech into text, answers from the same grounded knowledge base, reads the reply aloud, and listens for the next turn. Support depends on the browser; if voice is unavailable you can type as usual. The site does not send a raw audio file to an LENA server, but speech recognition may use a browser service depending on its settings, and the resulting text is handled like any assistant question.",
+    },
+  },
+  {
     id: "case-studies",
     topic: "work",
     question: {
