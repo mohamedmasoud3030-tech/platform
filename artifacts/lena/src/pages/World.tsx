@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { Link } from "react-router";
 import SeoHead from "@/components/SeoHead";
 import { pageSeo } from "@/content/seo";
@@ -9,6 +9,11 @@ import { worldEntities } from "@/features/world/content/world";
 import { useWorldPortalTransition } from "@/features/world/WorldPortalTransition";
 import { worldRegistry } from "@/features/world/registry";
 import { useSpatialContext, useSpatialNavigate, useWorldMemory } from "@/lib/spatial";
+import {
+  clampRegisterPosition,
+  readRegisterPosition,
+  saveRegisterPosition,
+} from "./../features/world/spatial/register-position";
 
 /**
  * LENA World — the house register, open at its systems index.
@@ -47,6 +52,41 @@ export default function WorldPage() {
   }, [memory]);
 
   const isOutwardArrival = direction === "back" || arrivalIntent === "emerge";
+
+  // The register remembers where the visitor was reading: the position is kept
+  // while the sheet is open, and a return (the browser's Back or the record's
+  // own back control) lands on the same line instead of the masthead. A direct
+  // URL entry is untouched, and nothing scrolls under reduced motion — the
+  // restore is instant, never an animated travel.
+  useEffect(() => {
+    const onScroll = () => saveRegisterPosition(window.scrollY);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      saveRegisterPosition(window.scrollY);
+      window.removeEventListener("scroll", onScroll);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isOutwardArrival) return;
+    const remembered = readRegisterPosition();
+    if (remembered === null || remembered < 40) return;
+
+    const restore = () => {
+      const y = clampRegisterPosition(remembered, document.body.scrollHeight, window.innerHeight);
+      window.scrollTo(0, y);
+    };
+    const frame = window.requestAnimationFrame(restore);
+    // Lazy plates can grow the sheet a moment after mount; one settle keeps the
+    // line the visitor left without fighting her if she scrolls first.
+    const settle = window.setTimeout(() => {
+      if (Math.abs(window.scrollY - remembered) < 4 || window.scrollY < 4) restore();
+    }, 240);
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.clearTimeout(settle);
+    };
+  }, [isOutwardArrival]);
   const rememberedName = rememberedSystemId
     ? worldRegistry.nameFor(rememberedSystemId, locale)
     : null;

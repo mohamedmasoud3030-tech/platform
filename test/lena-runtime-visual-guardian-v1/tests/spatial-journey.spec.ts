@@ -18,6 +18,55 @@ import { publicSystems } from "../../../artifacts/lena/src/content/systems";
  */
 const journey = GUARDIAN_CONFIG.spatialJourney;
 
+test("register back-step: a chamber returns the visitor to the line she left", async ({ page }) => {
+  test.info().annotations.push(
+    { type: "route", description: "/world → chamber → Back (register position)" },
+    { type: "viewport", description: "1280x800" },
+    { type: "theme", description: "dark" },
+    { type: "locale", description: "en" },
+  );
+
+  // The register is one long sheet and a chamber is a page inside it. Coming
+  // back must land on the line the visitor was reading — the welcome line
+  // ("the entry for X is ready") is only honest if the entry is where she left
+  // it. This is also the promise the World page makes in its own copy.
+  await openApp(page, { route: "/world", locale: "en", theme: "dark", viewport: VIEWPORTS.desktop });
+  await page.evaluate(() => window.sessionStorage.clear());
+
+  const lastEntry = page.locator('.ledger-entry[data-system="recycling"]');
+  await lastEntry.scrollIntoViewIfNeeded();
+  await page.waitForTimeout(250);
+  const leftAt = await page.evaluate(() => window.scrollY);
+  expect(leftAt, "the visitor is genuinely down the sheet").toBeGreaterThan(200);
+
+  await lastEntry.getByRole("link", { name: /Open system chamber/i }).click();
+  await page.waitForURL("**/world/recycling", { timeout: 20_000 });
+  await page.goBack();
+  await page.waitForURL("**/world", { timeout: 20_000 });
+  await expect(page.locator(".ledger-sheet").first()).toBeVisible();
+
+  await expect
+    .poll(() => page.evaluate(() => window.scrollY), {
+      message: "the register returns to the line the visitor left",
+      timeout: 5_000,
+    })
+    .toBeGreaterThan(100);
+
+  const landed = await page.evaluate(() => window.scrollY);
+  const rememberedTop = await page.evaluate(() => {
+    const entry = document.querySelector('.ledger-entry[data-system="recycling"]');
+    return entry ? entry.getBoundingClientRect().top : null;
+  });
+  expect(rememberedTop, "the entry she left is on screen, not the masthead").not.toBeNull();
+  expect(rememberedTop as number, "the remembered entry is inside the viewport").toBeLessThan(800);
+  expect(Math.abs(landed - leftAt), "and it is the same line, not an approximation").toBeLessThan(240);
+
+  // A fresh visit still opens at the top: the memory is a return, not a trap.
+  await page.evaluate(() => window.sessionStorage.clear());
+  await openApp(page, { route: "/world", locale: "en", theme: "dark", viewport: VIEWPORTS.desktop });
+  expect(await page.evaluate(() => window.scrollY), "a first visit opens at the masthead").toBeLessThan(40);
+});
+
 test("register journey: Home → World → MALEK Chamber → Back → Back", async ({ page }) => {
   test.info().annotations.push(
     { type: "route", description: "full journey (en)" },

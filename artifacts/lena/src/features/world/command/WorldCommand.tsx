@@ -131,7 +131,7 @@ export default function WorldCommand() {
             </span>
           </p>
           <Link className="lena-command-back" to="/world">
-            {ar ? "العودة إلى الكوكبة" : "Back to the constellation"}
+            {ar ? "العودة إلى عالم LENA" : "Back to LENA World"}
           </Link>
         </header>
         <section
@@ -173,7 +173,7 @@ export default function WorldCommand() {
           </span>
         </p>
         <Link className="lena-command-back" to="/world">
-          {ar ? "العودة إلى الكوكبة" : "Back to the constellation"}
+          {ar ? "العودة إلى عالم LENA" : "Back to LENA World"}
         </Link>
       </header>
 
