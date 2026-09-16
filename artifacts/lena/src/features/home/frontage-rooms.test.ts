@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { frontageRooms, isFrontageWindowLit } from "./frontage-rooms";
+import { SYSTEM_EVIDENCE } from "@/features/world/content/evidence";
 
 describe("home frontage rooms (House Ledger hero mapping)", () => {
   it("maps exactly the six public systems in owner order", () => {
@@ -15,15 +16,20 @@ describe("home frontage rooms (House Ledger hero mapping)", () => {
     expect(rooms).toHaveLength(6);
   });
 
-  it("lights exactly the two systems the evidence registry documents", () => {
+  it("lights exactly the systems the evidence registry documents", () => {
+    // Derived from the registry, not remembered: whether two or three systems
+    // have real captures is the registry's business, and a system that gains
+    // evidence (Carmén Gallery did) must move this test with it.
+    const documented = Object.entries(SYSTEM_EVIDENCE)
+      .filter(([, surfaces]) => (surfaces?.length ?? 0) > 0)
+      .map(([id]) => id)
+      .sort();
+    expect(documented.length, "the registry documents at least one system").toBeGreaterThan(0);
     const lit = frontageRooms()
       .filter((room) => room.documented)
       .map((room) => room.system.id)
       .sort();
-    expect(lit, "documented = lit, by the registry, in any visual era").toEqual([
-      "property", // MALEK — 7 real surfaces
-      "wellness", // Lara Beauty — 10 real surfaces
-    ]);
+    expect(lit, "documented = lit, by the registry, in any visual era").toEqual(documented);
   });
 
   it("never lights a system whose registry is empty", () => {
@@ -31,9 +37,10 @@ describe("home frontage rooms (House Ledger hero mapping)", () => {
       const expected = isFrontageWindowLit(room.system.id);
       expect(room.documented, `${room.system.id} flag matches the shared rule`).toBe(expected);
       if (!expected) {
-        expect(room.system.id, "undocumented systems stay dim").toMatch(
-          /^(rental|hospitality|investment|recycling)$/,
-        );
+        expect(
+          (SYSTEM_EVIDENCE[room.system.id]?.length ?? 0),
+          `${room.system.id} stays dim while its registry page is empty`,
+        ).toBe(0);
       }
     }
   });
