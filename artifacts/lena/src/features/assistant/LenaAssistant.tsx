@@ -138,6 +138,7 @@ export default function LenaAssistant() {
   const copy = COPY[locale];
   const [open, setOpen] = useState(false);
   const [teaserVisible, setTeaserVisible] = useState(false);
+  const [retracted, setRetracted] = useState(false);
 
   // Spoken welcome: the assistant greets the visitor out loud as soon as the
   // browser allows. Autoplay policies block sound before the visitor's first
@@ -232,6 +233,46 @@ export default function LenaAssistant() {
     return () => clearTimeout(timer);
   }, [locale, pathname]);
 
+  /**
+   * The button retracts while the page is moving down and returns the moment it
+   * settles.
+   *
+   * On a phone the disc floats over a column of text, so a visitor reading a
+   * paragraph has part of it hidden behind the assistant. Moving with the reader
+   * — out of the way on the way down, back in place as soon as the page stops —
+   * keeps the help one tap away without covering what she is reading. Scrolling
+   * back up is a deliberate "I want to go somewhere" gesture, so the button
+   * returns immediately instead of waiting for the page to stop.
+   */
+  useEffect(() => {
+    let lastY = window.scrollY;
+    let settle: number | undefined;
+    const clearSettle = () => {
+      if (settle !== undefined) window.clearTimeout(settle);
+      settle = undefined;
+    };
+    const onScroll = () => {
+      const y = window.scrollY;
+      const goingDown = y > lastY + 6;
+      const goingUp = y < lastY - 6;
+      if (goingDown || goingUp) lastY = y;
+      if (goingUp) {
+        setRetracted(false);
+        clearSettle();
+        return;
+      }
+      if (!goingDown) return;
+      setRetracted(true);
+      clearSettle();
+      settle = window.setTimeout(() => setRetracted(false), 420);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      clearSettle();
+      window.removeEventListener("scroll", onScroll);
+    };
+  }, []);
+
   function dismissTeaser() {
     setTeaserVisible(false);
     setSessionFlag(TEASER_SESSION_KEY);
@@ -246,7 +287,7 @@ export default function LenaAssistant() {
     <>
       <button
         type="button"
-        className="lena-assistant-fab"
+        className={`lena-assistant-fab${retracted && !open ? " is-retracted" : ""}`}
         onClick={() => (open ? setOpen(false) : openPanel())}
         aria-label={open ? copy.closeLabel : copy.fabLabel}
         aria-expanded={open}

@@ -13,16 +13,47 @@
   place-items: center;
   border: 1px solid var(--lena-line-strong);
   border-radius: 50%;
-  background: linear-gradient(135deg, rgba(97, 130, 255, 0.9), rgba(160, 86, 255, 0.75));
-  color: #fff;
+  /*
+     Brass, flat, one surface — the register's own accent.
+     This button was the last blue→violet gradient in the product, the exact
+     language the ledger direction retired, sitting on top of every page of a
+     warm-paper register. It is chrome, so it speaks the chrome's language.
+  */
+  background: var(--lena-accent);
+  color: #171209;
   cursor: pointer;
-  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.26);
-  transition: transform 0.18s ease, border-color 0.18s ease;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.28);
+  transition: transform 0.18s ease, border-color 0.18s ease, opacity 0.18s ease;
+}
+
+.light .lena-assistant-fab {
+  background: var(--lena-accent);
+  color: #fdf6e6;
+  box-shadow: 0 10px 24px rgba(24, 18, 8, 0.18);
 }
 
 .lena-assistant-fab:hover {
   transform: translateY(-2px);
-  border-color: var(--lena-accent);
+  border-color: var(--lena-accent-strong);
+}
+
+/*
+   On a phone this disc floats over a column of text and hides whatever is
+   behind it — the owner's own complaint about the button. Retracting it while
+   the page moves down, and returning it the moment movement stops, keeps it
+   reachable without covering a paragraph.
+*/
+.lena-assistant-fab.is-retracted {
+  transform: translateY(140%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lena-assistant-fab,
+  .lena-assistant-fab.is-retracted {
+    transition: none;
+  }
 }
 
 [dir="rtl"] .lena-assistant-fab {
