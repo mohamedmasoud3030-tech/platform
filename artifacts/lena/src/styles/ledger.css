@@ -30,6 +30,7 @@
   --led-cta-bg: #c8a04e;
   --led-cta-text: #171209;
   --led-focus: #e2c274;
+  --led-scrim: rgba(4, 6, 12, 0.94);   /* the room dims; the plate is the light */
   --dna-accent: #e2c274;
 }
 
@@ -48,6 +49,7 @@
   --led-cta-bg: #845f13;  /* AA ≥4.5:1 with cream CTA text (was 3.67:1) */
   --led-cta-text: #fdf6e6;
   --led-focus: #8a6117;
+  --led-scrim: rgba(30, 24, 12, 0.72);
 }
 
 /* DNA material inks — restrained accents, never full product branding. */
@@ -1103,6 +1105,192 @@
 }
 
 /* ------------------------------------------------------------------ */
+/* Plate viewer — a plate is read, not glanced at                       */
+/* ------------------------------------------------------------------ */
+
+/*
+   The leaf shows a plate at the width of a column; a capture of a real
+   interface needs to be readable. Opening one gives it the full width of the
+   record — and it is the same document: same figure number, same caption,
+   same source note, no second gallery and nothing newly claimed.
+*/
+.ledger-plate-open {
+  position: relative;
+  display: block;
+  width: 100%;
+  border: 0;
+  background: none;
+  padding: 0;
+  cursor: zoom-in;
+}
+.ledger-plate-open:focus-visible {
+  outline: 2px solid var(--led-focus);
+  outline-offset: 2px;
+}
+.ledger-plate-open-hint {
+  position: absolute;
+  inset-block-end: 10px;
+  inset-inline-end: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--led-rule-strong);
+  border-radius: 999px;
+  background: var(--led-paper);
+  padding: 5px 10px;
+  color: var(--led-mut);
+  font-size: 10.5px;
+  font-weight: 700;
+  opacity: 0;
+  transition: opacity 140ms ease;
+}
+.ledger-plate-open:hover .ledger-plate-open-hint,
+.ledger-plate-open:focus-visible .ledger-plate-open-hint {
+  opacity: 1;
+}
+@media (hover: none) {
+  /* Touch has no hover state: the hint is the only affordance, so it stays. */
+  .ledger-plate-open-hint {
+    opacity: 1;
+  }
+}
+
+@media (pointer: coarse) {
+  /* Touch targets keep the platform's 44px rule, in the viewer as everywhere. */
+  .ledger-plate-arrow {
+    width: 44px;
+    height: 44px;
+  }
+}
+
+.ledger-viewer {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: grid;
+  place-items: center;
+  padding: max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right))
+    max(12px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
+}
+.ledger-viewer-scrim {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background: var(--led-scrim);
+  padding: 0;
+  cursor: zoom-out;
+}
+.ledger-viewer-panel {
+  position: relative;
+  display: grid;
+  width: min(1120px, 100%);
+  max-height: 100%;
+  overflow: auto;
+  overscroll-behavior: contain;
+  border: 1px solid var(--led-rule-strong);
+  border-radius: 14px;
+  background: var(--led-paper);
+}
+.ledger-viewer-head {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px solid var(--led-rule);
+  background: var(--led-paper);
+  padding: 9px 12px;
+}
+.ledger-viewer-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  color: var(--led-mut);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
+}
+.ledger-viewer-title .ledger-viewer-brand {
+  color: var(--led-ink-soft);
+}
+.ledger-viewer-title .ledger-plate-bar-fig {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--led-brass-dim);
+}
+.ledger-viewer-title .ledger-plate-bar-fig i {
+  width: 1px;
+  height: 10px;
+  background: var(--led-rule-strong);
+}
+.ledger-viewer-close {
+  display: inline-grid;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid var(--led-rule);
+  border-radius: 10px;
+  background: var(--led-paper-2);
+  color: var(--led-ink);
+}
+.ledger-viewer-close:hover {
+  border-color: var(--led-rule-strong);
+  color: var(--led-brass-ink);
+}
+.ledger-viewer-figure {
+  display: grid;
+  margin: 0;
+}
+.ledger-viewer-frame {
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border-bottom: 1px solid var(--led-rule);
+  background: var(--led-frame-bg);
+  padding: 10px;
+}
+.ledger-viewer-frame img {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  max-height: min(66vh, 720px);
+  object-fit: contain;
+}
+.ledger-viewer-caption {
+  display: grid;
+  gap: 7px;
+  padding: 14px 16px 16px;
+}
+.ledger-viewer-controls {
+  position: sticky;
+  inset-block-end: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  border-top: 1px solid var(--led-rule);
+  background: var(--led-paper);
+  padding: 9px 12px;
+}
+[dir="rtl"] .ledger-viewer-title {
+  letter-spacing: normal;
+}
+
+/* The viewer never animates under reduced motion — and the sheet's own rule
+   already removes the plate transitions; this keeps the overlay calm too. */
+@media (prefers-reduced-motion: reduce) {
+  .ledger-plate-open-hint {
+    transition: none;
+  }
+}
+/* ------------------------------------------------------------------ */
 /* Arabic is written, not tracked                                      */
 /* ------------------------------------------------------------------ */
 
@@ -1165,6 +1353,7 @@ html[dir="rtl"] .ledger-appendices .lena-world-atlas-entry {
   html:has(.ledger-scope) .lena-mobile-backdrop,
   html:has(.ledger-scope) .cosmic,
   html:has(.ledger-scope) .lena-world-back,
+  html:has(.ledger-scope) .ledger-viewer,
   html:has(.ledger-scope) .lena-chamber-back {
     display: none !important;
   }
@@ -1179,7 +1368,7 @@ html[dir="rtl"] .ledger-appendices .lena-world-atlas-entry {
   html:has(.ledger-scope) .ledger-leaf {
     background: #fff !important;
     box-shadow: none !important;
-    backdrop-filter: none !important;
+    filter: none !important;
   }
 
   html:has(.ledger-scope) .lena-public,

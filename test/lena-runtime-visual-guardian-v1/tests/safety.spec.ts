@@ -465,6 +465,63 @@ test("reduced motion: Home Rose never vanishes and navigation still works", asyn
   await expect(page.locator(".ledger-sheet")).toBeVisible();
 });
 
+test("plate viewer: a plate opens as a readable document and gives the record back", async ({
+  page,
+}) => {
+  test.info().annotations.push(
+    { type: "route", description: "/world/property (plate viewer)" },
+    { type: "viewport", description: "1280x800" },
+    { type: "theme", description: "dark" },
+    { type: "locale", description: "en" },
+  );
+
+  // The leaf shows a plate at the width of a column; a capture of a real
+  // interface has to be readable. Opening one is a reading state, not a new
+  // gallery: same figure number, same caption, same source note.
+  await openApp(page, { route: "/world/property", locale: "en", theme: "dark", viewport: VIEWPORTS.desktop });
+  const opener = page.locator(".ledger-plate-open").first();
+  await expect(opener, "a documented plate is openable").toBeVisible();
+  await opener.click();
+
+  const dialog = page.locator('.ledger-viewer-panel[role="dialog"]');
+  await expect(dialog, "the plate opens as a modal document").toBeVisible();
+  await expect(dialog.locator(".ledger-viewer-frame img"), "the plate itself is shown").toBeVisible();
+  await expect(
+    dialog.locator(".ledger-viewer-caption .ledger-plate-source"),
+    "the source note travels with the plate",
+  ).toBeVisible();
+
+  // The figure number in the viewer is the same figure the leaf was showing.
+  const leafFigure = await page.locator(".ledger-plate-window .ledger-plate-bar-fig").innerText();
+  const viewerFigure = await dialog.locator(".ledger-plate-bar-fig").innerText();
+  expect(viewerFigure.replace(/\s+/g, " ").trim()).toBe(leafFigure.replace(/\s+/g, " ").trim());
+
+  // The page behind the document holds still.
+  const locked = await page.evaluate(() => document.body.style.overflow);
+  expect(locked, "the record behind the viewer does not scroll").toBe("hidden");
+
+  // Arrow keys step through the plates; Escape closes and hands the record
+  // back to the plate the reader opened.
+  await page.keyboard.press("ArrowRight");
+  await expect
+    .poll(() => dialog.locator(".ledger-plate-bar-fig").innerText())
+    .not.toBe(viewerFigure);
+  await page.keyboard.press("Escape");
+  await expect(dialog, "Escape closes the document").toHaveCount(0);
+  const refocused = await page.evaluate(() => document.activeElement?.className ?? "");
+  expect(refocused, "focus returns to the plate that was opened").toContain("ledger-plate-open");
+  const unlocked = await page.evaluate(() => document.body.style.overflow);
+  expect(unlocked, "the record scrolls again").not.toBe("hidden");
+
+  // Reduced motion is the Guardian's default: the viewer must still be a
+  // readable document, never an animation that can leave it invisible.
+  await opener.click();
+  await expect(dialog).toBeVisible();
+  await expect(dialog.locator(".ledger-viewer-frame img")).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(dialog).toHaveCount(0);
+});
+
 test("print: a record leaf prints as paper, and the home page prints as it always has", async ({
   page,
 }) => {
