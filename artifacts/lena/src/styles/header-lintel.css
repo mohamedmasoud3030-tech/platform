@@ -78,6 +78,37 @@
   color: var(--lena-text);
 }
 
+/*
+   The lintel in the paper register.
+
+   The bar above every page was written once, in ink: a dark gradient with a
+   brass edge. In the light register it stayed dark — a black band over a warm
+   paper page — because no light rule existed for it. Same geometry, same brass
+   edge, warm ground; the header is chrome, so it follows the register.
+*/
+.light .lena-header {
+  background: linear-gradient(180deg, rgba(242, 236, 221, 0.98), rgba(242, 236, 221, 0.92));
+  border-bottom: 1px solid rgba(132, 95, 19, 0.34);
+  box-shadow: 0 14px 34px rgba(24, 18, 8, 0.10);
+}
+
+.light .lena-header-scrolled {
+  background: rgba(248, 242, 227, 0.98);
+}
+
+.light .lena-header .lena-icon-button {
+  color: var(--lena-accent);
+}
+
+.light .lena-header .lena-icon-button:hover {
+  color: var(--lena-text);
+}
+
+.light .lena-header .lena-mobile-menu {
+  border-bottom: 1px solid rgba(132, 95, 19, 0.3);
+  background: rgba(248, 242, 227, 0.99);
+}
+
 .lena-lang-code {
   font-size: 11px;
   font-weight: 800;
