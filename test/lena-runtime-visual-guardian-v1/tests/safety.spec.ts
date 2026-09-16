@@ -465,6 +465,65 @@ test("reduced motion: Home Rose never vanishes and navigation still works", asyn
   await expect(page.locator(".ledger-sheet")).toBeVisible();
 });
 
+test("print: a record leaf prints as paper, and the home page prints as it always has", async ({
+  page,
+}) => {
+  test.info().annotations.push(
+    { type: "route", description: "/world/property + / (print media)" },
+    { type: "viewport", description: "1280x800" },
+    { type: "theme", description: "dark" },
+    { type: "locale", description: "en" },
+  );
+
+  // The register is a house ledger: a client prints it. On paper the chrome
+  // must disappear (nobody prints a fixed header, a starfield or the assistant
+  // disc), the sheets must be real paper, and the record entries must not be
+  // split across sheets.
+  await openApp(page, { route: "/world/property", locale: "en", theme: "dark", viewport: VIEWPORTS.desktop });
+  await page.emulateMedia({ media: "print" });
+  await expect(page.locator(".lena-header"), "chrome does not print").toBeHidden();
+  await expect(page.locator(".lena-footer"), "the footer does not print").toBeHidden();
+  await expect(page.locator(".lena-assistant-fab"), "the assistant disc does not print").toBeHidden();
+  await expect(page.locator(".ledger-leaf").first(), "the record leaf itself prints").toBeVisible();
+  await expect(page.locator(".ledger-plate").first(), "the documented plates print").toBeVisible();
+
+  // Backgrounds settle through the element's own transition, so the value is
+  // polled rather than sampled once — a print snapshot is taken long after the
+  // media change, and the test must read what the printer would get.
+  await expect
+    .poll(
+      () =>
+        page.evaluate(() =>
+          document.querySelector(".ledger-leaf")
+            ? getComputedStyle(document.querySelector(".ledger-leaf") as Element).backgroundColor
+            : null,
+        ),
+      { message: "the record leaf settles as white paper" },
+    )
+    .toBe("rgb(255, 255, 255)");
+  await expect
+    .poll(() => page.evaluate(() => getComputedStyle(document.body).backgroundColor), {
+      message: "the page itself settles as white",
+    })
+    .toBe("rgb(255, 255, 255)");
+
+  const breakInside = await page.evaluate(() => {
+    const plate = document.querySelector(".ledger-plate");
+    return plate ? getComputedStyle(plate).breakInside : null;
+  });
+  expect(breakInside, "a plate is never split across sheets").toBe("avoid");
+
+  // The home page is deliberately out of scope: the print rules are scoped to
+  // the record surfaces, so the hero and the gateway print exactly as they do
+  // today — nothing about the Rose is touched by the ledger's paper rules.
+  await page.emulateMedia({ media: "screen" });
+  await openApp(page, { route: "/", locale: "en", theme: "dark", viewport: VIEWPORTS.desktop });
+  await page.emulateMedia({ media: "print" });
+  await expect(page.locator(".rose-stage"), "the hero still prints on the home page").toBeVisible();
+  await expect(page.locator(".lena-header"), "the home chrome is untouched").toBeVisible();
+  await page.emulateMedia({ media: "screen" });
+});
+
 test("reduced motion: register entries and the chamber leaf are never left invisible", async ({
   page,
 }) => {
