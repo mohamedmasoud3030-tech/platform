@@ -66,7 +66,13 @@ describe("LedgerEntryCard", () => {
   });
 
   it("renders a pending entry honestly: no preview, no fabricated imagery", () => {
-    const entity = worldEntities().find((item) => item.systemId === "rental") as WorldEntity;
+    // Whichever system the registry has no captures for yet: the honesty rule
+    // is about the pending state, not about which system is in it today.
+    const pendingId = worldEntities()
+      .map((item) => item.systemId)
+      .find((id) => (evidenceFor(id)?.length ?? 0) === 0);
+    expect(pendingId, "the registry still has at least one pending system").toBeTruthy();
+    const entity = worldEntities().find((item) => item.systemId === pendingId) as WorldEntity;
     const { system } = renderCard(entity);
 
     expect(screen.getByText("RECORD PENDING")).toBeTruthy();

@@ -6,6 +6,13 @@ import {
   openApp,
   VIEWPORTS,
 } from "../helpers/app.mjs";
+// The canonical evidence registry is the source of truth the DOM is checked
+// against. Importing only the data (types are erased) keeps the guardian
+// black-box about behaviour while making every documented/pending claim
+// derived rather than remembered.
+import { SYSTEM_EVIDENCE } from "../../../artifacts/lena/src/features/world/content/evidence";
+import { publicSystems } from "../../../artifacts/lena/src/content/systems";
+import { ROSE_OWNER_READY } from "../../../artifacts/lena/src/features/home/rose-system-bodies";
 import {
   expectCoreCssContract,
   expectSettledOpacity,
@@ -146,6 +153,20 @@ test("the register is honest: the MALEK exemplar previews; evidence stays in cha
   );
   await openApp(page, { route: "/world", locale: "en", theme: "dark", viewport: VIEWPORTS.desktop });
 
+  // The rule, not a snapshot of it: the register is honest when every entry
+  // that carries a DOCUMENTED seal is documented in the canonical evidence
+  // registry, and every entry that does not is pending. Reading the registry —
+  // rather than pinning two system ids — is what keeps this honest when a real
+  // product adds surfaces, which is exactly what happened when Carmén Gallery's
+  // captures landed: a pinned test would have called the truth a regression.
+  const documentedIds = Object.entries(SYSTEM_EVIDENCE)
+    .filter(([, surfaces]) => (surfaces?.length ?? 0) > 0)
+    .map(([id]) => id);
+  const pendingIds = publicSystems()
+    .map((system) => system.id)
+    .filter((id) => !documentedIds.includes(id));
+  expect(documentedIds.length, "the registry documents at least one system").toBeGreaterThan(0);
+
   // MALEK is the direction's exemplar: DOCUMENTED seal + the real preview.
   const malek = page.locator('.ledger-entry[data-system="property"]');
   await expect(malek.getByText("DOCUMENTED", { exact: true })).toBeVisible();
@@ -156,20 +177,24 @@ test("the register is honest: the MALEK exemplar previews; evidence stays in cha
   }));
   expect(previewLoaded.w, "the MALEK preview is a real image").toBeGreaterThan(0);
 
-  // Other documented systems keep their plates inside their chamber — no
-  // preview rolls across the index, and no pending claim is made for them.
-  const lara = page.locator('.ledger-entry[data-system="wellness"]');
-  await expect(lara.getByText("DOCUMENTED", { exact: true })).toBeVisible();
-  await expect(lara.locator("[data-testid='ledger-preview']")).toHaveCount(0);
-  await expect(lara.locator(".ledger-nofigure")).toHaveCount(0);
+  // A documented system keeps its plates inside its chamber: no preview rolls
+  // across the index, and no pending claim is made for it.
+  for (const id of documentedIds.filter((systemId) => systemId !== "property")) {
+    const entry = page.locator(`.ledger-entry[data-system="${id}"]`);
+    await expect(entry.getByText("DOCUMENTED", { exact: true }), `${id} carries the documented seal`).toBeVisible();
+    await expect(entry.locator("[data-testid='ledger-preview']"), `${id} previews nowhere`).toHaveCount(0);
+    await expect(entry.locator(".ledger-nofigure"), `${id} is not marked pending`).toHaveCount(0);
+  }
 
-  // Systems without evidence get a RECORD PENDING seal and no imagery.
-  const pending = page.locator('.ledger-entry[data-system="rental"]');
-  await expect(pending.getByText("RECORD PENDING")).toBeVisible();
-  await expect(pending.locator("[data-testid='ledger-preview']")).toHaveCount(0);
-  const pendingImages = await pending.locator("img").count();
-  expect(pendingImages, "no fabricated imagery on a pending record").toBe(0);
-  await expect(pending.locator(".ledger-nofigure")).toBeVisible();
+  // Systems without evidence get a RECORD PENDING seal and no imagery at all.
+  for (const id of pendingIds) {
+    const pending = page.locator(`.ledger-entry[data-system="${id}"]`);
+    await expect(pending.getByText("RECORD PENDING"), `${id} is pending`).toBeVisible();
+    await expect(pending.locator("[data-testid='ledger-preview']")).toHaveCount(0);
+    const pendingImages = await pending.locator("img").count();
+    expect(pendingImages, `no fabricated imagery on the pending record ${id}`).toBe(0);
+    await expect(pending.locator(".ledger-nofigure")).toBeVisible();
+  }
 });
 
 test("MALEK Chamber keeps the external auth boundary explicit", async ({ page }) => {
@@ -339,12 +364,28 @@ test("reduced motion: Home Rose never vanishes and navigation still works", asyn
   // pair (rental + hospitality). Never a lifecycle word.
   const chips = page.locator(".rose-chip");
   await expect(chips, "six rose chips present").toHaveCount(6);
-  await expect(page.locator('.rose-chip[data-documented="true"]'), "two documented chips").toHaveCount(2);
-  await expect(page.locator('.rose-chip[data-documented="false"]'), "four not-yet-documented chips").toHaveCount(4);
+  // Derived from the registry for the same reason as the register test above:
+  // the count is the registry's truth, not a number frozen on the day.
+  const documentedCount = Object.values(SYSTEM_EVIDENCE).filter((surfaces) => (surfaces?.length ?? 0) > 0).length;
+  await expect(
+    page.locator('.rose-chip[data-documented="true"]'),
+    `${documentedCount} documented chips, matching the registry`,
+  ).toHaveCount(documentedCount);
+  await expect(
+    page.locator('.rose-chip[data-documented="false"]'),
+    `${6 - documentedCount} not-yet-documented chips`,
+  ).toHaveCount(6 - documentedCount);
 
-  // Flags must agree with the rule, and the documented pair must be exactly
-  // MALEK (property) + Lara Beauty (wellness) — the two systems the
-  // canonical registry documents.
+  // Flags must agree with the rule, and the rule's own sources are the ones
+  // checked against: the evidence registry says what is documented, and the
+  // owner's declared READY pair says what gilds early on the Rose. Both are
+  // read from the modules that own them, so a system that becomes documented —
+  // as Carmén Gallery did when its captures landed — moves this test with the
+  // product instead of breaking it.
+  const documentedFromRegistry = Object.entries(SYSTEM_EVIDENCE)
+    .filter(([, surfaces]) => (surfaces?.length ?? 0) > 0)
+    .map(([id]) => id)
+    .sort();
   const chipStates = await page.evaluate(() =>
     [...document.querySelectorAll(".rose-chip")].map((node) => ({
       id: node.getAttribute("data-system"),
@@ -353,24 +394,25 @@ test("reduced motion: Home Rose never vanishes and navigation still works", asyn
     })),
   );
   expect(chipStates).toHaveLength(6);
-  const ownerReady = ["rental", "hospitality"];
   for (const chip of chipStates) {
-    const expectedLit = chip.documented === "true" || ownerReady.includes(chip.id);
+    const expectedLit = chip.documented === "true" || (ROSE_OWNER_READY as readonly string[]).includes(chip.id ?? "");
     expect(chip.lit, `"${chip.id}" lit flag must equal documented || owner-ready`).toBe(
       String(expectedLit),
     );
   }
   const documentedIds = chipStates
     .filter((chip) => chip.documented === "true")
-    .map((chip) => chip.id)
+    .map((chip) => chip.id ?? "")
     .sort();
-  expect(documentedIds, "only registry-documented systems may be documented").toEqual(["property", "wellness"]);
+  expect(documentedIds, "the documented chips are exactly the registry's documented systems").toEqual(
+    documentedFromRegistry,
+  );
   const litIds = chipStates
     .filter((chip) => chip.lit === "true")
     .map((chip) => chip.id)
     .sort();
-  expect(litIds, "lit chips are the documented pair plus the owner-declared READY pair").toEqual(
-    ["hospitality", "property", "rental", "wellness"],
+  expect(litIds, "lit chips are the registry's documented systems plus the owner-declared READY pair").toEqual(
+    [...new Set([...documentedFromRegistry, ...(ROSE_OWNER_READY as readonly string[])])].sort(),
   );
 
   // The light is real: lit and dim chips render different, non-transparent
@@ -391,12 +433,25 @@ test("reduced motion: Home Rose never vanishes and navigation still works", asyn
 
   // The status key is visible (honesty at the surface, not only in data
   // attributes): READY for lit systems, RECORD PENDING for the rest.
-  await expect(page.locator(".night-key"), "rose key line visible").toBeVisible();
-  await expect(page.getByText("READY", { exact: true }), "ready key entry visible").toBeVisible();
+  // The legend that once sat under the Rose (`.night-key`, dropped with the
+  // reading cards in d45bcfd2) is not in the product any more, so this test no
+  // longer claims to find it. What stays true is checked instead: the flags are
+  // registry-backed (above), the hero makes no seal claim of its own, and the
+  // Rose still works as a truthful map — every chip points at its own chamber.
+  const chipLinks = await page.evaluate(() =>
+    [...document.querySelectorAll(".rose-chip")].map((node) => ({
+      id: node.getAttribute("data-system"),
+      href: node.getAttribute("href"),
+    })),
+  );
+  expect(chipLinks).toHaveLength(6);
+  for (const link of chipLinks) {
+    expect(link.href, `${link.id} chip points at its own chamber`).toBe(`/en/world/${link.id}`);
+  }
   await expect(
-    page.getByText("RECORD PENDING", { exact: true }),
-    "pending key entry visible",
-  ).toBeVisible();
+    page.locator(".rose-stage").getByText("DOCUMENTED", { exact: true }),
+    "the hero claims no documentation of its own — evidence lives in the chambers",
+  ).toHaveCount(0);
 
   const stageOpacity = await page.locator(".rose-stage").evaluate((el) => Number(getComputedStyle(el).opacity));
   expect(stageOpacity, `rose stage opacity under reduced motion`).toBe(1);

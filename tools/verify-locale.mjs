@@ -45,13 +45,27 @@ check("Arabic link wins over an English device", () => {
   assert.equal(L.bootstrapLocale(url("/ar/portfolio"), ["en-US"]).locale, "ar");
 });
 
-console.log("\n== first visit, no prefix: device decides ==");
+console.log("\n== first visit, no prefix: the house opens in English until asked ==");
 reset();
-check("Arabic device → Arabic", () => assert.equal(L.bootstrapLocale(url("/"), ["ar-EG"]).locale, "ar"));
+// The priority is deliberate (see resolveLocale): the address decides, then
+// the visitor's own stored choice, then English. Device languages are
+// deliberately not consulted — a link shared with a client must not change
+// language because of the phone it is opened on — and Arabic is one tap away
+// in the language control. This is the "English default" decision landed in
+// 375fcb35, asserted from both directions so it can never drift silently.
+check("Arabic device, no stored choice → English (device language is not consulted)", () =>
+  assert.equal(L.bootstrapLocale(url("/"), ["ar-EG"]).locale, "en"));
 check("English device → English", () => assert.equal(L.bootstrapLocale(url("/"), ["en-GB"]).locale, "en"));
 check("French device → English fallback (we do not publish French)", () => assert.equal(L.bootstrapLocale(url("/"), ["fr-FR"]).locale, "en"));
-check("German-then-Arabic device → Arabic (first supported wins)", () => assert.equal(L.bootstrapLocale(url("/"), ["de", "ar"]).locale, "ar"));
+check("German-then-Arabic device → English (device order changes nothing)", () =>
+  assert.equal(L.bootstrapLocale(url("/"), ["de", "ar"]).locale, "en"));
 check("no language information at all → English", () => assert.equal(L.bootstrapLocale(url("/"), []).locale, "en"));
+check("the visitor's own Arabic choice is honoured on the bare root", () => {
+  reset();
+  L.storeLocale("ar");
+  assert.equal(L.bootstrapLocale(url("/"), ["en"]).locale, "ar");
+  reset();
+});
 
 console.log("\n== a returning visitor's own choice beats the device ==");
 reset();
@@ -66,8 +80,8 @@ reset();
 check("/services → /en/services for an English visitor", () => {
   assert.equal(L.bootstrapLocale(url("/services"), ["en"]).redirectTo, "/en/services");
 });
-check("/world/property → /ar/world/property for an Arabic visitor", () => {
-  assert.equal(L.bootstrapLocale(url("/world/property"), ["ar"]).redirectTo, "/ar/world/property");
+check("/world/property → /en/world/property for a first-time visitor (device does not decide)", () => {
+  assert.equal(L.bootstrapLocale(url("/world/property"), ["ar"]).redirectTo, "/en/world/property");
 });
 check("query string and hash survive the move", () => {
   const r = L.bootstrapLocale(url("/contact", "?service=property", "#form"), ["en"]);
@@ -118,15 +132,21 @@ check("/lena/en/about is English and does not redirect", () => {
   assert.equal(r.locale, "en");
   assert.equal(r.redirectTo, null);
 });
-check("/lena → /lena/ar for an Arabic device", () => {
-  assert.equal(L.bootstrapLocale(url("/lena"), ["ar"]).redirectTo, "/lena/ar");
+check("/lena → /lena/en for a first-time visitor (device does not decide)", () => {
+  assert.equal(L.bootstrapLocale(url("/lena"), ["ar"]).redirectTo, "/lena/en");
+});
+check("/lena → /lena/ar once the visitor has chosen Arabic", () => {
+  reset();
+  L.storeLocale("ar");
+  assert.equal(L.bootstrapLocale(url("/lena"), ["en"]).redirectTo, "/lena/ar");
+  reset();
 });
 check("/lena/services → /lena/en/services for an English visitor", () => {
   assert.equal(L.bootstrapLocale(url("/lena/services"), ["en"]).redirectTo, "/lena/en/services");
 });
 check("query string survives the /lena move", () => {
   const r = L.bootstrapLocale(url("/lena/contact", "?from=malek", "#form"), ["ar"]);
-  assert.equal(r.redirectTo, "/lena/ar/contact?from=malek#form");
+  assert.equal(r.redirectTo, "/lena/en/contact?from=malek#form");
 });
 check("language switch keeps the page under /lena", () => {
   assert.equal(L.withLocale("en", "/lena/ar/services"), "/lena/en/services");
