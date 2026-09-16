@@ -321,6 +321,48 @@ html[dir="rtl"] .lena-public .lena-section-title {
   }
 }
 
+/*
+   Light register — the polish above is written for the ink ground: #c2bbcc
+   leads, a near-black menu panel, dark process slabs. On warm paper those
+   surfaces invert, and the honest fix is not a second palette but to stop
+   overriding the tokens the light theme already carries. axe flagged the two
+   leads as serious contrast failures the moment light mode became reachable
+   again; the rest of this block is the same class of defect on narrow widths.
+*/
+.light .lena-public .lena-lead,
+.light .lena-public .lena-section-lead,
+.light .lena-public .lena-opus-blurb,
+.light .lena-public .lena-contact-card p,
+.light .lena-opus-evidence-pending span {
+  color: var(--lena-muted);
+}
+
+.light .lena-mobile-backdrop {
+  background: rgba(24, 18, 8, 0.42);
+}
+
+@media (max-width: 1050px) {
+  .light .lena-header .lena-mobile-menu {
+    border-color: var(--lena-line-strong);
+    background: var(--lena-card-strong) !important;
+    box-shadow: 0 24px 60px rgba(24, 18, 8, 0.24);
+  }
+
+  .light .lena-header .lena-mobile-link {
+    border-bottom-color: var(--lena-line);
+    color: var(--lena-muted);
+  }
+
+  .light .lena-header .lena-mobile-link:hover,
+  .light .lena-header .lena-mobile-link.active {
+    background: rgba(132, 95, 19, 0.12);
+  }
+
+  .light .lena-process article {
+    background: var(--lena-card-strong);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .lena-mobile-backdrop,
   .lena-header .lena-mobile-menu {
