@@ -1101,3 +1101,133 @@
     transform: none;
   }
 }
+
+/* ------------------------------------------------------------------ */
+/* Arabic is written, not tracked                                      */
+/* ------------------------------------------------------------------ */
+
+/*
+   The record's small labels are set as tracked Latin caps — "RECORDED ON",
+   "THE REAL PROBLEM" — and that is right in English. Arabic is a joined
+   script: the same 0.14em–0.2em tracking pulls the letters of «المشكلة
+   الواقعية» apart and the word stops reading as one word. The register is the
+   surface where a client reads Arabic for a whole page, so the Arabic setting
+   keeps the weight, the case and the colour, and drops only the spacing.
+
+   Numerals keep their tracking on purpose: «٠١ / ٠٧» is a plate coordinate set
+   in tabular digits, not a word.
+*/
+html[dir="rtl"] .ledger-eyebrow,
+html[dir="rtl"] .ledger-kicker,
+html[dir="rtl"] .ledger-label,
+html[dir="rtl"] .ledger-section-label,
+html[dir="rtl"] .ledger-sectionhead small,
+html[dir="rtl"] .ledger-record-block small,
+html[dir="rtl"] .ledger-sheet-label,
+html[dir="rtl"] .ledger-entrytag,
+html[dir="rtl"] .ledger-seal,
+html[dir="rtl"] .ledger-remembered,
+html[dir="rtl"] .ledger-preview-bar,
+html[dir="rtl"] .ledger-plate-bar,
+html[dir="rtl"] .ledger-boundary small,
+html[dir="rtl"] .ledger-rootref,
+html[dir="rtl"] .ledger-leaf-tagline,
+html[dir="rtl"] .ledger-appendices .lena-world-command-entry,
+html[dir="rtl"] .ledger-appendices .lena-world-atlas-entry {
+  letter-spacing: normal;
+}
+
+/* Arabic lines break on whole words: no orphan word on its own line. */
+.ledger-scope p,
+.ledger-scope li {
+  text-wrap: pretty;
+}
+
+/* ------------------------------------------------------------------ */
+/* The register prints as paper                                        */
+/* ------------------------------------------------------------------ */
+
+/*
+   A house ledger exists to be printed: an owner prints a chamber leaf, a
+   client prints the register to read away from a screen. Every rule below is
+   guarded by `:has(.ledger-scope)`, so it applies to the record surfaces and
+   to nothing else — the home page and its hero print exactly as they do
+   today, and no rule here names any hero element.
+*/
+@media print {
+  html:has(.ledger-scope) .lena-header,
+  html:has(.ledger-scope) .lena-footer,
+  html:has(.ledger-scope) .lena-whatsapp-fab,
+  html:has(.ledger-scope) .lena-assistant-fab,
+  html:has(.ledger-scope) .lena-assistant-panel,
+  html:has(.ledger-scope) .lena-assistant-teaser,
+  html:has(.ledger-scope) .lena-mobile-menu,
+  html:has(.ledger-scope) .lena-mobile-backdrop,
+  html:has(.ledger-scope) .cosmic,
+  html:has(.ledger-scope) .lena-world-back,
+  html:has(.ledger-scope) .lena-chamber-back {
+    display: none !important;
+  }
+
+  html:has(.ledger-scope) body,
+  html:has(.ledger-scope) .lena-public,
+  html:has(.ledger-scope) .ledger-sheet,
+  html:has(.ledger-scope) .ledger-scope,
+  html:has(.ledger-scope) .ledger-entry,
+  html:has(.ledger-scope) .ledger-plate,
+  html:has(.ledger-scope) .ledger-record-block,
+  html:has(.ledger-scope) .ledger-leaf {
+    background: #fff !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+  }
+
+  html:has(.ledger-scope) .lena-public,
+  html:has(.ledger-scope) .ledger-headline,
+  html:has(.ledger-scope) .ledger-entry,
+  html:has(.ledger-scope) .ledger-plate {
+    color: #14161f !important;
+  }
+
+  html:has(.ledger-scope) .ledger-sheet,
+  html:has(.ledger-scope) .ledger-entry,
+  html:has(.ledger-scope) .ledger-plate,
+  html:has(.ledger-scope) .ledger-record-block,
+  html:has(.ledger-scope) .ledger-boundary {
+    border-color: #c6c1b6 !important;
+    color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* The seal is the record's one signal: it keeps its brass on paper. */
+  html:has(.ledger-scope) .ledger-seal {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* A record entry or a plate is never split across two sheets. */
+  html:has(.ledger-scope) .ledger-entry,
+  html:has(.ledger-scope) .ledger-plate,
+  html:has(.ledger-scope) .ledger-record-block,
+  html:has(.ledger-scope) .ledger-plates,
+  html:has(.ledger-scope) .ledger-plates figure {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  html:has(.ledger-scope) .ledger-headline,
+  html:has(.ledger-scope) .ledger-section-label,
+  html:has(.ledger-scope) .ledger-leaf-title {
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+
+  /* A printed record keeps the address it points at. */
+  html:has(.ledger-scope) .ledger-open::after,
+  html:has(.ledger-scope) .ledger-more::after {
+    content: " · " attr(href);
+    font-size: 9px;
+    color: #5c5f74;
+  }
+}
