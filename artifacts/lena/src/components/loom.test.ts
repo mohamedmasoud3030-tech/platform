@@ -3,7 +3,8 @@ import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import { publicSystems } from "@/content/systems";
 import { OPERATING_PRIMITIVES } from "@/features/world/content/operating-primitives";
-import { roseBodies } from "@/features/home/rose-system-bodies";
+import { ROSE_OWNER_READY, roseBodies } from "@/features/home/rose-system-bodies";
+import { SYSTEM_EVIDENCE } from "@/features/world/content/evidence";
 import { PRIMITIVE_LABELS, ROOT_ORDER, knotKindsFor, loomStatus, rootLoadFor } from "./loom-model";
 
 const css = readFileSync(resolve(process.cwd(), "src/styles/loom.css"), "utf8");
@@ -60,13 +61,18 @@ describe("the loom", () => {
 
   it("sees the temporary owner-ready middle state alive today", () => {
     const bodies = roseBodies();
+    const documented = Object.entries(SYSTEM_EVIDENCE)
+      .filter(([, surfaces]) => (surfaces?.length ?? 0) > 0)
+      .map(([id]) => id);
     expect(bodies.some((b) => b.documented)).toBe(true);
+    // The middle state is the owner's directive for the systems evidence has
+    // not reached yet — read from the directive, never memorised here.
     expect(
       bodies
         .filter((b) => b.ownerReady)
         .map((b) => b.system.id)
         .sort(),
-    ).toEqual(["hospitality", "investment", "recycling", "rental"]);
+    ).toEqual((ROSE_OWNER_READY as readonly string[]).filter((id) => !documented.includes(id)).sort());
     expect(bodies.every((b) => b.lit)).toBe(true);
   });
 

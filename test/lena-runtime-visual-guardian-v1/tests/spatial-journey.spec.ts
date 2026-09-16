@@ -1,6 +1,11 @@
 import { expect, test } from "@playwright/test";
 import { openApp, VIEWPORTS } from "../helpers/app.mjs";
 import { GUARDIAN_CONFIG } from "../helpers/config.mjs";
+// The register's own order is the canonical numbering: the chamber prints
+// `order` from this module, and the entry tag moved from ENTRY 03 to ENTRY 01
+// when the owner's register order settled. Reading the order keeps the journey
+// honest about the number the product prints instead of pinning the old one.
+import { publicSystems } from "../../../artifacts/lena/src/content/systems";
 
 /**
  * House Ledger — register journey smoke.
@@ -46,7 +51,12 @@ test("register journey: Home → World → MALEK Chamber → Back → Back", asy
   await expect(page.locator(".ledger-plates")).toBeVisible();
   await expect(page.locator(".ledger-plate")).toBeVisible();
   await expect(page.locator(".ledger-plate-tab").first()).toBeVisible();
-  await expect(page.locator(".ledger-entrytag", { hasText: "ENTRY 03" })).toBeVisible();
+  const propertyOrder = publicSystems().find((system) => system.id === "property")?.order;
+  expect(propertyOrder, "the register numbers MALEK").toBeGreaterThan(0);
+  await expect(
+    page.locator(".ledger-entrytag", { hasText: `ENTRY ${String(propertyOrder).padStart(2, "0")}` }),
+    "the chamber prints the register's own entry number",
+  ).toBeVisible();
 
   // Clean state: no stuck portal layer / aria-busy / disabled pointer layer.
   await expect(page.locator(".lena-world.is-portal, .lena-world.is-portal-resolve")).toHaveCount(0);

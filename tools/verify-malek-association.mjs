@@ -22,7 +22,11 @@ const grid = readFileSync(resolve(ROOT, "artifacts/lena/src/components/SystemGri
 console.log("\n== LENA surfaces MALEK as a product, not as LENA support ==");
 check("the property system is a public named product MALEK", () => {
   assert.match(systems, /id:\s*"property"/);
-  assert.match(systems, /name:\s*\{\s*ar:\s*"MALEK",\s*en:\s*"MALEK"\s*\}/);
+  // The brand is MALEK in both languages; each language writes it in its own
+  // script (the Arabic surface reads مالك). Pinning the Latin pair here would
+  // call the shipped Arabic brand a regression — the intent of this check is
+  // that MALEK stays a named public product, not how Arabic spells it.
+  assert.match(systems, /name:\s*\{\s*ar:\s*"(?:MALEK|مالك)",\s*en:\s*"MALEK"\s*\}/);
   assert.match(systems, /visibility:\s*"public"/);
 });
 check("MALEK has a concise bilingual product tagline", () => {
@@ -30,8 +34,13 @@ check("MALEK has a concise bilingual product tagline", () => {
   assert.match(systems, /منصة عربية لتشغيل العقارات ومحاسبة الإيجار/);
 });
 check("the existing industry-system grid renders the tagline rather than a parallel product card", () => {
+  // Still the one house grid in the settled card grammar (the opus card the
+  // owner marked): the tagline is the card's own blurb line, and the card
+  // opens its chamber directly (b0ebbde8 — direct entry, no circular hop
+  // through /services), never an inquiry form.
   assert.match(grid, /system\.tagline/);
-  assert.match(grid, /lena-system-tagline/);
+  assert.match(grid, /lena-opus-blurb/);
+  assert.doesNotMatch(grid, /<ProductCard|product-card/i);
 });
 check("LENA is not described as MALEK support", () => {
   const home = readFileSync(resolve(ROOT, "artifacts/lena/src/pages/Home.tsx"), "utf8");
@@ -58,7 +67,7 @@ check("the homepage is a normal LENA company page, not an app chooser or support
   assert.doesNotMatch(home, /اختر تطبيق/);
   assert.doesNotMatch(home, /support popup/i);
   assert.doesNotMatch(app, /path="\/products/);
-  assert.match(grid, /\/services#\$\{system\.id\}/);
+  assert.match(grid, /to=\{`\/world\/\$\{system\.id\}`\}/);
   assert.doesNotMatch(grid, /\/contact\?service=/);
 });
 
