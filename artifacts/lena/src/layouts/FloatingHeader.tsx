@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, Moon, Sun, X } from "lucide-react";
 import { Link, useLocation } from "react-router";
 import LenaLogo from "@/design-system/brand/LenaLogo";
 import { PUBLIC_NAVIGATION } from "@/content/navigation";
@@ -9,7 +9,7 @@ import { usePreferences } from "@/providers/preferences";
 
 export default function FloatingHeader() {
   const copy = useSiteCopy();
-  const { locale, toggleLocale } = usePreferences();
+  const { locale, theme, toggleLocale, toggleTheme } = usePreferences();
   const { pathname } = useLocation();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -85,6 +85,30 @@ export default function FloatingHeader() {
         </div>
 
         <div className="lena-nav-actions">
+          {/*
+            The two registers are a choice, not a setting: one press moves the
+            whole house between the ink operating room and the warm-paper
+            register. It lives beside the language switch because it is the same
+            kind of decision, and it is the only way the light palette — which
+            ships complete in styles/tokens.css — is reachable at all.
+          */}
+          <button
+            type="button"
+            className="lena-icon-button"
+            onClick={() => {
+              track("theme_switched", { theme: theme === "dark" ? "light" : "dark", surface: "header" });
+              toggleTheme();
+            }}
+            aria-pressed={theme === "light"}
+            aria-label={
+              theme === "dark"
+                ? (locale === "ar" ? "التبديل إلى السجل الفاتح" : "Switch to the paper register")
+                : (locale === "ar" ? "التبديل إلى الوضع الداكن" : "Switch to the ink register")
+            }
+          >
+            {theme === "dark" ? <Sun aria-hidden="true" size={16} /> : <Moon aria-hidden="true" size={16} />}
+          </button>
+
           <button
             type="button"
             className="lena-icon-button"

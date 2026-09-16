@@ -24,7 +24,29 @@ type PreferencesContextValue = {
 const PreferencesContext = createContext<PreferencesContextValue | null>(null);
 const THEME_STORAGE_KEY = "lena-digital-house.theme";
 
+function isAppTheme(value: unknown): value is AppTheme {
+  return value === "light" || value === "dark";
+}
+
+/**
+ * The theme a visitor gets on the first paint of a visit.
+ *
+ * The House Ledger ships two complete palettes — the ink operating room and the
+ * warm-paper register — and the stored choice decides between them. This was
+ * hard-wired to `dark` while `styles/tokens.css` carried the whole light
+ * palette, `styles/public.css` carried its overrides and the design system
+ * promised both modes: a mode nobody could reach, and three red safety tests.
+ * Dark stays the default for a first-time visitor, because that is the register
+ * the house is introduced in.
+ */
 function getInitialTheme(): AppTheme {
+  if (typeof window === "undefined") return "dark";
+  try {
+    const stored = window.localStorage.getItem(THEME_STORAGE_KEY);
+    if (isAppTheme(stored)) return stored;
+  } catch {
+    /* A blocked storage must never stop the app from choosing the default. */
+  }
   return "dark";
 }
 
@@ -39,16 +61,30 @@ export function PreferencesProvider({
   const [locale, setLocaleState] = useState<AppLocale>(initialLocale);
   const direction = locale === "ar" ? "rtl" : "ltr";
 
+  /**
+   * One place writes the theme to the document, and it writes both signals the
+   * palettes and the guardian suite read: the `light`/`dark` class and
+   * `data-theme`. Keeping them in one effect is what stops a surface that
+   * checked only one of them from rendering the wrong register.
+   */
   useEffect(() => {
     const root = document.documentElement;
     root.classList.remove("light", "dark");
-    root.classList.add("dark");
-    root.dataset.theme = "dark";
-    window.localStorage.setItem(THEME_STORAGE_KEY, "dark");
+    root.classList.add(theme);
+    root.dataset.theme = theme;
+    try {
+      window.localStorage.setItem(THEME_STORAGE_KEY, theme);
+    } catch {
+      /* Persisting is best-effort; the mode still applies for this visit. */
+    }
   }, [theme]);
 
-  const setTheme = useCallback((_next?: AppTheme) => {
-    setThemeState("dark");
+  const setTheme = useCallback((next: AppTheme) => {
+    setThemeState(isAppTheme(next) ? next : "dark");
+  }, []);
+
+  const toggleTheme = useCallback(() => {
+    setThemeState((current) => (current === "dark" ? "light" : "dark"));
   }, []);
 
   useEffect(() => {
@@ -90,10 +126,10 @@ export function PreferencesProvider({
       direction,
       setTheme,
       setLocale,
-      toggleTheme: () => setTheme("dark"),
+      toggleTheme,
       toggleLocale: () => setLocale(locale === "ar" ? "en" : "ar"),
     }),
-    [direction, locale, setLocale, setTheme, theme],
+    [direction, locale, setLocale, setTheme, theme, toggleTheme],
   );
 
   return <PreferencesContext.Provider value={value}>{children}</PreferencesContext.Provider>;

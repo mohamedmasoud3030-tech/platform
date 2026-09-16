@@ -208,10 +208,15 @@
   backdrop-filter: blur(2px) saturate(1.1);
 }
 
+/*
+   The footer is the last leaf of the ledger, not a pane of glass. At 0.2 alpha
+   it read as a faded strip with the page showing through it — no blur on a
+   permanent surface, and a solid paper ground, exactly like the sheets above it.
+*/
 .light .lena-public:has(.cosmic) .lena-footer {
-  background: rgba(253, 248, 235, 0.2);
-  -webkit-backdrop-filter: blur(2px);
-  backdrop-filter: blur(2px);
+  background: #f8f2e3;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
 }
 
 .light .lena-public:has(.cosmic) .lena-founder-strip {

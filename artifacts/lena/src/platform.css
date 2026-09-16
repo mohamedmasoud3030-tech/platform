@@ -1,4 +1,15 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Noto+Kufi+Arabic:wght@400;500;600;700&family=Noto+Naskh+Arabic:wght@400;500;600;700&family=Noto+Sans+Arabic:wght@300;400;500;600;700&display=swap');
+/*
+   Fonts are self-hosted (see scripts/fetch-fonts.mjs).
+
+   The families and their stacks are unchanged from the design system; what
+   changed is where the bytes come from. The public site used to pull five
+   families from Google Fonts on every visit — a third party on the critical
+   path of a house whose whole claim is that what you see is what runs. Now the
+   same three families the design system actually names are served from this
+   origin, subsets only, with the original unicode-range so a page downloads
+   nothing it does not render.
+*/
+@import "./styles/fonts.css";
 
 /* Typography follows the design-system spec (design-system/mohamed-masoud-platform/MASTER.md):
    Arabic body = IBM Plex Sans Arabic, Arabic headings = Noto Kufi Arabic, English = Inter. */
@@ -62,6 +73,18 @@ body {
   background: var(--platform-bg);
   color: var(--platform-text);
   transition: background-color 220ms ease, color 220ms ease;
+}
+
+/*
+   The document behind the sheets follows the register.
+   `--platform-*` is the platform entry shell's own palette; every public
+   surface is drawn from the House Ledger tokens, so in the paper register the
+   page ground must be the ledger's warm paper — otherwise a light visit shows
+   dark gutters around a paper sheet.
+*/
+html.light body {
+  background: var(--lena-bg);
+  color: var(--lena-text);
 }
 
 .app-shell {
