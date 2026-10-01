@@ -78,11 +78,58 @@ function useOrbitRadius(): number {
   return radius;
 }
 
+/**
+ * Calm-pulse gate (reduced motion only).
+ *
+ * Under reduced motion the wheels stop, but the hub would be left dead. The CSS
+ * gives it a slow opacity-only pulse instead — and this gate decides *when* that
+ * pulse is allowed to exist.
+ *
+ * It waits for the page to finish loading plus a settle beat, for two reasons:
+ *  - scheduled captures (the visual-regression suite) run right after load and
+ *    must photograph the static window, so baselines stay byte-stable;
+ *  - a visitor reads a still frame first, and the window comes alive after it.
+ *
+ * Fail-safe by construction: if this effect never runs (no JavaScript, older
+ * browser, unmounted), the attribute is absent and the window is simply still —
+ * the pulse is an enhancement over the static rendering, never a prerequisite.
+ */
+function useCalmPulse(settleMs = 1200): boolean {
+  const [calm, setCalm] = useState(false);
+
+  useEffect(() => {
+    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (!media.matches) return;
+
+    let timer: number | undefined;
+    const arm = () => {
+      timer = window.setTimeout(() => setCalm(true), settleMs);
+    };
+    if (document.readyState === "complete") arm();
+    else window.addEventListener("load", arm, { once: true });
+
+    // A visitor who turns reduced motion off mid-session gets the wheels back.
+    const onChange = () => {
+      if (!media.matches) setCalm(false);
+    };
+    media.addEventListener("change", onChange);
+
+    return () => {
+      window.removeEventListener("load", arm);
+      if (timer !== undefined) window.clearTimeout(timer);
+      media.removeEventListener("change", onChange);
+    };
+  }, [settleMs]);
+
+  return calm;
+}
+
 export default function RoseEngine() {
   const { locale, direction } = usePreferences();
   const bodies = roseBodies();
   const mirror: RoseMirror = direction === "rtl" ? -1 : 1;
   const orbitRadius = useOrbitRadius();
+  const calm = useCalmPulse();
   const [focusId, setFocusId] = useState<string | null>(null);
 
   const orbitUnits = (orbitRadius / 100) * 600;
@@ -98,7 +145,8 @@ export default function RoseEngine() {
             : "The Rose Engine: six systems around the LENA core"
         }
       >
-        <div className="rose-stage">
+        {/* `data-calm` is the reduced-motion pulse gate; see useCalmPulse. */}
+        <div className="rose-stage" data-calm={calm ? "true" : undefined}>
           {/* ambient sparkles */}
           <div className="rose-stars" aria-hidden="true">
             {STARS.map((star, i) => (

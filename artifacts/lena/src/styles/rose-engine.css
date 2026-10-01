@@ -26,7 +26,9 @@
    - Chips/threads use the independent `rotate` / `translate` / `scale`
      properties so positioning, counter-rotation and hover lift never fight.
    - Rotation never pauses on hover, focus, or press; under
-     `prefers-reduced-motion` the window appears complete and still.
+     `prefers-reduced-motion` the window appears complete and still — the
+     wheels stop, and only the hub keeps a slow opacity pulse (see the
+     reduced-motion block at the end of this file).
    - RTL mirrors every station angle and reverses every wheel so the whole
      rite reads right-to-left.
 ============================================================================= */
@@ -695,16 +697,53 @@
   }
 }
 
-/* --- reduced motion: complete and still -------------------------------------- */
+/* --- the calm pulse (reduced motion only) ------------------------------------ */
 
+/**
+ * Opacity alone. These keyframes are referenced exclusively from the
+ * reduced-motion block below; keeping them here mirrors how every other Rose
+ * animation is declared, and an unreferenced keyframe costs nothing.
+ */
+@keyframes rose-calm-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.86; }
+}
+
+@keyframes rose-calm-halo {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+/* --- reduced motion: complete and still, with a living hub -------------------- */
+
+/**
+ * The wheels stop; the window stays whole. What remains is deliberately not
+ * motion: the two halo rings and the core sigil pulse in *opacity only* — no
+ * rotation, translation or scale — so nothing travels through space and no
+ * vestibular trigger is introduced (WCAG 2.3.1: cycles of 6s/8s, far below any
+ * flash threshold).
+ *
+ * Two constraints shape the rules below:
+ *  1. `!important` is required. `styles/responsive.css` caps every animation on
+ *     `*` under reduced motion (`animation-duration: .01ms !important`).
+ *     A class selector with `!important` outranks that universal rule.
+ *  2. The pulse exists only while the stage carries `data-calm`, which
+ *     `useCalmPulse` sets after the page has loaded and settled. An element
+ *     with a live animation is promoted to its own compositing layer even
+ *     during a delay, which subtly changes how the whole stage rasterises —
+ *     so a pulse that merely starts transparent would still move the guardian's
+ *     visual baselines. Gating it on the settled state keeps capture (right
+ *     after load) pixel-identical to the static window.
+ *
+ * Both keyframes start and end at full opacity, so even a sampled frame is
+ * never a dimmed one.
+ */
 @media (prefers-reduced-motion: reduce) {
   .rose-stage,
   .rose-geometry,
   .rose-orbit,
   .rose-chip,
-  .rose-sigil,
   .rose-rope-flow,
-  .rose-halo,
   .rose-comets,
   .rose-comet,
   .rose-star,
@@ -716,6 +755,20 @@
   .rose-rope-body,
   .rose-rope-echo {
     animation: none;
+  }
+
+  /* The hub is alive, the wheels are not — and only once the stage says the
+     page has settled (see useCalmPulse in RoseEngine.tsx). */
+  .rose-stage[data-calm="true"] .rose-sigil {
+    animation: rose-calm-pulse 6s ease-in-out infinite !important;
+  }
+
+  .rose-stage[data-calm="true"] .rose-halo {
+    animation: rose-calm-halo 8s ease-in-out infinite !important;
+  }
+
+  .rose-stage[data-calm="true"] .rose-halo.two {
+    animation-delay: 1.6s !important;
   }
 
   .rose-construction,
