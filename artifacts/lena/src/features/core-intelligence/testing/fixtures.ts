@@ -33,11 +33,16 @@ export const PUB_WORLD_IDS = [
 /** Fixed clock shared by all fixtures (2026-09-03T09:00:00.000Z). */
 export const FIXED_NOW = Date.parse("2026-09-03T09:00:00.000Z");
 
-/** Explicitly authorized fixture source; never used by production composition. */
+/**
+ * Explicitly authorized fixture source; never used by production composition.
+ * Coverage is the canonical public set, so fixture derivations keep the same
+ * presence semantics they had before coverage existed.
+ */
 export const AVAILABLE_SIGNAL_SOURCE: SignalSourceState = {
   availability: "available",
   observedAt: "2026-09-03T09:00:00.000Z",
   writable: true,
+  coversWorlds: [...PUB_WORLD_IDS],
 };
 
 /** Deterministic ISO timestamp offset from FIXED_NOW, in minutes. */

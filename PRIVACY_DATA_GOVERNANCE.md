@@ -177,6 +177,7 @@ to.** Nothing above should be read as a determination.
 | Crash reports leak no personal data or stack traces to the screen | `e2e/verify-boundary.mjs` | pass |
 | Form drafts never leave the device and survive hostile storage | `e2e/verify-draft.mjs` | pass |
 | No AI SDK, model endpoint or undeclared outbound host exists | `tools/check-egress.mjs` (runs in every build) | pass |
+| The product signal source carries operational signals only — no customer, inquiry or tenant data, no persistence | `docs/WORLD_SIGNAL_SOURCE.md` contract + `tools/verify-world-signal-source.mjs` | pass |
 
 | Retention anonymises only records past the window, keeps history, and is audited | live server + real database | pass (38-month-old record) |
 | Audit events cannot be updated or deleted, even directly in the database | live database | pass — both blocked by a trigger |

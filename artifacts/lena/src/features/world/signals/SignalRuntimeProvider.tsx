@@ -53,8 +53,11 @@ export function SignalRuntimeProvider({ children }: { children: ReactNode }) {
     const source = worldSignalStore.getSource();
     const available = source.availability === "available";
     const observedSignals = available ? signals : [];
+    // Coverage matters: a world the source does not observe is unavailable,
+    // never "quiet". Without this, a single-product source would report the
+    // remaining worlds as calm.
     const presence = available
-      ? presenceByWorld(observedSignals, worldIds)
+      ? presenceByWorld(observedSignals, worldIds, source.coversWorlds)
       : unavailablePresence(worldIds);
 
     const canMutate = available && source.writable;

@@ -37,12 +37,26 @@ export function signalsForWorld(signals: WorldSignal[], worldId: string): WorldS
   return signals.filter((s) => s.sourceWorld === worldId);
 }
 
+/**
+ * Per-world presence.
+ *
+ * `coveredWorldIds` is the source's declared coverage. When a source is
+ * available but does not observe a world, that world is `unavailable` — an
+ * unobserved world must never read as a calm one. Omitting coverage keeps the
+ * previous behaviour for callers that already scoped their own world list.
+ */
 export function presenceByWorld(
   signals: WorldSignal[],
   worldIds: string[],
+  coveredWorldIds?: readonly string[],
 ): Record<string, WorldPresence> {
+  const covered = coveredWorldIds ? new Set(coveredWorldIds) : null;
   const map: Record<string, WorldPresence> = {};
   for (const id of worldIds) {
+    if (covered && !covered.has(id)) {
+      map[id] = "unavailable";
+      continue;
+    }
     map[id] = presenceFromSignals(signalsForWorld(signals, id));
   }
   return map;

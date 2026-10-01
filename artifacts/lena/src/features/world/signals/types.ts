@@ -40,17 +40,46 @@ export type WorldSignal = {
  * authorized product source exists; fixtures may explicitly provide an
  * available source in tests or a named demo harness.
  */
+/**
+ * Why nothing is observable.
+ *
+ * `no-authorized-product-source` is the production default: no product endpoint
+ * is configured, so the room is explicitly blind. The remaining values describe
+ * a configured source that did not answer: they are coarse transport facts, never
+ * upstream error text, and they exist so the room can say *which* absence it is
+ * looking at instead of pretending the source was never plugged in.
+ *
+ * `uncovered-worlds` is derived locally: the source answered, but covers no world
+ * that LENA publishes, so there is still nothing to observe.
+ */
+export type SignalSourceUnavailableReason =
+  | "no-authorized-product-source"
+  | "not-configured"
+  | "unreachable"
+  | "timeout"
+  | "rejected"
+  | "too-large"
+  | "invalid-payload"
+  | "uncovered-worlds";
+
 export type SignalSourceState =
   | {
       availability: "unavailable";
-      reason: "no-authorized-product-source";
+      reason: SignalSourceUnavailableReason;
       observedAt: null;
       writable: false;
+      /** Coverage is only meaningful for an available source. */
+      coversWorlds: readonly SystemId[];
     }
   | {
       availability: "available";
       observedAt: string;
       writable: boolean;
+      /**
+       * The worlds this source actually observes. A world outside this list is
+       * `unavailable`, never `quiet`: an unobserved world is not a calm one.
+       */
+      coversWorlds: readonly SystemId[];
     };
 
 export const UNAVAILABLE_SIGNAL_SOURCE: SignalSourceState = {
@@ -58,7 +87,10 @@ export const UNAVAILABLE_SIGNAL_SOURCE: SignalSourceState = {
   reason: "no-authorized-product-source",
   observedAt: null,
   writable: false,
+  coversWorlds: [],
 };
+
+
 
 /** An observation-derived per-world state. `unavailable` is not `quiet`. */
 export type WorldPresence = "unavailable" | "quiet" | "active" | "attention" | "critical";

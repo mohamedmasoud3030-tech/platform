@@ -67,6 +67,7 @@ pnpm run build                                       # egress guard, typecheck, 
 pnpm run verify:egress                               # no AI SDKs, no undeclared outbound hosts
 pnpm --filter @workspace/api-server dev              # API
 pnpm --filter @workspace/lena dev                    # site (proxies /api to localhost:8080)
+node tools/world-signal-fixture.mjs 8099             # dev harness for World Command (docs/WORLD_SIGNAL_SOURCE.md)
 pnpm --filter @workspace/db migrate                  # apply migrations
 bash tools/prepare-founder-photo.sh <photo>          # portrait + social card, metadata stripped
 ```
@@ -77,6 +78,10 @@ Copy `.env.example`. Required in production: `DATABASE_URL`, `APP_SECRET`,
 `INQUIRY_RATE_LIMIT_SECRET`, the OAuth values, and `SITE_URL` for canonical URLs and the sitemap.
 Without `SMTP_*` the inquiry notification silently does nothing — the dashboard remains the reliable
 source (`docs/RUNBOOK.md` §R2).
+
+Optional: `LENA_WORLD_SIGNAL_SOURCE_URL` (+ `LENA_WORLD_SIGNAL_TOKEN`) connects World Command to an
+owner-authorized product endpoint. Unset, the room stays explicitly closed and read-only — it never
+falls back to demo data. Contract and failure vocabulary: `docs/WORLD_SIGNAL_SOURCE.md`.
 
 ## Verification
 

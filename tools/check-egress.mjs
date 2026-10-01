@@ -29,6 +29,7 @@ const ALLOWED_HOSTS = [
   "www.w3.org", // XML namespace, never requested
   "openapi.vercel.sh", // JSON schema reference in vercel.json
   "generativelanguage.googleapis.com", // Gemini API — LENA Assistant grounding, server-side only (AI_FEATURE_SYSTEM.md §10)
+  "LENA_WORLD_SIGNAL_SOURCE_URL", // Operator-configured product signal endpoint — server-side only (AI_FEATURE_SYSTEM.md §12, docs/WORLD_SIGNAL_SOURCE.md)
 ];
 
 /**
