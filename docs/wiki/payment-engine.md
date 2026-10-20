@@ -28,11 +28,16 @@ set. Generated from the schema, never hand-written.
 | **No cashier UI anywhere** | Neither repository has a product UI |
 | **Pending cash has no producer** | `resolvePendingCash` is ready and idle. No code inserts `status = 'pending'`. Correct for a cash business; needed the day credit sales exist |
 
-## What is *not* proven
+## What is proven, and what is still not
 
-On 2026-10-19 the suite ran **274 passed, 22 skipped**. The 22 are the two-connection race tests. Anyone
-reading this page should treat refund-concurrency and double-shift-open as **unverified in this sandbox**
-until gap 2 in [environment-gaps.md](environment-gaps.md) is closed.
+- **2026-10-19 (earlier):** 274 passed, 22 skipped. The two-connection race tests did not run.
+- **2026-10-19 (later, superseding the above):** a local PostgreSQL was installed and the suite ran
+  **296/296 with 0 skipped** via `./tools/local-pg.sh test` on PostgreSQL 17.11. Refund races A–G and the
+  double-shift-open race **now execute and pass**. 0 leftover test databases.
+
+So concurrency is **verified in a sandbox**, reproducible by one command. Still not proven: that GitHub
+Actions passes — there is no CI file yet ([environment-gaps.md](environment-gaps.md) gap 1) — and the
+mutation check from acceptance test 8 (drop a constraint, confirm a test goes red) has not been done.
 
 ## Superseded claims
 

@@ -1,6 +1,6 @@
 # Environment gaps
 
-Audited 2026-10-19 against `nilesys@7959fb9`. Each entry: what is missing, the evidence, and what it costs
+Audited 2026-10-19 against `nilesys@7959fb9`. Gap 2 was closed the same day; the rest stand. Each entry: what is missing, the evidence, and what it costs
 an agent. Ordered by leverage, not by difficulty.
 
 ## Gap 1 — No CI at all (highest leverage)
@@ -15,7 +15,12 @@ claiming one. This is the single largest difference between this repository and 
 **Fix shape:** four jobs — typecheck, tests against PostgreSQL 17, API smoke, `gitleaks`. The draft already
 exists; it needs reviewing and pushing. Scope `workflow` exists on the token since 2026-10-19.
 
-## Gap 2 — No PostgreSQL, so the race tests never run
+## Gap 2 — No PostgreSQL, so the race tests never run — **CLOSED 2026-10-19**
+
+> **Closed the same day it was written.** `nilesys@7959fb9` now ships `tools/local-pg.sh`. Running
+> `./tools/local-pg.sh test` on PostgreSQL 17.11 gave **29 files, 296/296, 0 skipped** — the first time the
+> concurrency files ran in a sandbox (9 assertions: refund races A–G, double shift open), with 0 leftover
+> test databases. The historical description below is kept, because the reasoning is why the script exists.
 
 **Evidence:** `engines/transactions/test/refund-concurrency.pg.test.ts:70` is
 `describe.skipIf(!ADMIN_URL)`. With `ADMIN_URL` unset — which it was on 2026-10-19 — both `.pg.test.ts`
@@ -24,8 +29,10 @@ files skip. That was **22 skipped assertions** in the 274-pass run.
 **Cost:** no agent in this sandbox can honestly claim concurrency is correct. Two rows of the invariant
 table in proposal 0007 §3 (I5 refund races, I12 double shift open) rest on tests that have not run here.
 
-**Fix shape:** `apt-get install postgresql` (candidate `17+278`), initdb, set `ADMIN_URL`, run
-`--maxWorkers=1`. Cheap. Blocks nothing.
+**Fix shape (built):** `tools/local-pg.sh` — install if missing, start the cluster, set the superuser
+password so the default scram policy accepts TCP, wait for readiness, print the URL. Subcommands
+`start | url | stop | test`. The durable lesson is in the script's header: **a missing environment is a bug
+in the environment, not in the agent.**
 
 ## Gap 3 — Money is a bare `number`
 
