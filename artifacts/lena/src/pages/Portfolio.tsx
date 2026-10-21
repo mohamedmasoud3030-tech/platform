@@ -4,6 +4,7 @@ import LenaCta from "@/components/LenaCta";
 import SeoHead from "@/components/SeoHead";
 import { pageSeo } from "@/content/seo";
 import PortfolioShowcase from "@/features/projects/PortfolioShowcase";
+import { NileHouseBand } from "@/features/nile/NileHouseBand";
 import { publicProjects } from "@/content/projects";
 import { publicSystems } from "@/content/systems";
 import PublicShell from "@/layouts/PublicShell";
@@ -109,6 +110,8 @@ export default function Portfolio() {
           </div>
         </section>
       ) : null}
+
+      <NileHouseBand />
 
       <LenaCta />
     </PublicShell>

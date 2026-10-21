@@ -32,6 +32,7 @@ const SUITES = [
   { name: "lena world chambers", file: "tools/verify-world-chambers.mjs" },
   { name: "lena world real evidence", file: "tools/verify-world-evidence.mjs" },
   { name: "lena world ledger", file: "tools/verify-world-ledger.mjs" },
+  { name: "lena nile house products", file: "tools/verify-nile-products.mjs" },
   { name: "lena constellation graph", file: "tools/verify-constellation-graph.mjs" },
   { name: "lena world graph + atlas", file: "tools/verify-world-graph.mjs" },
   { name: "lena world command authority", file: "tools/verify-world-command.mjs" },
