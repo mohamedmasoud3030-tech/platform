@@ -42,10 +42,13 @@
 }
 
 .lena-nile-plate {
-  position: relative;
+  display: block;
+  margin: 8px 0 10px;
+}
+
+.lena-nile-plate-shot {
   display: block;
   overflow: hidden;
-  margin: 8px 0 4px;
   border: 1px solid var(--lena-line);
   border-radius: 12px;
   background: rgba(5, 6, 9, 0.35);
@@ -58,17 +61,20 @@
   height: 100%;
   object-fit: cover;
   object-position: top center;
+  transition: filter 0.2s ease;
+}
+
+.lena-nile-plate:hover img {
+  filter: brightness(1.06);
 }
 
 .lena-nile-plate-cap {
-  position: absolute;
-  inset: auto 0 0;
-  padding: 16px 12px 10px;
-  background: linear-gradient(to top, rgba(4, 6, 10, 0.92), rgba(4, 6, 10, 0));
-  color: #f4efe2;
-  font-size: 11px;
-  font-weight: 700;
-  line-height: 1.6;
+  display: block;
+  margin-top: 8px;
+  color: var(--lena-muted);
+  font-size: 11.5px;
+  font-weight: 600;
+  line-height: 1.7;
 }
 
 .lena-nile-card .lena-secondary {

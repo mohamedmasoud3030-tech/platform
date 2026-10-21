@@ -75,12 +75,14 @@ export default function NileProducts() {
                       to={`/nile/${product.id}`}
                       aria-label={`${product.name[locale]} — ${plate.capability[locale]}`}
                     >
-                      <img
-                        src={withBase(plate.src)}
-                        alt={plate.alt[locale]}
-                        loading="lazy"
-                        decoding="async"
-                      />
+                      <span className="lena-nile-plate-shot">
+                        <img
+                          src={withBase(plate.src)}
+                          alt={plate.alt[locale]}
+                          loading="lazy"
+                          decoding="async"
+                        />
+                      </span>
                       <span className="lena-nile-plate-cap">{plate.capability[locale]}</span>
                     </Link>
                   ) : null}

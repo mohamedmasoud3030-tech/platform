@@ -60,12 +60,14 @@ export function NileHouseBand({
 
                 {showPlates && plate ? (
                   <Link className="lena-nile-plate" to={`/nile/${product.id}`}>
-                    <img
-                      src={withBase(plate.src)}
-                      alt={plate.alt[locale]}
-                      loading="lazy"
-                      decoding="async"
-                    />
+                    <span className="lena-nile-plate-shot">
+                      <img
+                        src={withBase(plate.src)}
+                        alt={plate.alt[locale]}
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    </span>
                     <span className="lena-nile-plate-cap">{plate.capability[locale]}</span>
                   </Link>
                 ) : null}
