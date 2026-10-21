@@ -10,14 +10,14 @@
  *
  * This check fails the build when that happens. It is not a security boundary;
  * it is a review trigger. To add a provider legitimately: update
- * AI_FEATURE_SYSTEM.md, then add it to the allowlist below in the same change.
+ * docs/ARCHITECTURE.md, then add it to the allowlist below in the same change.
  */
 import { readFileSync, readdirSync, statSync } from "node:fs";
 import path from "node:path";
 
 const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..");
 
-/** Declared outbound integrations. Every entry must be justified in AI_FEATURE_SYSTEM.md §2. */
+/** Declared outbound integrations. Every entry must be justified in docs/ARCHITECTURE.md §2. */
 const ALLOWED_HOSTS = [
   "KIMI_AUTH_URL", // OAuth provider — admin sign-in only
   "KIMI_OPEN_URL", // OAuth provider profile — admin sign-in only
@@ -29,19 +29,19 @@ const ALLOWED_HOSTS = [
   "www.sitemaps.org", // XML namespace, never requested
   "www.w3.org", // XML namespace, never requested
   "openapi.vercel.sh", // JSON schema reference in vercel.json
-  "generativelanguage.googleapis.com", // Gemini API — LENA Assistant grounding, server-side only (AI_FEATURE_SYSTEM.md §10)
-  "LENA_WORLD_SIGNAL_SOURCE_URL", // Operator-configured product signal endpoint — server-side only (AI_FEATURE_SYSTEM.md §12, docs/WORLD_SIGNAL_SOURCE.md)
+  "generativelanguage.googleapis.com", // Gemini API — LENA Assistant grounding, server-side only (docs/ARCHITECTURE.md §10)
+  "LENA_WORLD_SIGNAL_SOURCE_URL", // Operator-configured product signal endpoint — server-side only (docs/ARCHITECTURE.md (نظام الذكاء), docs/specs/world-signal-source.md)
 ];
 
 /**
- * AI endpoints declared by an owner-approved decision in AI_FEATURE_SYSTEM.md.
+ * AI endpoints declared by an owner-approved decision in docs/ARCHITECTURE.md.
  * Detection still happens; a match on a declared endpoint passes, and the
  * declaration must exist in the same change that introduces the call.
  */
 const DECLARED_AI_ENDPOINTS = [
   {
     host: "generativelanguage.googleapis.com",
-    decision: "AI_FEATURE_SYSTEM.md §10 — LENA Assistant (owner-approved 2026-09-07, server-side, deterministic fallback)",
+    decision: "docs/ARCHITECTURE.md §10 — LENA Assistant (owner-approved 2026-09-07, server-side, deterministic fallback)",
   },
 ];
 
@@ -86,7 +86,7 @@ for (const manifest of ["package.json", "artifacts/api-server/package.json", "ar
       if (AI_PACKAGE_PATTERN.test(name)) {
         problems.push(
           `${manifest}: dependency "${name}" is an AI provider SDK. No AI provider is approved. ` +
-            `See AI_FEATURE_SYSTEM.md §3 before adding one.`,
+            `See docs/ARCHITECTURE.md §3 before adding one.`,
         );
       }
     }
@@ -123,7 +123,7 @@ if (problems.length > 0) {
   console.error("\nEgress guard failed:\n");
   for (const problem of [...new Set(problems)]) console.error(`  - ${problem}`);
   console.error(
-    "\nIf this addition is intentional, document it in AI_FEATURE_SYSTEM.md and add it to the\n" +
+    "\nIf this addition is intentional, document it in docs/ARCHITECTURE.md and add it to the\n" +
       "allowlist in tools/check-egress.mjs in the same change.\n",
   );
   process.exit(1);

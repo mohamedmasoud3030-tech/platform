@@ -26,7 +26,7 @@ Current product/runtime authorities:
 - artifacts/lena/src/features/world/content/product-contract.ts — derived product contract, not a second registry
 - artifacts/lena/src/graph/ — World Graph; Atlas and World remain distinct surfaces
 - artifacts/lena/src/features/core-intelligence/ — derived read-only intelligence; not a second product registry. Production graph seam is CanonicalWorldGraphAdapter.
-- artifacts/lena/src/features/world/signals/ — observation and mutation adapter. Production defaults to an unavailable, seedless store; it becomes live only through the validated server snapshot of an owner-authorized product endpoint (`docs/WORLD_SIGNAL_SOURCE.md`). Fixtures stay test-only, never production composition.
+- artifacts/lena/src/features/world/signals/ — observation and mutation adapter. Production defaults to an unavailable, seedless store; it becomes live only through the validated server snapshot of an owner-authorized product endpoint (`docs/specs/world-signal-source.md`). Fixtures stay test-only, never production composition.
 
 Hidden `LENA_SERVICES` and `STUDIO_PROJECTS` records stay in the repository unpublished. Do not restore them as a public catalog.
 
@@ -62,10 +62,4 @@ Run pnpm run verify:skills after any skill change.
 
 ## Supplemental autonomous execution protocol
 
-Read [AUTONOMOUS EXECUTION PROTOCOL — FULL POWER MODE 2026](docs/agent-system/AUTONOMOUS_EXECUTION_PROTOCOL.md) as supplemental execution guidance.
-
-- This protocol does not replace this repository's existing instruction precedence, accepted architecture/product decisions, skills, or verification gates. Surface consequential conflicts rather than silently overriding them.
-- It grants no additional tools, credentials, permissions, budget, or authorization. Platform/tool safety requirements and the owner's current task-specific restrictions remain binding.
-- Scope capability discovery to the task; reuse verified findings. Prefer targeted remote file reads for cross-repository assessment. Do not bulk-clone repositories, install dependencies, or provision resources merely to inventory capabilities. Obtain task-appropriate authorization first.
-- Keep discovery read-only by default. Preserve secrets; detect credential availability without printing values. Use bounded, evidence-based retries and report genuine blockers.
-- Creating this guidance does not approve moving Nile into Platform, combining their runtimes, changing either stack, or merging branches. Such choices require separate evidence and owner approval.
+The owner-provided autonomous execution protocol (in `docs/DECISIONS.md` register history) is supplemental guidance only; it grants no tools, permissions or budget and never overrides this file.

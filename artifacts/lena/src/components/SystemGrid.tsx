@@ -6,7 +6,7 @@ import { withBase } from "@/lib/base-path";
 import { dashboardEvidenceFor } from "@/features/world/content/evidence";
 import { usePreferences } from "@/providers/preferences";
 
-/** Industry-first entry points, as decided in PRODUCT_DECISIONS.md D4. */
+/** Industry-first entry points, as decided in docs/DECISIONS.md D4. */
 export default function SystemGrid({
   limit,
   visitedSystemId,
