@@ -24,6 +24,7 @@ branches and none of them touches payments. Checked by searching every branch of
 | `feat/nile-payments-engine` | `c489a23` | An *alternative* implementation of proposal 0007. Option (3) of decision D-A. Not taken |
 | `fix/nile-pool-error-listener` | `29390fa` | Superseded: N-1 is fixed inside `7959fb9` instead |
 | `investigation/g7-runtime-role-boundary-incomplete` | `60342be` | **Not a fix.** See finding G-7a |
+| `feat/demo-on-vercel` | `780bf49` (2026-10-21) | Makes the prototype deployable as a Vercel project. **PR #7**, base `feat/plt-0005-payment-db-constraints`. Nothing deployed |
 
 ## `platform` branches
 

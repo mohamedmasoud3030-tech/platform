@@ -74,6 +74,42 @@ For PR #5, the recorded plan is: tag `archive/…`, then close — both need the
 
 ---
 
+## Gap 6 — The sandbox wipes the GitHub token, `gh`, and `.git/config` — **PARTLY CLOSED 2026-10-21**
+
+**What happened (2026-10-21).** After a normal turn boundary the environment came back without:
+
+- the GitHub token and `gh` itself,
+- `.git/config` in **both** repositories, so `origin` was gone and `git push` failed with
+  `fatal: 'origin' does not appear to be a git repository`,
+- `/home/user/platform/.git` entirely.
+
+Nothing of value was lost — every commit was already pushed — but the owner's instruction
+*"push continuously because the sandbox gets wiped"* is defeated by anything that survives **only** on a
+server that will be wiped.
+
+**The root cause was my own design.** The token was stored under `~/.local/gh`, and `.local` is one of the
+directories the snapshot **excludes**. Putting a secret in an excluded folder is exactly how it disappears.
+`.git/config` is excluded too, for the same class of reason (credential paths).
+
+**What was fixed, and how it behaves now:**
+
+| Thing | Fix | Survives a wipe? |
+| --- | --- | --- |
+| Token storage | moved out of `~/.local` | partly — see below |
+| `origin` remotes | `bin/rehydrate.sh` puts them back, no secrets in it | yes, the script survives |
+| Device login | `bin/gh-device-login.py` saves the device code to a plain workspace file and **resumes polling** on re-run instead of minting a new code | yes |
+| Auth for git | `git push` with an explicit token URL, not a stored credential helper | works, but must be redone each session |
+
+**Still open:** every new session needs a fresh authentication. That is the price of not persisting a
+secret — and persisting one in the workspace is not acceptable. The owner should expect one
+"approve this code" step per session until a durable secret store exists.
+
+**Also learned:** `gh auth login --with-token` refuses a token without the `read:org` scope
+(`error validating token: missing required scope 'read:org'`). The REST API and `git push` accept the same
+token fine, so the CLI is not needed for pushing or opening pull requests.
+
+---
+
 ## What is already good, so it is not "fixed" by mistake
 
 - `tsc --strict` with `noUncheckedIndexedAccess` at `7959fb9`.
