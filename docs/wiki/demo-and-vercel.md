@@ -63,6 +63,52 @@ the demo **data** lives in the warm instance and returns to seed on a new one. V
 for *showing* and *reviewing*, and not evidence that "the data is saved". Proving that needs a shared
 database (Postgres/Supabase) instead of a JSON file.
 
+## DEPLOYED — 2026-10-21
+
+**Live:** https://nilesys-demo.vercel.app · project `nilesys-demo`
+(`prj_x3u4mKOx1RFSb7vpiU2QCLzGRkVU`), team `lenabeauty`, Vercel deployment
+`nilesys-demo-ckkyvzrkz-lenabeauty.vercel.app`.
+
+Deployment Protection (Vercel Authentication) was **turned off** for this project so the link is public.
+That is a deliberate, reversible setting.
+
+### How it deployed, and why not the way first intended
+
+The first deploy failed *after* going live: every route returned 500.
+
+```
+Invalid export found in module "/var/task/server.cjs".
+The default export must be a function or server.
+```
+
+Vercel's zero-config Node "server mode" requires the module's **default export** to be a function. The
+listener was on a named export only. Fixed in `nilesys@71d1b97`; the named export is kept so
+`api/[...path].js` and both test files are untouched. A second discovery: the static pages are read from
+disk at runtime, so `public/**` had to be added to `includeFiles` or production would 404 them.
+
+### Verified against the live deployment (not locally)
+
+| Check | Result |
+| --- | --- |
+| `/` | 200 |
+| `/systems/pos.html` | 200 |
+| `/api/session` | `{"user":null}` |
+| `POST /api/login` (`manager`) | ok |
+| `POST /api/sales` | sale no **1046** created |
+| a later request | sale 1046 returned |
+| **after a full redeploy** | **47 sales still present, including 1046** |
+
+The last row is the one that matters. A redeploy means brand-new instances, so data surviving it proves
+the **shared Supabase store**, not a warm `/tmp`. The `/tmp` caveat recorded above is therefore closed in
+practice for this deployment.
+
+### The path that was used, for the record
+
+The Vercel connector in this session could not upload files, and its repository-linking parameters were
+rejected on both sides of the schema (`git_source` / `git_repository` expected a dict by one layer and a
+string by the other). So the deploy used the **official Vercel CLI** against the working tree:
+`bin/deploy-demo.sh`. What is deployed is what is committed — not a re-typed copy.
+
 ## The decision still open (owner)
 
 | Option | Meaning | Cost |
