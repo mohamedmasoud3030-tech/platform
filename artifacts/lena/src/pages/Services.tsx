@@ -4,6 +4,7 @@ import LenaCta from "@/components/LenaCta";
 import SeoHead from "@/components/SeoHead";
 import { pageSeo } from "@/content/seo";
 import { publicSystems } from "@/content/systems";
+import { NileHouseBand } from "@/features/nile/NileHouseBand";
 import { SystemLogo } from "@/design-system/brand/SystemLogo";
 import PublicShell from "@/layouts/PublicShell";
 import { usePreferences } from "@/providers/preferences";
@@ -134,6 +135,8 @@ export default function Services() {
           ))}
         </div>
       </section>
+
+      <NileHouseBand />
 
       <LenaCta />
     </PublicShell>

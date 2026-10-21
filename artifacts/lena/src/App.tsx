@@ -13,6 +13,8 @@ const WorldSystem = lazy(() => import("./pages/WorldSystem"));
 const Services = lazy(() => import("./pages/Services"));
 const ServiceDetails = lazy(() => import("./pages/ServiceDetails"));
 const Portfolio = lazy(() => import("./pages/Portfolio"));
+const NileProducts = lazy(() => import("./pages/NileProducts"));
+const NileProduct = lazy(() => import("./pages/NileProduct"));
 const ProjectDetails = lazy(() => import("./pages/ProjectDetails"));
 const About = lazy(() => import("./pages/About"));
 const AiSolutions = lazy(() => import("./pages/AiSolutions"));
@@ -39,6 +41,8 @@ export default function App() {
           <Route path="/services" element={<Services />} />
           <Route path="/services/:serviceId" element={<ServiceDetails />} />
           <Route path="/portfolio" element={<Portfolio />} />
+          <Route path="/nile" element={<NileProducts />} />
+          <Route path="/nile/:productId" element={<NileProduct />} />
           <Route path="/work/:projectId" element={<ProjectDetails />} />
           <Route path="/about" element={<About />} />
           <Route path="/ai-solutions" element={<AiSolutions />} />
