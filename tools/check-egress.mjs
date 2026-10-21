@@ -23,6 +23,7 @@ const ALLOWED_HOSTS = [
   "KIMI_OPEN_URL", // OAuth provider profile — admin sign-in only
   "SUPABASE_URL", // Object storage for project media — no personal data
   "malek-plus.vercel.app", // Verified MALEK product destination — browser navigation only
+  "nilesys-demo-git-feat-demo-on-vercel-lenabeauty.vercel.app", // Nile systems live room — visitor-opened product link, no data crosses the boundary
   "wa.me", // WhatsApp deep link, opened by the user's own browser
   "schema.org", // Structured-data vocabulary URL, never requested at runtime
   "www.sitemaps.org", // XML namespace, never requested

@@ -202,6 +202,15 @@ No AI. Two things that protect the decision:
 Supabase Storage for project media, the verified MALEK product destination (`malek-plus.vercel.app`)
 opened by explicit visitor navigation, and WhatsApp deep links. The MALEK connection is a plain product
 link: no API bridge, telemetry, inquiry payload, auth sharing, or customer data crosses that boundary.
+
+**Nile systems live room (`nilesys-demo-git-feat-demo-on-vercel-lenabeauty.vercel.app`)** — added
+2026-10-21. The seven systems in `content/nile-systems.ts` are shown on LENA as products built in our
+own workshop, each with real captures of its interface. A single `trialRoom` link per system opens the
+published deployment in a new window so a visitor can operate the product herself. It is a plain
+product link like MALEK's: the navigation is the visitor's, the URL is a literal in the data module,
+nothing is fetched by the page, and no inquiry, auth or customer data crosses that boundary. The link
+is deliberately outside the evidence register: opening a guest account is not evidence of commercial
+use, and `tools/verify-nile-products.mjs` enforces that separation.
 No analytics, no embeds, no AI.
 
 ---

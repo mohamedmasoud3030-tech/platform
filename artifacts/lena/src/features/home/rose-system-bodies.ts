@@ -33,6 +33,14 @@ export const SYSTEM_COMPLETION: Record<SystemId, number> = {
   hospitality: 0.92,
   recycling: 0.85,
   materials: 0,
+  // أنظمة نيل: مبنية ومُختبَرة مع أدلة تشغيل حقيقية — لا تُرسم في الوردة (الوردة ستة بيوت).
+  "nile-pos": 1,
+  "nile-inventory": 1,
+  "nile-restaurant": 1,
+  "nile-clinic": 1,
+  "nile-courts": 1,
+  "nile-hr": 1,
+  "nile-sites": 1,
 };
 
 export function completionFor(id: SystemId): number {

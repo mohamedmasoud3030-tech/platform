@@ -1,5 +1,6 @@
 import type { AppLocale } from "@/providers/preferences";
 import type { OperatingPrimitiveId, SystemId } from "@/content/systems";
+import { NILE_SYSTEMS_META } from "@/content/nile-systems";
 
 /**
  * Canonical real-application evidence.
@@ -26,6 +27,21 @@ export type EvidenceSurface = {
   /** Operating root this surface demonstrates, when applicable. */
   primitive?: OperatingPrimitiveId;
 };
+
+/** أسطح نيل سيستمز — تُولَّد من ملف بيانات واحد حتى لا تنفصل عن الكتالوج. */
+function nileEvidence(): Partial<Record<SystemId, EvidenceSurface[]>> {
+  const out: Partial<Record<SystemId, EvidenceSurface[]>> = {};
+  for (const meta of NILE_SYSTEMS_META) {
+    out[meta.id as SystemId] = meta.surfaces.map((surface) => ({
+      id: surface.id,
+      src: surface.src,
+      alt: surface.alt,
+      capability: surface.capability,
+      primitive: surface.primitive,
+    }));
+  }
+  return out;
+}
 
 export const SYSTEM_EVIDENCE: Partial<Record<SystemId, EvidenceSurface[]>> = {
   /**
@@ -453,7 +469,7 @@ export const SYSTEM_EVIDENCE: Partial<Record<SystemId, EvidenceSurface[]>> = {
 
 /** Real evidence for one system, or undefined when none exists yet. */
 export function evidenceFor(systemId: string): EvidenceSurface[] | undefined {
-  return SYSTEM_EVIDENCE[systemId as SystemId];
+  return ALL_SYSTEM_EVIDENCE[systemId as SystemId];
 }
 
 /** The operating dashboard plate only — never a mobile crop, never a stand-in. */
@@ -470,3 +486,10 @@ export function evidenceForPrimitive(
 ): EvidenceSurface | undefined {
   return evidenceFor(systemId)?.find((surface) => surface.primitive === primitiveId);
 }
+
+// دمج أدلة نيل في السجل القياسي: `evidenceFor()` تقرأ من هنا، فتصبح الأنظمة
+// السبعة «موثّقة» بنفس القاعدة التي تحكم غيرها، بلا فرع خاص في أي مكوّن.
+export const ALL_SYSTEM_EVIDENCE: Partial<Record<SystemId, EvidenceSurface[]>> = {
+  ...SYSTEM_EVIDENCE,
+  ...nileEvidence(),
+};

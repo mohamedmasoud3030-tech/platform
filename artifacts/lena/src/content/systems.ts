@@ -1,3 +1,5 @@
+import { nileBusinessSystems } from "@/content/nile-systems";
+
 import type { AppLocale } from "@/providers/preferences";
 
 /**
@@ -15,6 +17,15 @@ import type { AppLocale } from "@/providers/preferences";
 export type Visibility = "public" | "hidden";
 
 export type SystemId =
+  // أنظمة نيل سيستمز — تُعرَّف هنا حتى تعمل كل الدوال النوعية (logos, evidence, world)
+  // عليها بلا استثناءات، وتُدمج في الكتالوج في نهاية الملف.
+  | "nile-pos"
+  | "nile-inventory"
+  | "nile-restaurant"
+  | "nile-clinic"
+  | "nile-courts"
+  | "nile-hr"
+  | "nile-sites"
   | "property"
   | "wellness"
   | "rental"
@@ -458,3 +469,18 @@ export function publicSystems(): BusinessSystem[] {
 export function findSystem(id?: string): BusinessSystem | undefined {
   return BUSINESS_SYSTEMS.find((system) => system.id === id && system.visibility === "public");
 }
+
+/**
+ * بيت نيل سيستمز — سبعة أنظمة مبنية داخل نفس الورشة، تُعرض على LENA كخطّ منتجات
+ * مستقل عن دفتر البيت (الذي يبقى ستة أنظمة لعملاء LENA).
+ *
+ * الفصل مقصود ومرحلي: `publicSystems()` تبقى عقد دفتر LENA كما هو (ستة، بترتيب
+ * المالك)، و`nileSystems()` هي عقد خط المنتجات. الدمج الحقيقي في مستودع واحد هو
+ * المرحلة التالية، ولهذا لا نخلط السجلّين الآن.
+ */
+export function nileSystems(): BusinessSystem[] {
+  return nileBusinessSystems();
+}
+
+/** الكتالوج الكامل للعرض في صفحات الخدمات والأعمال — بلا مساس بدفتر البيت. */
+export const ALL_BUSINESS_SYSTEMS: BusinessSystem[] = [...BUSINESS_SYSTEMS, ...nileBusinessSystems()];

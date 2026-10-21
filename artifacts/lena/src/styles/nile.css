@@ -1,0 +1,248 @@
+/* ============================================================
+   بيت نيل سيستمز — Nile house products on LENA
+   مقصود به الفصل عن أنماط دفتر البيت: هذا خطّ منتجات، لا سجل عملاء.
+   ============================================================ */
+
+.lena-nile-head {
+  max-width: 820px;
+}
+
+.lena-nile-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 14px;
+  margin-top: 26px;
+}
+
+.lena-nile-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 20px;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.lena-nile-card:hover {
+  border-color: var(--lena-line-strong);
+  transform: translateY(-3px);
+}
+
+.lena-nile-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.lena-nile-card h3 {
+  margin: 4px 0 0;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.lena-nile-plate {
+  display: block;
+  margin: 8px 0 10px;
+}
+
+.lena-nile-plate-shot {
+  display: block;
+  overflow: hidden;
+  border: 1px solid var(--lena-line);
+  border-radius: 12px;
+  background: rgba(5, 6, 9, 0.35);
+  aspect-ratio: 16 / 10;
+}
+
+.lena-nile-plate img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  transition: filter 0.2s ease;
+}
+
+.lena-nile-plate:hover img {
+  filter: brightness(1.06);
+}
+
+.lena-nile-plate-cap {
+  display: block;
+  margin-top: 8px;
+  color: var(--lena-muted);
+  font-size: 11.5px;
+  font-weight: 600;
+  line-height: 1.7;
+}
+
+.lena-nile-card .lena-secondary {
+  margin-top: auto;
+  width: 100%;
+}
+
+.lena-nile-foot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+/* ---------- صفحة المنتج المفردة ---------- */
+
+.lena-nile-hero {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  align-items: start;
+  gap: 26px;
+}
+
+.lena-nile-hero-plate {
+  overflow: hidden;
+  border: 1px solid var(--lena-line);
+  border-radius: 16px;
+  background: rgba(5, 6, 9, 0.35);
+}
+
+.lena-nile-hero-plate img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.lena-nile-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.lena-nile-stat {
+  border: 1px solid var(--lena-line);
+  border-radius: 13px;
+  padding: 13px 15px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.lena-nile-stat dt {
+  margin: 0;
+  color: var(--lena-muted);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.lena-nile-stat dd {
+  margin: 6px 0 0;
+  color: var(--lena-text);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.6;
+}
+
+.lena-nile-rows {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.lena-nile-rows > div {
+  border: 1px solid var(--lena-line);
+  border-radius: 14px;
+  padding: 18px;
+}
+
+.lena-nile-rows dt {
+  margin: 0;
+  color: var(--lena-accent);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.lena-nile-rows dd {
+  margin: 9px 0 0;
+  color: var(--lena-text);
+  font-size: 14px;
+  line-height: 1.85;
+}
+
+.lena-nile-roots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 16px;
+  padding: 0;
+  list-style: none;
+}
+
+.lena-nile-roots li {
+  border: 1px solid var(--lena-line);
+  border-radius: 99px;
+  padding: 6px 11px;
+  color: var(--lena-muted);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+/* ---------- غرفة الحساب التجريبي ---------- */
+
+.lena-nile-room {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-top: 24px;
+  border: 1px solid var(--lena-line-strong);
+  border-radius: 16px;
+  padding: 22px 24px;
+  background: rgba(200, 160, 78, 0.06);
+}
+
+.lena-nile-room h3 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.lena-nile-room p {
+  margin: 7px 0 0;
+  max-width: 620px;
+  color: var(--lena-muted);
+  font-size: 13px;
+  line-height: 1.85;
+}
+
+.lena-nile-room-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.lena-nile-room-note {
+  margin: 12px 0 0;
+  color: var(--lena-muted);
+  font-size: 11px;
+  line-height: 1.8;
+}
+
+@media (max-width: 860px) {
+  .lena-nile-hero,
+  .lena-nile-rows {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lena-nile-card {
+    transition: none;
+  }
+  .lena-nile-card:hover {
+    transform: none;
+  }
+}

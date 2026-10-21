@@ -1,5 +1,8 @@
 # Project inventory — raw input from the founder
 
+> **Evidence-path reconciliation — 2026-10-15:** at Platform commit `5ad2b66b7fc314e17bde8e7106a92a2576568a4a`, the canonical `artifacts/lena/src/features/world/content/evidence.ts` references 31 committed image paths: MALEK 7, Wellness 10, Carmen 14. All 31 paths exist in that commit's tree. This is a static path check, NOT independent validation of screenshot capture provenance, deployed UI, business results, or production readiness. Statements below about missing screens preserve historical intake and must not override current canonical product/evidence files. Cross-repository execution and its evidence gates are tracked in [the portfolio execution plan](portfolio/EXECUTION_PLAN.md); product truth remains in each repository's existing authorities.
+
+
 **Captured:** 2026-08-20 · **Status:** historical founder-input baseline, recorded verbatim in substance.
 
 > **Current-state correction — 2026-09-04:** this document preserves the original intake history; it
