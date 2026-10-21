@@ -6,7 +6,7 @@ import type { AppLocale } from "@/providers/preferences";
  * The systems this studio builds, organised by the industry that buys them.
  *
  * Content is drawn strictly from the founder's own account of what he has built
- * (see docs/PROJECT_INVENTORY.md). Nothing here is invented: no metric, no client
+ * (see docs/STATUS.md). Nothing here is invented: no metric, no client
  * name, no claim of scale. Where detail is still missing, the entry says so
  * rather than filling the gap.
  *
