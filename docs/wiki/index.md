@@ -40,6 +40,7 @@ travels with the repository.
 | Page | What it answers |
 | --- | --- |
 | [payment-engine.md](payment-engine.md) | What the payment engine does and does not do, pinned to commits |
+| [cashier.md](cashier.md) | The demo cashier: six rules, the failure each removes, and what is still missing |
 | [repos-and-branches.md](repos-and-branches.md) | Which repository holds what, and which branches matter |
 | [demo-and-vercel.md](demo-and-vercel.md) | The demo's real state, why Vercel blocks, and where it can ship |
 
