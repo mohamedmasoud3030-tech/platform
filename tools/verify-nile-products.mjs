@@ -30,6 +30,17 @@ const portfolio = read("artifacts/lena/src/pages/Portfolio.tsx");
 
 const PUBLIC = resolve(ROOT, "artifacts/lena/public");
 
+/** لوحات الأنظمة السبعة. */
+const NILE_SYSTEMS_META_SOURCES = () => {
+  const head = meta.split("NILE_WINDOWS_PROGRAMS")[0];
+  return [...head.matchAll(/src: "([^"]+)"/g)].map((m) => m[1]);
+};
+/** لوحات برامج ويندوز الخمسة. */
+const windowsSources = () => {
+  const tail = meta.split("NILE_WINDOWS_PROGRAMS")[1] ?? "";
+  return [...tail.split("PRIMITIVE_LABEL")[0].matchAll(/src: "([^"]+)"/g)].map((m) => m[1]);
+};
+
 /** لغة دورة الحياة الممنوعة على أي سطح عام (نفس عقد بقية الموقع). */
 const FORBIDDEN_LIFECYCLE = [
   /\bDemo\b/i,
@@ -92,7 +103,7 @@ check("every Nile id is a canonical SystemId member", () => {
 
 check("every shown plate is a real file on disk", () => {
   const sources = [...meta.matchAll(/src: "\/([^"]+)"/g)].map((m) => m[1]);
-  assert.ok(sources.length >= 12, `expected at least twelve plates, found ${sources.length}`);
+  assert.ok(sources.length >= 24, `expected at least twenty-four system plates, found ${sources.length}`);
   for (const src of sources) {
     assert.ok(existsSync(resolve(PUBLIC, src)), `missing plate asset: /${src}`);
   }
@@ -106,6 +117,24 @@ check("every plate carries alt and capability in Arabic and English", () => {
   assert.equal(capBlocks.length, srcCount, "one bilingual capability per plate");
   for (const block of altBlocks) assert.match(block[0], /ar: "[^"]{8,}"/);
   for (const block of capBlocks) assert.match(block[0], /ar: "[^"]{20,}"/);
+});
+
+check("system plates are web-system captures, never Windows-program captures", () => {
+  // الخطأ الذي نبّه إليه المالك: لقطة من برنامج ويندوز تُنسب لنظام ويب.
+  const systemSources = NILE_SYSTEMS_META_SOURCES();
+  for (const src of systemSources) {
+    assert.doesNotMatch(src, /nile-windows/, `a Windows capture is used as a web-system plate: ${src}`);
+  }
+  assert.match(meta, /NILE_WINDOWS_PROGRAMS/);
+  assert.ok(windowsSources().length === 5, "five Windows programs are declared separately");
+  for (const src of windowsSources()) {
+    assert.ok(existsSync(resolve(PUBLIC, src.replace(/^\//, ""))), `missing Windows capture: ${src}`);
+  }
+  // وكل نظام ويب يشير إلى صفحته الحقيقية لا إلى برنامج ويندوز.
+  const rooms = [...meta.matchAll(/trialRoom: `\$\{DEMO\}([^`]+)`/g)].map((m) => m[1]);
+  for (const room of rooms) {
+    assert.doesNotMatch(room, /^\/windows\//, `a web system points at a Windows program: ${room}`);
+  }
 });
 
 check("the trial room is one explicit field and stays out of the evidence register", () => {

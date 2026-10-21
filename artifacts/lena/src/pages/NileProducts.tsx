@@ -2,7 +2,7 @@ import { ArrowUpRight } from "lucide-react";
 import { Link } from "react-router";
 import LenaCta from "@/components/LenaCta";
 import SeoHead from "@/components/SeoHead";
-import { NILE_SYSTEMS_META } from "@/content/nile-systems";
+import { NILE_SYSTEMS_META, NILE_WINDOWS_PROGRAMS } from "@/content/nile-systems";
 import { SystemLogo } from "@/design-system/brand/SystemLogo";
 import type { SystemId } from "@/content/systems";
 import PublicShell from "@/layouts/PublicShell";
@@ -47,8 +47,8 @@ export default function NileProducts() {
         </h1>
         <p className="lena-lead">
           {isAr
-            ? "هذه ليست أفكاراً ولا عروضاً تقديمية. كل نظام هنا له معايير قبول مكتوبة، وله واجهة تعمل، ولقطة واحدة على الأقل مأخوذة منه وهو يعمل — وتُعرض كما هي. تفتح النظام فترى ما يديره، وما يمنعه، ولمن يصلح، ثم تدخل الغرفة الحيّة وتجرّبه بنفسك."
-            : "These are not ideas or slide decks. Each system has written acceptance criteria, a working interface, and at least one capture taken from it while running — shown as it is. Open a system to see what it runs, what it refuses and who it suits, then step into the live room and try it yourself."}
+            ? "سبعة أنظمة ويب، وخمسة برامج ويندوز، وسبعة مواقع أنشطة — كلها تعمل. كل صورة في هذه الصفحة لقطة من الشاشة نفسها وهي تعمل، لا رسم تخيلي ولا واجهة مقترحة. تفتح النظام فترى شاشاته واحدة واحدة، وما يديره، ولمن يصلح، ثم تدخل الغرفة الحيّة وتجرّبه بنفسك."
+            : "Seven web systems, five Windows programs and seven trade sites — all of them running. Every picture here is a capture of the screen itself while it works, not an illustration or a proposed interface. Open a system to see its screens one by one, what it runs and who it suits, then step into the live room and try it yourself."}
         </p>
       </section>
 
@@ -93,6 +93,42 @@ export default function NileProducts() {
                 </article>
               );
             })}
+          </div>
+        </div>
+      </section>
+
+
+      <section className="lena-section" id="nile-windows">
+        <div className="lena-container">
+          <header className="lena-nile-head">
+            <p className="lena-kicker">{isAr ? "برامج ويندوز" : "Windows programs"}</p>
+            <h2 className="lena-section-title">
+              {isAr ? "خمسة برامج تعمل على جهاز بلا إنترنت" : "Five programs that run on a machine without a network"}
+            </h2>
+            <p className="lena-lead">
+              {isAr
+                ? "هذه ليست الأنظمة السبعة: دي برامج مثبَّتة على جهاز واحد في المحل أو المخزن أو المطبخ، تشتغل والشبكة مقطوعة. كل برنامج له شاشة واحدة واضحة، وصورها هنا من التشغيل الفعلي."
+                : "These are not the seven web systems: these are programs installed on a single machine in the shop, the store or the kitchen, working with the network down. Each has one clear screen, and the pictures are captures of it running."}
+            </p>
+          </header>
+
+          <div className="lena-nile-grid">
+            {NILE_WINDOWS_PROGRAMS.map((program) => (
+              <article className="lena-glass lena-nile-card" key={program.id} data-program={program.id}>
+                <h3>{program.name[locale]}</h3>
+                <p className="lena-system-tagline">{program.line[locale]}</p>
+                <a className="lena-nile-plate" href={program.runUrl} target="_blank" rel="noopener noreferrer">
+                  <span className="lena-nile-plate-shot">
+                    <img src={withBase(program.src)} alt={program.alt[locale]} loading="lazy" decoding="async" />
+                  </span>
+                  <span className="lena-nile-plate-cap">{program.capability[locale]}</span>
+                </a>
+                <a className="lena-secondary" href={program.runUrl} target="_blank" rel="noopener noreferrer">
+                  {isAr ? "افتح البرنامج" : "Open the program"}
+                  <ArrowUpRight size={14} />
+                </a>
+              </article>
+            ))}
           </div>
         </div>
       </section>

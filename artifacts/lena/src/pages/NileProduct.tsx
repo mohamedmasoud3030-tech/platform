@@ -148,6 +148,21 @@ export default function NileProduct() {
         <div className="lena-nile-rows" style={{ gridTemplateColumns: "1fr" }}>
           <div>
             <dl style={{ margin: 0 }}>
+              <dt>{isAr ? "شاشات النظام كما هي في شريطه الجانبي" : "The system's screens, as they sit in its own sidebar"}</dt>
+              <dd>
+                <ul className="lena-nile-roots" style={{ marginTop: 10 }}>
+                  {product.screens[locale].map((screen) => (
+                    <li key={screen}>{screen}</li>
+                  ))}
+                </ul>
+              </dd>
+            </dl>
+          </div>
+        </div>
+
+        <div className="lena-nile-rows" style={{ gridTemplateColumns: "1fr" }}>
+          <div>
+            <dl style={{ margin: 0 }}>
               <dt>{isAr ? "من يستخدمه" : "Who uses it"}</dt>
               <dd>
                 <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "grid", gap: 8 }}>
