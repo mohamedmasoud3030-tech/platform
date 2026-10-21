@@ -173,7 +173,9 @@ function signalFacts(
   const byWorld =
     worldIds && worldIds.length > 0
       ? available
-        ? presenceByWorld(list, [...worldIds])
+        ? // Declared coverage is authoritative: an unobserved world is
+          // `unavailable`, never `quiet`.
+          presenceByWorld(list, [...worldIds], source.coversWorlds)
         : Object.fromEntries(worldIds.map((id) => [id, "unavailable" as const]))
       : {};
 

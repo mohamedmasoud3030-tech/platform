@@ -288,3 +288,50 @@ customer personal data to a provider, lead scoring, content generation, pricing 
 - **Validation:** unit tests cover retrieval scoring (Arabic normalisation), prompt construction,
   adapter failure classification (mocked fetch), the fallback composer, and the rate limiter. The
   build gates (`typecheck`, `verify`, `test`, `build`) must pass with the guard's new declaration.
+
+---
+
+## 12. Amendment (2026-10-01): authorized product signal source — implemented, not connected
+
+**Owner decision.** The room that shows the operating pulse of LENA's products
+(`/world/command`) may read a real product endpoint. The owner directed connecting an
+authorized source; the room stays closed until one is configured.
+
+**What it is.** A read-only ingest path, not AI and not analytics:
+
+```
+owner-configured endpoint (lena.world-signals/1)
+  → server adapter (validate, cap, cache, classify failures)
+  → worldSignals.snapshot (public tRPC query, read-only)
+  → client transport (re-validate, drop unknown worlds, keep canonical paths only)
+  → signal store (available + declared coverage, or unavailable)
+```
+
+Full contract and operating guide: `docs/WORLD_SIGNAL_SOURCE.md`.
+
+**Boundaries this amendment keeps:**
+
+1. **No host is compiled in.** The endpoint arrives through
+   `LENA_WORLD_SIGNAL_SOURCE_URL` (optional bearer token `LENA_WORLD_SIGNAL_TOKEN`),
+   the same configuration posture as `KIMI_AUTH_URL` / `SUPABASE_URL`. The egress guard's
+   allowlist carries the variable name so the integration is declared reviewably.
+2. **Read-only.** There is no write path back into any product. The public snapshot always
+   reports `writable: false`; the room offers no acknowledge/resolve action it cannot
+   persist, and hydration refuses any writable source state.
+3. **Fail-closed.** Missing configuration, timeout, non-2xx, oversized body and contract
+   violations all become coarse `unavailable` reasons. No partial snapshot, no stale live
+   room: a source that goes down clears the observation on the next refresh.
+4. **No fabricated calm.** The payload declares which worlds it observes (`worlds`); a
+   published world outside that coverage is `unavailable`, never `quiet`.
+5. **Nothing is stored.** No table, no history, no analytics event. Snapshots live in
+   server memory for one TTL window and in the browser store until replaced.
+6. **No upstream error text, URL or token** reaches a response, a log line or the browser;
+   logs carry shape only (status, reason, counts, latency).
+7. **Declared in the guard.** `tools/check-egress.mjs` carries the configuration variable,
+   and `tools/verify-world-signal-source.mjs` (in every `pnpm run verify`) fails the build
+   if the store can be seeded, hydrated from anywhere but the validated transport, or made
+   writable.
+
+**Status.** Implemented and machine-checked; the production default remains
+`no-authorized-product-source` — the room is still closed until the owner configures a real
+endpoint. `tools/world-signal-fixture.mjs` exists only as a local development harness.

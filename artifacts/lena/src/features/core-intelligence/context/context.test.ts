@@ -469,8 +469,9 @@ describe("context fusion — deterministic output & read-only contract", () => {
     expect(ids).toEqual([...PUB_WORLD_IDS]);
     expect(ids).not.toContain("materials");
     expect(ids).not.toContain("ghost-system");
-    // byWorld mirrors the requested ids (presence of unknown = quiet).
-    expect(snapshot.signals.byWorld["ghost-system"]).toBe("quiet");
+    // byWorld mirrors the requested ids. A world the source does not declare
+    // coverage for is `unavailable`, never `quiet` — nothing observed it.
+    expect(snapshot.signals.byWorld["ghost-system"]).toBe("unavailable");
   });
 });
 

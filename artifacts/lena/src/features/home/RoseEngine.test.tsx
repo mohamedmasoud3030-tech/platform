@@ -1,5 +1,5 @@
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
-import { cleanup, render, screen, within } from "@testing-library/react";
+import { act, cleanup, render, screen, within } from "@testing-library/react";
 import { createMemoryRouter, RouterProvider } from "react-router";
 import { PreferencesProvider } from "@/providers/preferences";
 import RoseEngine from "./RoseEngine";
@@ -95,5 +95,58 @@ describe("RoseEngine", () => {
     });
     // Arabic-Indic digits: the first chip carries ٠١.
     expect(within(group).getByText("٠١")).toBeTruthy();
+  });
+});
+
+/**
+ * The calm-pulse gate. Reduced motion stops the wheels; the hub pulse is the
+ * one exception, and it is only allowed once the page has settled — so a
+ * scheduled capture (which runs right after load) photographs the still window
+ * and the guardian's visual baselines stay meaningful.
+ */
+describe("RoseEngine calm-pulse gate", () => {
+  function mockReducedMotion(matches: boolean) {
+    Object.defineProperty(window, "matchMedia", {
+      writable: true,
+      value: vi.fn().mockImplementation((query: string) => ({
+        matches: query.includes("prefers-reduced-motion") ? matches : false,
+        media: query,
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        addListener: vi.fn(),
+        removeListener: vi.fn(),
+        dispatchEvent: vi.fn(),
+      })),
+    });
+  }
+
+  it("leaves the window still while the page is still loading", () => {
+    mockReducedMotion(true);
+    renderEngine();
+    expect(document.querySelector(".rose-stage")?.getAttribute("data-calm")).toBeNull();
+  });
+
+  it("never marks the stage settled without a reduced-motion preference", () => {
+    mockReducedMotion(false);
+    renderEngine();
+    expect(document.querySelector(".rose-stage")?.getAttribute("data-calm")).toBeNull();
+  });
+
+  it("arms the pulse once the window reports it has loaded and settled", async () => {
+    vi.useFakeTimers();
+    try {
+      mockReducedMotion(true);
+      renderEngine();
+      const stage = () => document.querySelector(".rose-stage");
+      expect(stage()?.getAttribute("data-calm")).toBeNull();
+
+      await act(async () => {
+        window.dispatchEvent(new Event("load"));
+        await vi.advanceTimersByTimeAsync(2000);
+      });
+      expect(stage()?.getAttribute("data-calm")).toBe("true");
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });

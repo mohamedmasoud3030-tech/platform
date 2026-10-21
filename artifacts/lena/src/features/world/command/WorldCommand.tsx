@@ -8,6 +8,7 @@ import {
   type WorldSignal,
   type GlobalWorldState,
   type WorldPresence,
+  type SignalSourceUnavailableReason,
 } from "../signals";
 
 function stateLabel(state: GlobalWorldState, ar: boolean): string {
@@ -88,6 +89,47 @@ function SignalRow({
 }
 
 /**
+ * Why the room is closed, said precisely.
+ *
+ * "Not connected" and "connected but not answering" are different facts, and a
+ * room that exists to avoid optimistic fiction must not blur them. Every branch
+ * keeps the same promise: nothing is shown that was not observed.
+ */
+function unavailableCopy(
+  reason: SignalSourceUnavailableReason,
+  ar: boolean,
+): { headline: string; detail: string } {
+  if (reason === "uncovered-worlds") {
+    return {
+      headline: ar
+        ? "المصدر متصل، لكنه لا يغطي أي عالم منشور."
+        : "The source is connected but covers no published world.",
+      detail: ar
+        ? "لن نعرض عوالمنا كأنها هادئة دون رصد فعلي لها."
+        : "We will not show our worlds as calm without an actual observation of them.",
+    };
+  }
+  if (reason === "no-authorized-product-source" || reason === "not-configured") {
+    return {
+      headline: ar
+        ? "الإشارات الحية للمنتجات غير متصلة بعد."
+        : "Live product signals are not connected yet.",
+      detail: ar
+        ? "لا يوجد مصدر منتج مصرح به للمراقبة. تبقى هذه الغرفة للعرض فقط حتى يتصل مصدر معتمد."
+        : "No authorized product source is available for observation. This room stays read-only until one is connected.",
+    };
+  }
+  return {
+    headline: ar
+      ? "مصدر الإشارات المصرّح به لم يستجب."
+      : "The authorized signal source did not answer.",
+    detail: ar
+      ? "تعذّر الوصول إلى مصدر المنتج الآن. لا نعرض قيمًا قديمة أو تقديرية، وتعود الغرفة تلقائيًا عند استجابة المصدر."
+      : "The product source is unreachable right now. No stale or estimated values are shown, and the room resumes automatically when the source answers.",
+  };
+}
+
+/**
  * World Command — operating chamber.
  *
  * Read path: `useLenaIntelligence` is the fused observation authority
@@ -107,6 +149,7 @@ export default function WorldCommand() {
   // store into a quiet-looking operational dashboard. No counts, pressure,
   // state, signals, or mutation authority are rendered before a source exists.
   if (source.availability === "unavailable") {
+    const copy = unavailableCopy(source.reason, ar);
     return (
       <div
         className="lena-command state-unavailable"
@@ -119,16 +162,8 @@ export default function WorldCommand() {
           <p className="lena-kicker">{ar ? "غرفة القيادة · عالم LENA" : "WORLD COMMAND · LENA"}</p>
           <h1>{ar ? "نبض العالم" : "World Pulse"}</h1>
           <p className="lena-command-unavailable-message" role="status" aria-live="polite">
-            <strong>
-              {ar
-                ? "الإشارات الحية للمنتجات غير متصلة بعد."
-                : "Live product signals are not connected yet."}
-            </strong>
-            <span>
-              {ar
-                ? "لا يوجد مصدر منتج مصرح به للمراقبة. تبقى هذه الغرفة للعرض فقط حتى يتصل مصدر معتمد."
-                : "No authorized product source is available for observation. This room stays read-only until one is connected."}
-            </span>
+            <strong>{copy.headline}</strong>
+            <span>{copy.detail}</span>
           </p>
           <Link className="lena-command-back" to="/world">
             {ar ? "العودة إلى عالم LENA" : "Back to LENA World"}

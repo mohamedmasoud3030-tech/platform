@@ -26,7 +26,7 @@ Current product/runtime authorities:
 - artifacts/lena/src/features/world/content/product-contract.ts — derived product contract, not a second registry
 - artifacts/lena/src/graph/ — World Graph; Atlas and World remain distinct surfaces
 - artifacts/lena/src/features/core-intelligence/ — derived read-only intelligence; not a second product registry. Production graph seam is CanonicalWorldGraphAdapter.
-- artifacts/lena/src/features/world/signals/ — observation and mutation adapter. Production source stays unavailable until an authorized product source exists.
+- artifacts/lena/src/features/world/signals/ — observation and mutation adapter. Production defaults to an unavailable, seedless store; it becomes live only through the validated server snapshot of an owner-authorized product endpoint (`docs/WORLD_SIGNAL_SOURCE.md`). Fixtures stay test-only, never production composition.
 
 Hidden `LENA_SERVICES` and `STUDIO_PROJECTS` records stay in the repository unpublished. Do not restore them as a public catalog.
 
