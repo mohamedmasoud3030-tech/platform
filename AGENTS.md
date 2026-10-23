@@ -63,3 +63,12 @@ Run pnpm run verify:skills after any skill change.
 ## Supplemental autonomous execution protocol
 
 The owner-provided autonomous execution protocol (in `docs/DECISIONS.md` register history) is supplemental guidance only; it grants no tools, permissions or budget and never overrides this file.
+
+---
+
+## Portfolio command center
+
+This repository is part of a 10-project portfolio governed by the
+[`command-center-`](https://github.com/mohamedmasoud3030-tech/command-center-) repository. Portfolio rules (they take precedence over this file where they conflict):
+one live status file per repo, dated reports are archived — never silently deleted, no secrets in git,
+and the non-technical owner is always answered in simple Egyptian Arabic with explicit decisions to approve.
