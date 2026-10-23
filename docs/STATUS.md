@@ -762,3 +762,17 @@ A sign-in screen proves identity, not operating depth. LENA therefore publishes 
 only when it has been captured from the real application and committed into the canonical evidence layer.
 MALEK satisfies that rule today. Products without verified interior evidence remain evidence-free in the
 World chamber; LENA does not generate substitute mockups or imply evidence that does not exist.
+
+---
+
+## 🛰️ مراجع الموجات الإدارية — مزامنة مركز القيادة (2026-10-23)
+
+آخر ثلاث موجات إدارية اكتملت على هذا المستودع بدمج موثق — هذا القسم هو الصفحة الأخيرة من رحلة «خطة ← تسليم»:
+
+| الموجة | PR | مرجع الدمج | التاريخ | الأثر |
+|---|---|---|---|---|
+| توحيد المستندات القانونية | #102 | `7d8590e` | 2026-10-21 | مصدر واحد قانوني للمنصة |
+| ربط مركز القيادة | #103 | `5fe5739` | 2026-10-23 | AGENTS/STATUS موحدان + ربط المركز |
+| مزامنة المهارات | #104 | `198a985` | 2026-10-23 | 18 مهارة مرجعية بعد المزامنة |
+
+> **المرجع الأم للمحفظة:** مركز القيادة [`command-center-`](https://github.com/mohamedmasoud3030-tech/command-center-) — سجل الجلسات النشطة والـ PRs المفتوحة وقرارات المالك يعيش هناك. هذا القسم يحدّثه مدير المحفظة مع كل موجة ولا يُعدّل يدوياً.
